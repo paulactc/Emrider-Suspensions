@@ -1,0 +1,293 @@
+@use './core/reset';
+
+/* landing*/
+.offpage{
+  background-color: rgb(11, 9, 17);
+}
+
+.main{
+  /*width:100%;
+  height: 100%;*/
+  margin-bottom: 2em;
+}
+
+.bigsection{
+display:flex;
+justify-content: center;
+padding-top: 10em;
+padding-bottom: 2.5em;
+align-items: center;
+justify-content: space;
+margin-left:3em; 
+gap:0.3em;
+}
+
+.imglog{
+  width: 25%;
+  border-radius: 50%;
+}
+
+.title {
+    color: rgba(165, 149, 149, 0.966);
+    font-family: "Lobster Two",sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    margin-top: 0.5em;
+    margin-left: 0.1em;
+    font-size: 2.5em;
+  }
+
+  .sectmedium{
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+  }
+   
+  .sectmedium h3{
+    display:flex;
+    justify-content: center;
+    color:rgb(245, 248, 50);
+    text-align: center;  
+    font-size: 1.7em;
+    gap: 0.2em;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  }
+
+  .sectmedium p{
+    display:flex;
+    justify-content: center;
+    text-align: center; 
+    font-size: 1em;
+    color: rgba(243, 239, 239, 0.966); 
+    padding-bottom: 2em;
+    padding-inline: 1.5em;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    
+    
+  }
+
+  .conticon{
+    display:flex; 
+    flex-direction: column;;
+    border-radius: 0.5em;
+    box-shadow: 0 0.1em 0.2em rgb(238, 238, 229);
+    margin-inline:4em;
+    justify-content: center;
+    
+  }
+
+  .conticon input{
+    width:50%;
+    margin-inline: 0.3em;
+
+  }
+
+.conticon label{
+   margin-inline: 0.3em;
+   color:rgb(251, 252, 253)
+  
+}
+
+.parra {
+  margin-top: 10px;
+}
+
+  
+
+    .btngo{
+      
+      margin-right:9.5em;
+     padding: 0.7rem;
+     font-family: "Lobster Two", sans-serif;
+     color:rgb(20, 19, 17);
+     border: solid rgb(3, 3, 3);
+     margin-top: 10px; 
+     margin-bottom: 10px;
+     display: block; 
+     font-size: 1.1em;
+     border-radius: 0.5rem;
+     padding: 0.3em;
+     background-color: rgb(245, 248, 50);
+     cursor: pointer;
+     transition-duration: 0.2s;
+}
+
+.btngo:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 10px 15px rgba(9, 15, 48, 0.1);
+}
+
+@media(width > 768px ){
+  .paragraph{
+    padding-right: 5em;
+  }
+}
+
+a{
+  text-decoration: none;
+}
+
+
+   /*main*/ 
+
+   * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+/*:root {
+  font-family: "Lobster Two", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}*/
+
+header {
+  display: flex; 
+  min-width: 100%;  
+} 
+
+.header_container {
+  display: flex;
+  background-color: rgb(196, 196, 171);
+  color: rgb(228, 217, 227);
+  gap:6em;;
+  min-width: 100%;  
+  align-items: center;
+  padding-block:  0.3rem;
+  padding-inline: 3rem;
+  position: static;
+  height: 3em;;
+}
+
+.logo_hdr{
+  display: flex;
+  height: 30px;
+  position: absolute;
+  left:5px;
+  top:10px;
+}
+
+.vibeH {
+  font-size: 1.5rem;
+  font-family: "Lobster Two", sans-serif;
+  color: rgb(19, 14, 18);
+}
+
+/*footer*/
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-inline: auto;
+  background-color: rgb(196, 196, 171);
+  color: black;
+  width: 100%;
+  padding: 4px;
+ 
+  
+  
+}
+
+.vm {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: rgb(14, 12, 11);
+  font-size: 0.75rem;
+}
+
+.rrss {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.rrss_link {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgb(5, 5, 4);
+}
+
+.logofooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: center;
+  width: 2rem;
+  height: 2rem;
+ }
+
+//  TechnicalDataCustomer
+
+.body-list-client{
+  background-color: rgb(10, 8, 17);
+  color: aliceblue;
+}
+.title-Shock{
+color:rgb(245, 248, 50)
+}
+    
+.sizeli{
+color:rgb(216, 204, 187);
+}
+
+.subsection{
+ display:flex; 
+ flex-direction: column;
+ gap:0.3em;
+ margin:0.3em;
+ border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background-color: rgba(94, 87, 87, 0.568); // sutil fondo translúcido
+  backdrop-filter: blur(2px);
+  box-shadow: 0 1px 6px rgba(87, 83, 83, 0.3);
+}
+
+.title-Shock{
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding-block: 0.3em;
+}
+
+//filters 
+
+.filters{
+  display:flex;
+  gap: 0.3em;
+  
+}
+
+.listMotocicle{
+  display:flex;
+  flex-direction: column;
+   gap:0.3em;
+ margin:0.3em;
+ border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background-color: rgba(94, 87, 87, 0.568); // sutil fondo translúcido
+  backdrop-filter: blur(2px);
+  box-shadow: 0 1px 6px rgba(87, 83, 83, 0.3);
+  
+}
