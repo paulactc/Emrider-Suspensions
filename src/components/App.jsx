@@ -1,8 +1,8 @@
 import "../styles/App.scss";
 import React, { useState } from "react";
-import Footer from "./Footer";
-import Header from "./header";
-import LandingPage from "./LandingPage";
+import Footer from "../components/layout/Footer";
+import Header from "../components/layout/Header";
+import LandingPage from "./layout/LandingPage";
 import ListCustom from "../components/Page.Custom/ListCustom";
 
 import data from "../data/ListBikes.json";
