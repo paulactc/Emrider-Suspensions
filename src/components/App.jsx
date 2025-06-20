@@ -4,6 +4,7 @@ import Footer from "../components/layout/Footer";
 import Header from "../components/layout/Header";
 import LandingPage from "./layout/LandingPage";
 import ListCustom from "../components/Page.Custom/ListCustom";
+import { Route, Routes, Link } from "react-router";
 
 import data from "../data/ListBikes.json";
 import TechnicalDataCustomer from "./TechnicalDataCustomer";
@@ -44,29 +45,22 @@ function App() {
   return (
     <>
       <Header />
+      <Routes>
+        <Route
+          path="/"
+          element={<LandingPage handleButton={handleButton} />}
+        ></Route>
+        <Route
+          path="/list"
+          element={
+            <ListCustom
+              bikes={filteredBikes}
+              handleInputFilter={handleInputFilter}
+            />
+          }
+        />
+      </Routes>
       <main className="main">
-        <form className="filters">
-          <label htmlFor="filterCustom">Busqueda de cliente</label>
-          <input
-            id="Cliente"
-            type="text"
-            name="filterName"
-            onInput={handleInputFilter}
-            value={filters.Cliente}
-          ></input>
-
-          <label htmlFor="filterEnrolment">matricula de motocicleta</label>
-          <input
-            id="Matricula"
-            name="filterEnrolment"
-            type="text"
-            onInput={handleInputFilter}
-            value={filters.Matricula}
-          ></input>
-        </form>
-        <ListCustom bikes={filteredBikes} />
-
-        <LandingPage handleButton={handleButton} />
         <TechnicalDataCustomer />
       </main>
 

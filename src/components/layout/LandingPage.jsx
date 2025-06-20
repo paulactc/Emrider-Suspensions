@@ -1,5 +1,5 @@
 import logoEmrider from "../../images/Logomonoemrider.jpeg";
-
+import { NavLink } from "react-router";
 function LandingPage(props) {
   return (
     <div className="offpage">
@@ -23,13 +23,9 @@ function LandingPage(props) {
         <input className="user" type="text" />
         <label>Clave:</label>
         <input className="user" type="text" />
-        <a
-          href="./formulary.html"
-          className="btngo"
-          onClick={props.handleButton}
-        >
-          Acceso
-        </a>
+        <NavLink to="/list" className="btngo">
+          <button onClick={props.handleButton}>Acceso</button>{" "}
+        </NavLink>
       </section>
     </div>
   );

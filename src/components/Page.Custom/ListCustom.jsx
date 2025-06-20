@@ -1,6 +1,7 @@
+import InputSearchCustom from "../layout/InputSearchCustom";
 import UleachBike from "../Page.Custom/UleachBike";
 
-function ListCustom({ bikes }) {
+function ListCustom({ bikes, handleInputFilter }) {
   // const handleInputEnrolment = (ev) => {
   // setFilterEnrolment(ev.target.value);
   //};
@@ -8,6 +9,7 @@ function ListCustom({ bikes }) {
 
   return (
     <>
+      <InputSearchCustom handleInputFilter={handleInputFilter} />
       <h3>DATOS DE LA MOTOCICLETA</h3>
       <ul className="ulListBikes">
         {bikes.map((eachBike) => (
