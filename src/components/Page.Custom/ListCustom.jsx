@@ -1,7 +1,7 @@
-import InputSearchCustom from "../layout/InputSearchCustom";
-import UleachBike from "../Page.Custom/UleachBike";
+import InputSearchCustom from "../admin/forms/InputSearchCustom";
+import UleachCustom from "../Page.Custom/UleachCustom";
 
-function ListCustom({ bikes, handleInputFilter }) {
+function ListCustom({ Custom, handleInputFilter, filters }) {
   // const handleInputEnrolment = (ev) => {
   // setFilterEnrolment(ev.target.value);
   //};
@@ -9,11 +9,14 @@ function ListCustom({ bikes, handleInputFilter }) {
 
   return (
     <>
-      <InputSearchCustom handleInputFilter={handleInputFilter} />
-      <h3>DATOS DE LA MOTOCICLETA</h3>
+      <InputSearchCustom
+        handleInputFilter={handleInputFilter}
+        filters={filters}
+      />
+      <h3>DATOS CLIENTE</h3>
       <ul className="ulListBikes">
-        {bikes.map((eachBike) => (
-          <UleachBike objListBike={eachBike} key={eachBike.Cliente} />
+        {Custom.map((eachCustom) => (
+          <UleachCustom objListCustom={eachCustom} key={eachCustom.Cliente} />
         ))}
       </ul>
     </>

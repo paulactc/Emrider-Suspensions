@@ -1,6 +1,36 @@
+import { useState } from "react";
 import logoEmrider from "../../images/Logomonoemrider.jpeg";
-import { NavLink } from "react-router";
+
+import { useNavigate } from "react-router";
 function LandingPage(props) {
+  const [login, setLogin] = useState({
+    user: "",
+    pass: "",
+  });
+  const handleInput = (ev) => {
+    const { name, value } = ev.target;
+
+    setLogin({
+      ...login,
+      [name]: value,
+    });
+  };
+  const navigate = useNavigate();
+
+  const handleAccess = () => {
+    if (login.user === "paula" && login.pass === "pass") {
+      // Es admin
+      console.log("Navigating to /list");
+      props.handleButton(); // ← Sin pasar evento
+      navigate("/admin/clientes");
+      window.scrollTo(0, 0);
+    } else {
+      console.log("Navigating to /list");
+      props.handleButton(); // ← Sin pasar evento
+      navigate("/cliente");
+      window.scrollTo(0, 0);
+    }
+  };
   return (
     <div className="offpage">
       <section className="bigsection">
@@ -20,12 +50,24 @@ function LandingPage(props) {
 
       <section className="conticon">
         <label>Usuario:</label>
-        <input className="user" type="text" />
+        <input
+          className="user"
+          name="user"
+          value={login.user}
+          onInput={handleInput}
+          type="text"
+        />
         <label>Clave:</label>
-        <input className="user" type="text" />
-        <NavLink to="/list" className="btngo">
-          <button onClick={props.handleButton}>Acceso</button>{" "}
-        </NavLink>
+        <input
+          className="user"
+          name="pass"
+          value={login.pass}
+          onInput={handleInput}
+          type="text"
+        />
+        <button className="btngo" onClick={handleAccess}>
+          Acceso
+        </button>
       </section>
     </div>
   );

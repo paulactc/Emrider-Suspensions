@@ -1,41 +1,42 @@
 [
   {
-    "Marca": "BMW",
-    "Modelo": "R1200GS",
-    "Añodefabricacion": 2020,
-    "Matricula": "1234GGS",
     "Cliente": "Juan Perez Martinez",
     "Email": "juan@hotmail.es",
-    "Teléfono": 722439479,
+    "telefono": 722439479,
     "Dirección": "C/Delicias 20 ",
     "CódigoPostal": 11130,
     "Población": "Chiclana de la Frontera",
-    "Provincia": "Cádiz"
+    "Provincia": "Cádiz",
+    "id": 1
   },
   {
-    "Marca": "HONDA",
-    "Modelo": "Africa Twin",
-    "Añodefabricacion": 2007,
-    "Matricula": "2586GGS",
     "Cliente": "Maria Sanchez",
     "Email": "Maria@hotmail.es",
     "Teléfono": 655855477,
     "Dirección": "C/barrio nuevo 20 ",
     "CódigoPostal": 11110,
     "Población": "Cádiz",
-    "Provincia": "Cádiz"
+    "Provincia": "Cádiz",
+    "id": 2
   },
   {
-    "Marca": "DUCATI",
-    "Modelo": "Monster",
-    "Añodefabricacion": 2010,
-    "Matricula": "9186GGS",
     "Cliente": "Pedro Benitez Ruiz",
     "Email": "Pedro@hotmail.es",
     "Teléfono": 69857785,
     "Dirección": "C/Fresas rojas 20 ",
     "CódigoPostal": 11130,
     "Población": "Chiclana de la Frontera",
-    "Provincia": "Cádiz"
+    "Provincia": "Cádiz",
+    "id": 3
+  },
+  {
+    "Cliente": "Sandra sanchez Calvo",
+    "Email": "Sandra@hotmail.es",
+    "Teléfono": 698858475,
+    "Dirección": "C/Esperanza 1 ",
+    "CódigoPostal": 11130,
+    "Población": "Chiclana de la Frontera",
+    "Provincia": "Cádiz",
+    "id": 1
   }
 ]

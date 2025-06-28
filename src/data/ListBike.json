@@ -1,0 +1,36 @@
+{
+  "motos": [
+    {
+      "id": 1,
+      "clienteId": 1,
+      "marca": "Yamaha",
+      "modelo": "MT-07",
+      "anoFabricacion": 2020,
+      "Matricula": "8754-LRR"
+    },
+    {
+      "id": 2,
+      "clienteId": 2,
+      "marca": "Honda",
+      "modelo": "CB650R",
+      "anoFabricacion": 2019,
+      "Matricula": "0354-KHG"
+    },
+    {
+      "id": 3,
+      "clienteId": 3,
+      "marca": "Kawasaki",
+      "modelo": "Ninja 650",
+      "anoFabricacion": 2021,
+      "Matricula": "1584-HJF"
+    },
+    {
+      "id": 4,
+      "clienteId": 1,
+      "marca": "BMW",
+      "modelo": "1",
+      "anoFabricacion": 2020,
+      "Matricula": "5984-THL"
+    }
+  ]
+}
