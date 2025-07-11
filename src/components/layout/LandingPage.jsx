@@ -1,5 +1,6 @@
 import { useState } from "react";
 import logoEmrider from "../../images/Logomonoemrider.jpeg";
+import { NavLink } from "react-router";
 
 import { useNavigate } from "react-router";
 function LandingPage(props) {
@@ -68,6 +69,9 @@ function LandingPage(props) {
         <button className="btngo" onClick={handleAccess}>
           Acceso
         </button>
+        <NavLink className="btngo" to="/nuevo-usuario">
+          Crear nueva cuenta
+        </NavLink>
       </section>
     </div>
   );

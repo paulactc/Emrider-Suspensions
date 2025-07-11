@@ -10,11 +10,13 @@ import FormTechnicalDataCustom from "./admin/forms/FormTechnicalDataCustomer";
 import dataBike from "../data/ListBike.json";
 import dataCustom from "../data/ListCustom.json";
 import dataTechnical from "../data/TechinalDatas.json";
-
+import dataUsers from "../data/ListUsers.json";
+import FormNewUser from "./Page.Custom/FormNewUser";
 import TechnicalDataCustomer from "./user/TechnicalDataCustomer";
 import FormBike from "./admin/forms/FormBike";
 import Cliente from "./user/Cliente";
 import ListBike from "./Page.Bike/ListBike";
+
 function App() {
   //VARIABLES DE ESTADO
   const [filters, setFilters] = useState({
@@ -25,6 +27,9 @@ function App() {
   const [listCustom, setListCustom] = useState(dataCustom);
   const [listBikes, setListBikes] = useState(dataBike);
   const [listTechnical, setListTechnical] = useState(dataTechnical);
+  const [listUsers, setListUsers] = useState(dataUsers);
+
+  console.log("Bicicletas cargadas:", listBikes);
 
   const [clientData, setClientData] = useState({
     Cliente: "", // "Juan Perez Martinez"
@@ -38,6 +43,7 @@ function App() {
 
   const [motoData, setMotoData] = useState({
     clienteId: null, // Referencia al cliente
+    id: "",
     Marca: "", // "BMW" o "Yamaha"
     Modelo: "", // "R1200GS" o "MT-07"
     Añodefabricacion: "", // 2020 (¿por qué tienes "Añodefabricacion" y "anoFabricacion"?)
@@ -154,7 +160,9 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<LandingPage handleButton={handleButton} />}
+          element={
+            <LandingPage handleButton={handleButton} listUsers={listUsers} />
+          }
         ></Route>
         <Route
           path="/admin/clientes"
@@ -178,7 +186,10 @@ function App() {
           }
         />
 
-        <Route path="/admin/motos" element={<ListBike />} />
+        <Route
+          path="/admin/motos/:id"
+          element={<ListBike listBikes={listBikes} />}
+        />
 
         <Route
           path="/formsCustom"
@@ -189,6 +200,8 @@ function App() {
             />
           }
         />
+
+        <Route path="/nuevo-usuario" element={<FormNewUser />} />
         <Route
           path="/FormTechnicalDataCustom"
           element={
@@ -202,7 +215,10 @@ function App() {
         <Route
           path="/FormBike"
           element={
-            <FormBike handleChangeMotos={handleChange} motoData={motoData} />
+            <FormBike
+              handleChangeMotos={handleChangeMotos}
+              motoData={motoData}
+            />
           }
         />
         <Route

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "username": "juanperez",
+    "email": "juan@hotmail.es",
+    "password": "123456"
+  },
+  {
+    "id": 2,
+    "username": "marias",
+    "email": "Maria@hotmail.es",
+    "password": "123456"
+  },
+  {
+    "id": 3,
+    "username": "pedrob",
+    "email": "Pedro@hotmail.es",
+    "password": "123456"
+  },
+  {
+    "id": 4,
+    "username": "sandrasc",
+    "email": "Sandra@hotmail.es",
+    "password": "123456"
+  }
+]

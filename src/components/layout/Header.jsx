@@ -1,12 +1,13 @@
 import logoEmrider from "../../images/Logomonoemrider.jpeg";
+import { Link, NavLink } from "react-router";
 
 const Header = () => {
   return (
     <header>
       <div className="header_container">
-        <a href="/index.html">
+        <NavLink to="/">
           <img className="logo_hdr" src={logoEmrider} alt="logo" />
-        </a>
+        </NavLink>
         <span className="vibeH">EmriderSuspensions</span>
       </div>
     </header>

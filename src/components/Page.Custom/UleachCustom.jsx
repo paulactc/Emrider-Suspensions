@@ -1,12 +1,10 @@
 import { NavLink } from "react-router";
-function UleachCustom({ objListCustom }) {
-  //objListBike es cada cliente del array dentro del componente list y para que lo pase por props creo
 
+function UleachCustom({ objListCustom, listBikes }) {
   return (
     <>
       <li className="listMotocicle">
         <p>Datos del cliente: </p>
-
         <p>Cliente: {objListCustom.Cliente}</p>
         <p>Email: {objListCustom.Email} </p>
         <p>Teléfono: {objListCustom.Teléfono}</p>
@@ -15,23 +13,16 @@ function UleachCustom({ objListCustom }) {
         <p>Población: {objListCustom.Población}</p>
         <p>Provincia: {objListCustom.Provincia}</p>
       </li>
+
+      {/* Asegúrate de usar el campo correcto del ID del cliente */}
       <NavLink
         className="Newcustom"
-        to={`/admin/motos/${objListCustom?.id || ""}`}
+        to={`/admin/motos/${objListCustom.id}`}
+        state={{ listBikes }}
       >
-        Listar motocicletas
-      </NavLink>
-      <NavLink className="Newcustom" to={`/admin/motos${objListCustom.id}`}>
-        Listar motocicletas
+        Ver tu motocicleta
       </NavLink>
 
-      <NavLink className="Newcustom" to={`/admin/motos/${objListCustom.id}`}>
-        Listar motocicletas
-      </NavLink>
-
-      <NavLink className="Newcustom" to="/FormBike">
-        Crear datos motocicleta
-      </NavLink>
       <NavLink className="Newcustom" to="/TechnicalDataCustomer">
         Datos suspensiones
       </NavLink>

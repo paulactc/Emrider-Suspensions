@@ -1,7 +1,7 @@
 import InputSearchCustom from "../admin/forms/InputSearchCustom";
 import UleachCustom from "../Page.Custom/UleachCustom";
 
-function ListCustom({ Custom, handleInputFilter, filters }) {
+function ListCustom({ Custom, handleInputFilter, filters, listBikes }) {
   // const handleInputEnrolment = (ev) => {
   // setFilterEnrolment(ev.target.value);
   //};
@@ -16,7 +16,11 @@ function ListCustom({ Custom, handleInputFilter, filters }) {
       <h3>DATOS CLIENTE</h3>
       <ul className="ulListBikes">
         {Custom.map((eachCustom) => (
-          <UleachCustom objListCustom={eachCustom} key={eachCustom.Cliente} />
+          <UleachCustom
+            objListCustom={eachCustom}
+            key={eachCustom.Cliente}
+            listBikes={listBikes}
+          />
         ))}
       </ul>
     </>
