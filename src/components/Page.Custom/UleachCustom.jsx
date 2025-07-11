@@ -1,30 +1,30 @@
 import { NavLink } from "react-router";
 
-function UleachCustom({ objListCustom, listBikes }) {
+function UleachCustom({ eachCustom, listBikes }) {
+  console.log("eachCustom en UleachCustom:", eachCustom);
   return (
     <>
       <li className="listMotocicle">
         <p>Datos del cliente: </p>
-        <p>Cliente: {objListCustom.Cliente}</p>
-        <p>Email: {objListCustom.Email} </p>
-        <p>Teléfono: {objListCustom.Teléfono}</p>
-        <p>Dirección: {objListCustom.Dirección}</p>
-        <p>CódigoPostal: {objListCustom.CódigoPostal}</p>
-        <p>Población: {objListCustom.Población}</p>
-        <p>Provincia: {objListCustom.Provincia}</p>
+        <p>Cliente: {eachCustom.Cliente}</p>
+        <p>Email: {eachCustom.Email} </p>
+        <p>Teléfono: {eachCustom.telefono}</p>
+        <p>Dirección: {eachCustom.Dirección}</p>
+        <p>CódigoPostal: {eachCustom.CódigoPostal}</p>
+        <p>Población: {eachCustom.Población}</p>
+        <p>Provincia: {eachCustom.Provincia}</p>
       </li>
 
-      {/* Asegúrate de usar el campo correcto del ID del cliente */}
       <NavLink
         className="Newcustom"
-        to={`/admin/motos/${objListCustom.id}`}
+        to={`/admin/motos/${eachCustom.id}`}
         state={{ listBikes }}
       >
         Ver tu motocicleta
       </NavLink>
 
-      <NavLink className="Newcustom" to="/TechnicalDataCustomer">
-        Datos suspensiones
+      <NavLink className="Newcustom" to="/formsCustom">
+        Agrega tus datos de cliente
       </NavLink>
     </>
   );
