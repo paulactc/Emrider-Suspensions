@@ -16,52 +16,48 @@ import TechnicalDataCustomer from "./user/TechnicalDataCustomer";
 import FormBike from "./admin/forms/FormBike";
 import Cliente from "./user/Cliente";
 import ListBike from "./Page.Bike/ListBike";
+import { useEffect } from "react";
 
 function App() {
-  //VARIABLES DE ESTADO
+  const [listCustom, setListCustom] = useState(dataCustom);
+
   const [filters, setFilters] = useState({
     Cliente: "",
     telefono: "",
   });
 
-  const [listCustom, setListCustom] = useState(dataCustom);
   const [listBikes, setListBikes] = useState(dataBike);
   const [listTechnical, setListTechnical] = useState(dataTechnical);
   const [listUsers, setListUsers] = useState(dataUsers);
 
-  console.log("Bicicletas cargadas:", listBikes);
-
   const [clientData, setClientData] = useState({
-    Cliente: "", // "Juan Perez Martinez"
-    Email: "", // "juan@hotmail.es"
-    Teléfono: "", // 722439479
-    Dirección: "", // "C/Delicias 20"
-    CódigoPostal: "", // 11130
-    Población: "", // "Chiclana de la Frontera"
-    Provincia: "", // "Cádiz"
+    Cliente: "",
+    Email: "",
+    teléfono: "",
+    Dirección: "",
+    CódigoPostal: "",
+    Población: "",
+    Provincia: "",
   });
 
   const [motoData, setMotoData] = useState({
-    clienteId: null, // Referencia al cliente
+    clienteId: null,
     id: "",
-    Marca: "", // "BMW" o "Yamaha"
-    Modelo: "", // "R1200GS" o "MT-07"
-    Añodefabricacion: "", // 2020 (¿por qué tienes "Añodefabricacion" y "anoFabricacion"?)
-    Matricula: "", // "1234GGS"
+    Marca: "",
+    Modelo: "",
+    Añodefabricacion: "",
+    Matricula: "",
   });
 
   const [formData, setFormData] = useState({
-    // Datos del servicio
     pesoPiloto: "",
     disciplina: "",
     numeroOrden: "",
     observaciones: "",
-    // Datos Suspensiones
     marca: "",
     modelo: "",
     año: "",
     referenciasuspension: "",
-    // Datos Técnicos - Spring Data
     mainRate: "",
     springRef: "",
     length: "",
@@ -85,21 +81,62 @@ function App() {
     headRodEnd: "",
     upperMount: "",
     lowerMount: "",
-    // Oil & Gas
     oil: "",
     gas: "",
-    // Compression
     compressionOriginal: "",
     compressionModification: "",
-    // Rebound
     reboundOriginal: "",
     reboundModification: "",
-    // Compression Adjusters
     originalCompressionAdjuster: "",
     modifiedCompressionAdjuster: "",
   });
 
-  //EVENTOS
+  useEffect(() => {
+    console.log("=== CAMBIO EN LISTCUSTOM ===");
+    console.log("listCustom actualizado:", listCustom);
+
+    if (Array.isArray(listCustom)) {
+      const undefinedCount = listCustom.filter(
+        (item) => item === undefined
+      ).length;
+      const nullCount = listCustom.filter((item) => item === null).length;
+      const validCount = listCustom.filter(
+        (item) => item && typeof item === "object" && item.Cliente
+      ).length;
+
+      console.log(
+        `Stats: ${validCount} válidos, ${undefinedCount} undefined, ${nullCount} null`
+      );
+    }
+  }, [listCustom]);
+
+  useEffect(() => {
+    console.log("=== VERIFICANDO DATOS ORIGINALES ===");
+    console.log("1. dataCustom importado:", dataCustom);
+    console.log("2. Tipo de dataCustom:", typeof dataCustom);
+    console.log("3. Es array dataCustom:", Array.isArray(dataCustom));
+    console.log("4. Longitud dataCustom:", dataCustom?.length);
+
+    if (Array.isArray(dataCustom)) {
+      dataCustom.forEach((item, index) => {
+        console.log(`5. dataCustom[${index}]:`, item);
+        console.log(`   - Tipo: ${typeof item}`);
+        console.log(`   - Es null: ${item === null}`);
+        console.log(`   - Es undefined: ${item === undefined}`);
+        console.log(`   - Tiene Cliente: ${item?.Cliente || "NO"}`);
+        console.log(
+          `   - Keys disponibles:`,
+          item ? Object.keys(item) : "ninguna"
+        );
+      });
+    }
+
+    console.log("6. Estado inicial listCustom:", listCustom);
+    console.log(
+      "7. Son iguales dataCustom y listCustom:",
+      dataCustom === listCustom
+    );
+  }, []);
 
   const handleInputFilter = (ev) => {
     const { id, value } = ev.target;
@@ -109,26 +146,58 @@ function App() {
     });
   };
 
-  const filteredCustom = listCustom
-    .filter((eachCustom) => {
-      // Verificar que Cliente existe y filtrar
-      if (!filters.Cliente) return true;
-      return eachCustom.Cliente?.toLowerCase().includes(
-        filters.Cliente.toLowerCase()
-      );
-    })
-    .filter((eachCustom) => {
-      // Verificar que telefono existe y filtrar
-      if (!filters.telefono) return true;
-      return eachCustom.telefono
-        ?.toString()
-        .includes(filters.telefono.toString());
+  const filterCustomData = (data, filters) => {
+    if (!Array.isArray(data)) {
+      console.warn("Los datos de clientes no son un array:", data);
+      return [];
+    }
+
+    const cleanedData = data.filter((customer) => {
+      if (!customer || typeof customer !== "object") {
+        console.warn("Cliente inválido encontrado:", customer);
+        return false;
+      }
+
+      if (!customer.Cliente || customer.Cliente.trim() === "") {
+        console.warn("Cliente sin nombre encontrado:", customer);
+        return false;
+      }
+
+      return true;
     });
+
+    console.log("Datos limpios:", cleanedData);
+
+    const filteredData = cleanedData.filter((customer) => {
+      if (filters.Cliente && filters.Cliente.trim() !== "") {
+        const clientName = customer.Cliente.toLowerCase();
+        const searchTerm = filters.Cliente.toLowerCase();
+        if (!clientName.includes(searchTerm)) {
+          return false;
+        }
+      }
+
+      if (filters.telefono && filters.telefono.trim() !== "") {
+        const phoneNumber = customer.telefono || customer.telefono || "";
+        const searchPhone = filters.telefono.toString();
+        if (!phoneNumber.toString().includes(searchPhone)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    console.log("Datos filtrados:", filteredData);
+    return filteredData;
+  };
+
+  const filteredCustom = filterCustomData(listCustom, filters);
 
   const handleButton = () => {
     console.log("has hecho click");
   };
-  //FORMULARIO DE LOS CLIENTES
+
   const handleChangeClientes = (e) => {
     const { name, value } = e.target;
     setClientData((prev) => ({
@@ -136,7 +205,7 @@ function App() {
       [name]: value,
     }));
   };
-  //FORMULARIO DE LOS DATOS TÉCNICOS
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -145,7 +214,6 @@ function App() {
     }));
   };
 
-  //FORMULARIO DE LOS DATOS DE MOTOS
   const handleChangeMotos = (e) => {
     const { name, value } = e.target;
     setMotoData((prev) => ({
@@ -168,9 +236,11 @@ function App() {
           path="/admin/clientes"
           element={
             <ListCustom
-              Custom={filteredCustom}
+              Custom={filteredCustom} // Aquí pasamos el array ya limpio y filtrado
               handleInputFilter={handleInputFilter}
               filters={filters}
+              listBikes={listBikes}
+              listCustom={listCustom}
             />
           }
         />
@@ -178,7 +248,8 @@ function App() {
         <Route
           path="/cliente"
           element={
-            <Cliente
+            <ListCustom
+              listCustom={listCustom}
               Custom={filteredCustom}
               handleInputFilter={handleInputFilter}
               filters={filters}
@@ -192,6 +263,17 @@ function App() {
         />
 
         <Route
+          path="/admin/datos-tecnicos/:id"
+          element={
+            <TechnicalDataCustomer
+              handleChange={handleChange}
+              formData={formData}
+              listTechnical={listTechnical}
+            />
+          }
+        />
+
+        <Route
           path="/formsCustom"
           element={
             <FormsCustom
@@ -202,15 +284,6 @@ function App() {
         />
 
         <Route path="/nuevo-usuario" element={<FormNewUser />} />
-        <Route
-          path="/FormTechnicalDataCustom"
-          element={
-            <FormTechnicalDataCustom
-              handleChange={handleChange}
-              formData={formData}
-            />
-          }
-        />
 
         <Route
           path="/FormBike"

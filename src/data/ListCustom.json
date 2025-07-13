@@ -12,7 +12,7 @@
   {
     "Cliente": "Maria Sanchez",
     "Email": "Maria@hotmail.es",
-    "Teléfono": 655855477,
+    "telefono": 655855477,
     "Dirección": "C/barrio nuevo 20 ",
     "CódigoPostal": 11110,
     "Población": "Cádiz",
@@ -22,7 +22,7 @@
   {
     "Cliente": "Pedro Benitez Ruiz",
     "Email": "Pedro@hotmail.es",
-    "Teléfono": 69857785,
+    "telefono": 69857785,
     "Dirección": "C/Fresas rojas 20 ",
     "CódigoPostal": 11130,
     "Población": "Chiclana de la Frontera",
@@ -32,7 +32,7 @@
   {
     "Cliente": "Sandra sanchez Calvo",
     "Email": "Sandra@hotmail.es",
-    "Teléfono": 698858475,
+    "telefono": 698858475,
     "Dirección": "C/Esperanza 1 ",
     "CódigoPostal": 11130,
     "Población": "Chiclana de la Frontera",
