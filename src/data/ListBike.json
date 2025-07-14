@@ -2,7 +2,7 @@
   "motos": [
     {
       "id": 1,
-      "clienteId": 1,
+      "clienteId": 2,
       "marca": "Yamaha",
       "modelo": "MT-07",
       "anoFabricacion": 2020,
@@ -26,7 +26,7 @@
     },
     {
       "id": 4,
-      "clienteId": 1,
+      "clienteId": 2,
       "marca": "BMW",
       "modelo": "f800",
       "anoFabricacion": 2020,

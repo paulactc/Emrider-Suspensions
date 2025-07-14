@@ -244,17 +244,9 @@ function App() {
             />
           }
         />
-
         <Route
           path="/cliente"
-          element={
-            <ListCustom
-              listCustom={listCustom}
-              Custom={filteredCustom}
-              handleInputFilter={handleInputFilter}
-              filters={filters}
-            />
-          }
+          element={<Cliente listCustom={listCustom} listBikes={listBikes} />}
         />
 
         <Route
