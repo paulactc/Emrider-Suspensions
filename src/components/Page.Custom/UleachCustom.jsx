@@ -1,6 +1,6 @@
 import { NavLink } from "react-router";
 
-function UleachCustom({ eachCustom, listBikes }) {
+function UleachCustom({ eachCustom, listBikes, listTechnical }) {
   console.log("5. eachCustom en UleachCustom (al inicio):", eachCustom);
 
   if (!eachCustom) {
@@ -47,8 +47,8 @@ function UleachCustom({ eachCustom, listBikes }) {
             <div className="tiene-motos">
               <NavLink
                 className="Newcustom"
-                to={`/motos/${eachCustom.id}`}
-                state={{ listBikes }}
+                to={`/admin/motos/${eachCustom.id}`}
+                state={{ listBikes, listTechnical }}
               >
                 Ver mis motocicletas ({motosDelCliente.length})
               </NavLink>
@@ -59,7 +59,11 @@ function UleachCustom({ eachCustom, listBikes }) {
               <NavLink
                 className="Newcustom create-moto-btn"
                 to="/formsBike"
-                state={{ clienteId: eachCustom.id, clienteData: eachCustom }}
+                state={{
+                  clienteId: eachCustom.id,
+                  clienteData: eachCustom,
+                  listTechnical,
+                }}
               >
                 Registrar mi motocicleta
               </NavLink>

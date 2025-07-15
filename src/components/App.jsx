@@ -261,9 +261,12 @@ function App() {
           path="/cliente"
           element={<Cliente listCustom={listCustom} listBikes={listBikes} />}
         />
+
         <Route
           path="/admin/motos/:id"
-          element={<ListBike listBikes={listBikes} />}
+          element={
+            <ListBike listBikes={listBikes} listTechnical={listTechnical} />
+          }
         />
         <Route
           path="/admin/motosadmin/:id"

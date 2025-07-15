@@ -18,35 +18,37 @@ function UleachCustomUser({ Custom, listBikes }) {
 
   return (
     <>
-      <li className="listMotocicle">
-        <p>Cliente: {safeDisplay(Custom.Cliente)}</p>
-        <p>Email: {safeDisplay(Custom.Email)}</p>
-        <p>Teléfono: {safeDisplay(Custom.telefono)}</p>
-        <p>Dirección: {safeDisplay(Custom.Dirección)}</p>
-        <p>Código Postal: {safeDisplay(Custom.CódigoPostal)}</p>
-        <p>Población: {safeDisplay(Custom.Población)}</p>
-        <p>Provincia: {safeDisplay(Custom.Provincia)}</p>
-      </li>
+      <div className="ulListBikes">
+        <li>
+          <p>Cliente: {safeDisplay(Custom.Cliente)}</p>
+          <p>Email: {safeDisplay(Custom.Email)}</p>
+          <p>Teléfono: {safeDisplay(Custom.telefono)}</p>
+          <p>Dirección: {safeDisplay(Custom.Dirección)}</p>
+          <p>Código Postal: {safeDisplay(Custom.CódigoPostal)}</p>
+          <p>Población: {safeDisplay(Custom.Población)}</p>
+          <p>Provincia: {safeDisplay(Custom.Provincia)}</p>
+        </li>
 
-      {/* Mostrar enlace de motos o botón de crear */}
-      {Custom.id &&
-        (tieneMotos ? (
-          <NavLink
-            className="Newcustom"
-            to={`/motos/${Custom.id}`}
-            state={{ listBikes }}
-          >
-            Ver mis motocicletas ({motosDelCliente.length})
-          </NavLink>
-        ) : (
-          <NavLink
-            className="Newcustom create-moto-btn"
-            to="/FormBike"
-            state={{ clienteId: Custom.id, clienteData: Custom }}
-          >
-            Registrar mi motocicleta
-          </NavLink>
-        ))}
+        {/* Mostrar enlace de motos o botón de crear */}
+        {Custom.id &&
+          (tieneMotos ? (
+            <NavLink
+              className="Newcustom"
+              to={`/admin/motos/${Custom.id}`} // ✅ Agregar la barra inicial
+              state={{ listBikes }}
+            >
+              Ver mis motocicletas ({motosDelCliente.length})
+            </NavLink>
+          ) : (
+            <NavLink
+              className="Newcustom create-moto-btn"
+              to="/FormBike"
+              state={{ clienteId: Custom.id, clienteData: Custom }}
+            >
+              Registrar mi motocicleta
+            </NavLink>
+          ))}
+      </div>
 
       <NavLink className="Newcustom" to="/formsCustom">
         Editar mis datos de cliente
