@@ -24,10 +24,9 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
           <p>Año de fabricación: {bike.anoFabricacion}</p>
           <p>Matrícula: {bike.Matricula}</p>
 
-          {/* ✅ NavLink dentro del map, para cada moto */}
           <NavLink
             className="Newcustom"
-            to={`/custom/datos-tecnicos/${bike.id}`} // ✅ Usar bike.id
+            to={`/admin/datos-tecnicos/${bike.id}`} // ✅ Usar bike.id
             state={{ listTechnical }}
           >
             Ver datos técnicos

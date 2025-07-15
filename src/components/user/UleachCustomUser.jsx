@@ -41,7 +41,7 @@ function UleachCustomUser({ Custom, listBikes }) {
         ) : (
           <NavLink
             className="Newcustom create-moto-btn"
-            to="/formsBike"
+            to="/FormBike"
             state={{ clienteId: Custom.id, clienteData: Custom }}
           >
             Registrar mi motocicleta

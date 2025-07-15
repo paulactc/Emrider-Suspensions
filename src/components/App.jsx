@@ -6,7 +6,6 @@ import LandingPage from "./layout/LandingPage";
 import ListCustom from "./Page.Custom/ListCustom";
 import { Route, Routes } from "react-router";
 import FormsCustom from "./admin/forms/FormsCustom";
-import FormTechnicalDataCustom from "./admin/forms/FormTechnicalDataCustomer";
 import dataBike from "../data/ListBike.json";
 import dataCustom from "../data/ListCustom.json";
 import dataTechnical from "../data/TechinalDatas.json";
@@ -16,19 +15,31 @@ import TechnicalDataCustomer from "./user/TechnicalDataCustomer";
 import FormBike from "./admin/forms/FormBike";
 import Cliente from "./user/Cliente";
 import ListBike from "./Page.Bike/ListBike";
+import ListBikeadmin from "./Page.Bike/ListBikeadmin";
+import TechnicalDataAdmin from "./admin/forms/TechnicalDataAdmin";
 import { useEffect } from "react";
+import { useLocation } from "react-router";
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 function App() {
-  const [listCustom, setListCustom] = useState(dataCustom);
+  const listCustom = dataCustom;
 
   const [filters, setFilters] = useState({
     Cliente: "",
     telefono: "",
   });
 
-  const [listBikes, setListBikes] = useState(dataBike);
-  const [listTechnical, setListTechnical] = useState(dataTechnical);
-  const [listUsers, setListUsers] = useState(dataUsers);
+  const listBikes = dataBike;
+  const listTechnical = dataTechnical;
+  const listUsers = dataUsers;
 
   const [clientData, setClientData] = useState({
     Cliente: "",
@@ -178,7 +189,7 @@ function App() {
       }
 
       if (filters.telefono && filters.telefono.trim() !== "") {
-        const phoneNumber = customer.telefono || customer.telefono || "";
+        const phoneNumber = customer.telefono || "";
         const searchPhone = filters.telefono.toString();
         if (!phoneNumber.toString().includes(searchPhone)) {
           return false;
@@ -225,18 +236,20 @@ function App() {
   return (
     <>
       <Header />
+      <ScrollToTop />
+
       <Routes>
         <Route
           path="/"
           element={
             <LandingPage handleButton={handleButton} listUsers={listUsers} />
           }
-        ></Route>
+        />
         <Route
           path="/admin/clientes"
           element={
             <ListCustom
-              Custom={filteredCustom} // Aquí pasamos el array ya limpio y filtrado
+              Custom={filteredCustom}
               handleInputFilter={handleInputFilter}
               filters={filters}
               listBikes={listBikes}
@@ -248,14 +261,16 @@ function App() {
           path="/cliente"
           element={<Cliente listCustom={listCustom} listBikes={listBikes} />}
         />
-
         <Route
           path="/admin/motos/:id"
           element={<ListBike listBikes={listBikes} />}
         />
-
         <Route
-          path="/admin/datos-tecnicos/:id"
+          path="/admin/motosadmin/:id"
+          element={<ListBikeadmin listBikes={listBikes} />}
+        />
+        <Route
+          path="/custom/datos-tecnicos/:id"
           element={
             <TechnicalDataCustomer
               handleChange={handleChange}
@@ -264,7 +279,10 @@ function App() {
             />
           }
         />
-
+        <Route
+          path="/custom/datos-tecnicos-admin/:id"
+          element={<TechnicalDataAdmin listTechnical={listTechnical} />}
+        />
         <Route
           path="/formsCustom"
           element={
@@ -274,9 +292,7 @@ function App() {
             />
           }
         />
-
         <Route path="/nuevo-usuario" element={<FormNewUser />} />
-
         <Route
           path="/FormBike"
           element={
@@ -290,8 +306,8 @@ function App() {
           path="/TechnicalDataCustomer"
           element={<TechnicalDataCustomer />}
         />
+        <Route path="/TechnicalDataAdmin" element={<TechnicalDataAdmin />} />
       </Routes>
-      <main className="main"></main>
 
       <Footer />
     </>

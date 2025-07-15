@@ -47,7 +47,7 @@ function UleachCustom({ eachCustom, listBikes }) {
             <div className="tiene-motos">
               <NavLink
                 className="Newcustom"
-                to={`/admin/motos/${eachCustom.id}`}
+                to={`/motos/${eachCustom.id}`}
                 state={{ listBikes }}
               >
                 Ver mis motocicletas ({motosDelCliente.length})

@@ -3,7 +3,7 @@ import UleachCustomUser from "../user/UleachCustomUser";
 function Cliente({ listCustom, listBikes }) {
   // Aquí puedes definir qué índice del array quieres mostrar.
   // Por ejemplo, para mostrar el primer elemento (índice 0):
-  const indexToRender = 0;
+  const indexToRender = 1;
   const customToRender = listCustom[indexToRender];
 
   return (

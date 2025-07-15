@@ -26,7 +26,7 @@ function MotoForm({ motoData, handleChangeMotos }) {
             onChange={handleChangeMotos}
           />
 
-          <legend className="addForm__title">Año</legend>
+          <legend className="addForm__title">Año de fabricación</legend>
           <input
             className="addForm__input"
             type="number"
@@ -34,6 +34,16 @@ function MotoForm({ motoData, handleChangeMotos }) {
             id="año"
             placeholder="2023"
             value={motoData.año}
+            onChange={handleChangeMotos}
+          />
+          <legend className="addForm__title">Matrícula</legend>
+          <input
+            className="addForm__input"
+            type="text"
+            name="matricula"
+            id="matricula"
+            placeholder="1234ABC"
+            value={motoData.Mmatricula}
             onChange={handleChangeMotos}
           />
         </fieldset>
