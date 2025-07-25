@@ -39,7 +39,7 @@ function ListCustom({
         />
       </div>
 
-      <h3 className="list-title">DATOS CLIENTE</h3>
+      <h3 className="list-title">LISTA DE CLIENTES</h3>
 
       <ul className="custom-list">
         {clientesActuales && clientesActuales.length > 0 ? (
