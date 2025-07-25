@@ -48,5 +48,215 @@
     "Población": "Chiclana de la Frontera",
     "Provincia": "Cádiz",
     "id": 5
+  },
+  {
+    "Cliente": "María Carmen López",
+    "Email": "mariac@gmail.com",
+    "telefono": 612345678,
+    "Dirección": "Av. Constitución 25",
+    "CódigoPostal": 41001,
+    "Población": "Sevilla",
+    "Provincia": "Sevilla",
+    "id": 6
+  },
+  {
+    "Cliente": "José Antonio Ruiz",
+    "Email": "joseantonio@yahoo.es",
+    "telefono": 654789123,
+    "Dirección": "C/Larios 14, 3ºB",
+    "CódigoPostal": 29015,
+    "Población": "Málaga",
+    "Provincia": "Málaga",
+    "id": 7
+  },
+  {
+    "Cliente": "Ana Belén Martínez",
+    "Email": "anabelen@outlook.com",
+    "telefono": 678912345,
+    "Dirección": "Plaza España 7",
+    "CódigoPostal": 18001,
+    "Población": "Granada",
+    "Provincia": "Granada",
+    "id": 8
+  },
+  {
+    "Cliente": "Francisco Javier Moreno",
+    "Email": "fmoreno@hotmail.es",
+    "telefono": 689234567,
+    "Dirección": "C/Sierpes 89",
+    "CódigoPostal": 41004,
+    "Población": "Sevilla",
+    "Provincia": "Sevilla",
+    "id": 9
+  },
+  {
+    "Cliente": "Carmen Rosa Jiménez",
+    "Email": "carmenrosa@gmail.com",
+    "telefono": 645123789,
+    "Dirección": "Av. Andalucía 156",
+    "CódigoPostal": 14005,
+    "Población": "Córdoba",
+    "Provincia": "Córdoba",
+    "id": 10
+  },
+  {
+    "Cliente": "Manuel Jesús Fernández",
+    "Email": "manujesus@yahoo.es",
+    "telefono": 697456123,
+    "Dirección": "C/Victoria 23, 1ºA",
+    "CódigoPostal": 21001,
+    "Población": "Huelva",
+    "Provincia": "Huelva",
+    "id": 11
+  },
+  {
+    "Cliente": "Rocío del Carmen Santos",
+    "Email": "rociosantos@outlook.com",
+    "telefono": 632178945,
+    "Dirección": "Paseo de la Estación 45",
+    "CódigoPostal": 23003,
+    "Población": "Jaén",
+    "Provincia": "Jaén",
+    "id": 12
+  },
+  {
+    "Cliente": "Antonio Miguel García",
+    "Email": "antoniomiguel@gmail.com",
+    "telefono": 658741236,
+    "Dirección": "C/Real 78",
+    "CódigoPostal": "",
+    "Población": "Almería",
+    "Provincia": "Almería",
+    "id": 13
+  },
+  {
+    "Cliente": "Isabel María Herrera",
+    "Email": "isabelmaria@hotmail.es",
+    "telefono": 674582139,
+    "Dirección": "Av. de la Paz 34, 4ºC",
+    "CódigoPostal": 11405,
+    "Población": "Jerez de la Frontera",
+    "Provincia": "Cádiz",
+    "id": 14
+  },
+  {
+    "Cliente": "Juan Carlos Romero",
+    "Email": "juancarlos@yahoo.es",
+    "telefono": 691357824,
+    "Dirección": "C/Alcalá Galiano 12",
+    "CódigoPostal": 41010,
+    "Población": "Sevilla",
+    "Provincia": "Sevilla",
+    "id": 15
+  },
+  {
+    "Cliente": "Dolores Pilar Vázquez",
+    "Email": "lolap@gmail.com",
+    "telefono": 617829346,
+    "Dirección": "Plaza del Carmen 9",
+    "CódigoPostal": 18010,
+    "Población": "Granada",
+    "Provincia": "Granada",
+    "id": 16
+  },
+  {
+    "Cliente": "Rafael Ángel Muñoz",
+    "Email": "rafaelangel@outlook.com",
+    "telefono": 653974125,
+    "Dirección": "C/Mesones 67, 2ºD",
+    "CódigoPostal": 29007,
+    "Población": "Málaga",
+    "Provincia": "Málaga",
+    "id": 17
+  },
+  {
+    "Cliente": "Esperanza Concepción Díaz",
+    "Email": "esperanzac@hotmail.es",
+    "telefono": 689517348,
+    "Dirección": "Av. Gran Capitán 145",
+    "CódigoPostal": 14008,
+    "Población": "Córdoba",
+    "Provincia": "Córdoba",
+    "id": 18
+  },
+  {
+    "Cliente": "Fernando José Castro",
+    "Email": "fernandoj@gmail.com",
+    "telefono": 672485139,
+    "Dirección": "C/Colón 56",
+    "CódigoPostal": 21003,
+    "Población": "Huelva",
+    "Provincia": "Huelva",
+    "id": 19
+  },
+  {
+    "Cliente": "Amparo Remedios Gil",
+    "Email": "amparogil@yahoo.es",
+    "telefono": 648293715,
+    "Dirección": "Plaza de Armas 18, 3ºB",
+    "CódigoPostal": 23007,
+    "Población": "Jaén",
+    "Provincia": "Jaén",
+    "id": 20
+  },
+  {
+    "Cliente": "Miguel Ángel Ortega",
+    "Email": "miguelangel@outlook.com",
+    "telefono": 695174823,
+    "Dirección": "C/Rambla 23",
+    "CódigoPostal": "",
+    "Población": "Almería",
+    "Provincia": "Almería",
+    "id": 21
+  },
+  {
+    "Cliente": "Pastora Inmaculada Peña",
+    "Email": "pastorai@gmail.com",
+    "telefono": 634851729,
+    "Dirección": "Av. del Puerto 78",
+    "CódigoPostal": 11207,
+    "Población": "Algeciras",
+    "Provincia": "Cádiz",
+    "id": 22
+  },
+  {
+    "Cliente": "Sebastián David Morales",
+    "Email": "sebastiand@hotmail.es",
+    "telefono": 671528394,
+    "Dirección": "C/Betis 34, 1ºC",
+    "CódigoPostal": 41011,
+    "Población": "Sevilla",
+    "Provincia": "Sevilla",
+    "id": 23
+  },
+  {
+    "Cliente": "Encarnación Soledad Ramos",
+    "Email": "encarnis@yahoo.es",
+    "telefono": 687419265,
+    "Dirección": "Plaza Nueva 15",
+    "CódigoPostal": 18009,
+    "Población": "Granada",
+    "Provincia": "Granada",
+    "id": 24
+  },
+  {
+    "Cliente": "Cristóbal Alejandro Navarro",
+    "Email": "cristobala@outlook.com",
+    "telefono": 652738149,
+    "Dirección": "C/Cánovas del Castillo 91, 2ºA",
+    "CódigoPostal": 29016,
+    "Población": "Málaga",
+    "Provincia": "Málaga",
+    "id": 25
+  },
+  {
+    "Cliente": "Patricia Ángeles Torres",
+    "Email": "patriciaa@gmail.com",
+    "telefono": 619483752,
+    "Dirección": "C/Alhambra 42",
+    "CódigoPostal": 18015,
+    "Población": "Granada",
+    "Provincia": "Granada",
+    "id": 26
   }
 ]

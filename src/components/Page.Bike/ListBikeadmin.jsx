@@ -1,5 +1,5 @@
 import { useParams, useLocation } from "react-router";
-import UleachBikeAdmin from "./UleachBike";
+import UleachBikeAdmin from "./UleachBikeAdmin";
 
 function ListBikeadmin({ listBikes, listTechnical }) {
   // ✅ Recibir listTechnical

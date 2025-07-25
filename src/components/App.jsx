@@ -283,7 +283,7 @@ function App() {
           }
         />
         <Route
-          path="/custom/datos-tecnicos-admin/:id"
+          path="/admin/datos-tecnicos-admin/:id"
           element={<TechnicalDataAdmin listTechnical={listTechnical} />}
         />
         <Route

@@ -49,22 +49,25 @@ function LandingPage(props) {
         </p>
       </div>
 
-      <section className="conticon">
-        <label>Usuario:</label>
+      <section className="form-body">
+        <h2 className="header-title">ACCESO</h2>
+        <label className="input-label">Usuario:</label>
         <input
-          className="user"
+          className="input-field"
           name="user"
           value={login.user}
           onInput={handleInput}
           type="text"
+          placeholder="ejemplo@emrider.es"
         />
-        <label>Clave:</label>
+        <label className="input-label">Clave:</label>
         <input
-          className="user"
+          className="input-field"
           name="pass"
           value={login.pass}
           onInput={handleInput}
-          type="text"
+          type="password"
+          placeholder="••••••••"
         />
         <button className="btngo" onClick={handleAccess}>
           Acceso

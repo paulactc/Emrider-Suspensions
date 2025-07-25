@@ -1,6 +1,6 @@
 import { NavLink } from "react-router";
 
-function UleachBike({ listBikes, clientId, listTechnical }) {
+function UleachBikeAdmin({ listBikes, clientId, listTechnical }) {
   // ✅ Recibir listTechnical
   if (!Array.isArray(listBikes) || listBikes.length === 0) {
     return <div>No hay motocicletas disponibles</div>;
@@ -26,7 +26,7 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
 
           <NavLink
             className="Newcustom"
-            to={`/admin/datos-tecnicos/${bike.id}`} // ✅ Usar bike.id
+            to={`/admin/datos-tecnicos-admin/${bike.id}`}
             state={{ listTechnical }}
           >
             Ver datos técnicos
@@ -37,4 +37,4 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
   );
 }
 
-export default UleachBike;
+export default UleachBikeAdmin;

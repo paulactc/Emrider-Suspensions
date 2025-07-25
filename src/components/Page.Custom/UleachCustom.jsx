@@ -30,47 +30,60 @@ function UleachCustom({ eachCustom, listBikes, listTechnical }) {
   return (
     <>
       <li className="listMotocicle">
-        <p>Datos del cliente: </p>
-        <p>Cliente: {safeDisplay(eachCustom.Cliente)}</p>
-        <p>Email: {safeDisplay(eachCustom.Email)}</p>
-        <p>Teléfono: {safeDisplay(eachCustom.telefono)}</p>
-        <p>Dirección: {safeDisplay(eachCustom.Dirección)}</p>
-        <p>Código Postal: {safeDisplay(eachCustom.CódigoPostal)}</p>
-        <p>Población: {safeDisplay(eachCustom.Población)}</p>
-        <p>Provincia: {safeDisplay(eachCustom.Provincia)}</p>
-      </li>
+        <p className="datos-cliente">
+          Cliente: {safeDisplay(eachCustom.Cliente)}
+        </p>
+        <p className="datos-cliente">Email: {safeDisplay(eachCustom.Email)}</p>
+        <p className="datos-cliente">
+          Teléfono: {safeDisplay(eachCustom.telefono)}
+        </p>
+        <p className="datos-cliente">
+          Dirección: {safeDisplay(eachCustom.Dirección)}
+        </p>
+        <p className="datos-cliente">
+          Código Postal: {safeDisplay(eachCustom.CódigoPostal)}
+        </p>
+        <p className="datos-cliente">
+          Población: {safeDisplay(eachCustom.Población)}
+        </p>
+        <p className="datos-cliente">
+          Provincia: {safeDisplay(eachCustom.Provincia)}
+        </p>
 
-      {/* Mostrar datos de moto o botón de crear */}
-      {eachCustom.id && (
-        <div className="moto-actions">
-          {tieneMotos ? (
-            <div className="tiene-motos">
-              <NavLink
-                className="Newcustom"
-                to={`/admin/motos/${eachCustom.id}`}
-                state={{ listBikes, listTechnical }}
-              >
-                Ver mis motocicletas ({motosDelCliente.length})
-              </NavLink>
-            </div>
-          ) : (
-            <div className="no-motos">
-              <p>No tienes motocicletas registradas</p>
-              <NavLink
-                className="Newcustom create-moto-btn"
-                to="/formsBike"
-                state={{
-                  clienteId: eachCustom.id,
-                  clienteData: eachCustom,
-                  listTechnical,
-                }}
-              >
-                Registrar mi motocicleta
-              </NavLink>
-            </div>
-          )}
-        </div>
-      )}
+        {/* Mostrar datos de moto o botón de crear */}
+        {eachCustom.id && (
+          <div className="moto-actions">
+            {tieneMotos ? (
+              <div className="tiene-motos">
+                <NavLink
+                  className="Newcustom"
+                  to={`/admin/motosadmin/${eachCustom.id}`}
+                  state={{ listBikes, listTechnical }}
+                >
+                  Ver motocicletas ({motosDelCliente.length})
+                </NavLink>
+              </div>
+            ) : (
+              <div className="no-motos">
+                <p className="no-results-message">
+                  No tiene motocicletas registradas
+                </p>
+                <NavLink
+                  className="Newcustom create-moto-btn"
+                  to="/formBike"
+                  state={{
+                    clienteId: eachCustom.id,
+                    clienteData: eachCustom,
+                    listTechnical,
+                  }}
+                >
+                  Registrar motocicleta
+                </NavLink>
+              </div>
+            )}
+          </div>
+        )}
+      </li>
     </>
   );
 }

@@ -7,6 +7,7 @@ function InputSearchCustom({ handleInputFilter, filters }) {
           <div className="field-container">
             <label htmlFor="Cliente">Búsqueda de cliente</label>
             <input
+              className="input-field"
               id="Cliente"
               type="text"
               name="filterName"
@@ -19,6 +20,7 @@ function InputSearchCustom({ handleInputFilter, filters }) {
           <div className="field-container">
             <label htmlFor="telefono">Teléfono</label>
             <input
+              className="input-field"
               id="telefono"
               name="filterEnrolment"
               type="number"
