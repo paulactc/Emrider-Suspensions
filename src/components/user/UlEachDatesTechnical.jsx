@@ -1,13 +1,15 @@
 function UlEachDatesTechnical({ datetechnicalArray, motoId }) {
-  // ✅ Props correctas
-
   // Filtrar los datos técnicos por el motoId proporcionado
   const bikeDatesTechnical = datetechnicalArray.filter(
     (datetechnical) => datetechnical.clienteId === parseInt(motoId)
   );
 
   if (bikeDatesTechnical.length === 0) {
-    return <div>No se encontraron datos técnicos para esta motocicleta</div>;
+    return (
+      <div className="no-data-message">
+        No se encontraron datos técnicos para esta motocicleta
+      </div>
+    );
   }
 
   return (
@@ -16,27 +18,41 @@ function UlEachDatesTechnical({ datetechnicalArray, motoId }) {
         <div key={datesTechnical.id}>
           <section className="body-list-client">
             <section className="subsection">
-              <h3 className="subtitles">INFORMACIÓN </h3>
+              <h3 className="subtitles">INFORMACIÓN</h3>
               <ul className="Sublists">
                 <li>
-                  <p className="sizeli">
-                    Número de orden: {datesTechnical.numeroOrden}
-                  </p>
-                  <p className="sizeli">
-                    Km de la motocicleta: {datesTechnical.kmmoto}
-                  </p>
-                  <p className="sizeli">
-                    Fecha próxima mantenimiento:{" "}
-                    {datesTechnical.fechaProximoMantenimiento}
-                  </p>
-                  <p className="sizeli">
-                    Servicio de la suspensión:{" "}
-                    {datesTechnical.servicioSuspension}
-                  </p>
-
-                  <p className="sizeli">
-                    Disciplina piloto: {datesTechnical.disciplina}
-                  </p>
+                  <div className="sizeli">
+                    <span className="field-label">Número de orden:</span>
+                    <span className="field-value">
+                      {datesTechnical.numeroOrden}
+                    </span>
+                  </div>
+                  <div className="sizeli">
+                    <span className="field-label">Km de la motocicleta:</span>
+                    <span className="field-value">{datesTechnical.kmmoto}</span>
+                  </div>
+                  <div className="sizeli">
+                    <span className="field-label">
+                      Fecha próximo mantenimiento:
+                    </span>
+                    <span className="field-value">
+                      {datesTechnical.fechaProximoMantenimiento}
+                    </span>
+                  </div>
+                  <div className="sizeli">
+                    <span className="field-label">
+                      Servicio de la suspensión:
+                    </span>
+                    <span className="field-value">
+                      {datesTechnical.servicioSuspension}
+                    </span>
+                  </div>
+                  <div className="sizeli">
+                    <span className="field-label">Disciplina piloto:</span>
+                    <span className="field-value">
+                      {datesTechnical.disciplina}
+                    </span>
+                  </div>
                 </li>
               </ul>
             </section>
@@ -45,42 +61,85 @@ function UlEachDatesTechnical({ datetechnicalArray, motoId }) {
               <h3 className="subtitles">SUSPENSION</h3>
               <ul className="Sublists">
                 <li>
-                  <p className="sizeli">Marca: {datesTechnical.marca}</p>
-                  <p className="sizeli">Modelo: {datesTechnical.modelo}</p>
-                  <p className="sizeli">Año: {datesTechnical.ano}</p>
+                  <div className="sizeli">
+                    <span className="field-label">Marca:</span>
+                    <span className="field-value">{datesTechnical.marca}</span>
+                  </div>
+                  <div className="sizeli">
+                    <span className="field-label">Modelo:</span>
+                    <span className="field-value">{datesTechnical.modelo}</span>
+                  </div>
+                  <div className="sizeli">
+                    <span className="field-label">Año:</span>
+                    <span className="field-value">{datesTechnical.ano}</span>
+                  </div>
                 </li>
               </ul>
             </section>
+
             <section className="subsection">
-              <h4 className="subtitles">OBSERVACIONES:</h4>
-              <ul>
-                <li>
-                  <p className="sizeli">{datesTechnical.observaciones}</p>
-                </li>
-              </ul>
-            </section>
-            <h1 className="title-Shock">DATOS TÉCNICOS</h1>
-            <section className="subsection">
-              <h3 className="subtitles">SETTING </h3>
+              <h4 className="subtitles">OBSERVACIONES</h4>
               <ul className="Sublists">
                 <li>
-                  <p className="sizeli">Spring: 16 N/mm</p>
-                  <p className="sizeli">Initial: 45</p>
-                  {/*PDTE METER VALOR*/}
-                  <p className="sizeli">Oil: {datesTechnical.oil}</p>
-                  <p className="sizeli">Gas: {datesTechnical.gas}</p>
-                  <p className="sizeli">
-                    Rebound: {datesTechnical.reboundSpring}
-                  </p>
-                  <p className="sizeli">Comp.Low: 15</p>
-                  {/*PDTE METER VALOR*/}
-                  <p className="sizeli">Comp.High: 25</p>
-                  {/*PDTE METER VALOR*/}
-                  <p className="sizeli">Rebound spring: 58n/mm</p>{" "}
-                  {/*PDTE METER VALOR*/}
-                  <p className="sizeli">Stroke: 63mm</p>
-                  {/*PDTE METER VALOR*/}
-                  <p className="sizeli">Height RR: {datesTechnical.height}mm</p>
+                  <div className="sizeli observation-field">
+                    <span className="field-value observation-text">
+                      {datesTechnical.observaciones}
+                    </span>
+                  </div>
+                </li>
+              </ul>
+            </section>
+
+            <h1 className="title-Shock">DATOS TÉCNICOS</h1>
+
+            <section className="subsection">
+              <h3 className="subtitles">SETTING</h3>
+              <ul className="Sublists">
+                <li>
+                  <div className="sizeli field-important">
+                    <span className="field-label">Spring:</span>
+                    <span className="field-value">16 N/mm</span>
+                  </div>
+                  <div className="sizeli">
+                    <span className="field-label">Initial:</span>
+                    <span className="field-value">45</span>
+                  </div>
+                  <div className="sizeli field-important">
+                    <span className="field-label">Oil:</span>
+                    <span className="field-value">{datesTechnical.oil}</span>
+                  </div>
+                  <div className="sizeli field-important">
+                    <span className="field-label">Gas:</span>
+                    <span className="field-value">{datesTechnical.gas}</span>
+                  </div>
+                  <div className="sizeli field-important">
+                    <span className="field-label">Rebound:</span>
+                    <span className="field-value">
+                      {datesTechnical.reboundSpring}
+                    </span>
+                  </div>
+                  <div className="sizeli">
+                    <span className="field-label">Comp.Low:</span>
+                    <span className="field-value">15</span>
+                  </div>
+                  <div className="sizeli">
+                    <span className="field-label">Comp.High:</span>
+                    <span className="field-value">25</span>
+                  </div>
+                  <div className="sizeli">
+                    <span className="field-label">Rebound spring:</span>
+                    <span className="field-value">58 N/mm</span>
+                  </div>
+                  <div className="sizeli">
+                    <span className="field-label">Stroke:</span>
+                    <span className="field-value">63mm</span>
+                  </div>
+                  <div className="sizeli">
+                    <span className="field-label">Height RR:</span>
+                    <span className="field-value">
+                      {datesTechnical.height}mm
+                    </span>
+                  </div>
                 </li>
               </ul>
             </section>
@@ -90,4 +149,5 @@ function UlEachDatesTechnical({ datetechnicalArray, motoId }) {
     </>
   );
 }
+
 export default UlEachDatesTechnical;

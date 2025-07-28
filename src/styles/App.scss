@@ -52,8 +52,6 @@ gap:0.3em;
     display:flex;
     justify-content: center;
     text-align: center; 
-    font-size: 1em;
-    color: rgba(243, 239, 239, 0.966); 
     padding-bottom: 2em;
     padding-inline: 1.5em;
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
@@ -277,9 +275,7 @@ footer {
 color:rgb(245, 248, 50)
 }
     
-.sizeli{
-color:rgb(216, 204, 187);
-}
+
 
 .subsection{
  display:flex; 
@@ -764,5 +760,799 @@ color:#f3eeee
   transform: scale(1.05);
   &:hover {
     background: rgb(245, 248, 50); /* Color actualizado */
+  }
+}
+
+/* =============================================================================
+   ESTILOS PARA UlEachDatesTechnical - TEMÁTICA MOTOCICLISMO & SUSPENSIONES
+   ============================================================================= */
+
+/* Container principal */
+.body-list-client {
+  position: relative;
+  background: linear-gradient(135deg, #0f1419 0%, #1a202c 50%, #2d3748 100%);
+  border: 2px solid #4a5568;
+  border-radius: 1.5rem;
+  margin: 2rem auto;
+  max-width: 900px;
+  padding: 2.5rem;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(245, 248, 50, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.body-list-client::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    rgb(245, 248, 50) 0%, 
+    #ffffff 25%, 
+    #e2e8f0 50%, 
+    #ffffff 75%, 
+    rgb(245, 248, 50) 100%);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Decoración minimalista */
+.body-list-client::after {
+  content: '';
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  width: 6px;
+  height: 6px;
+  background: rgb(245, 248, 50);
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* Hover effect del container */
+.body-list-client:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 35px 70px -15px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(245, 248, 50, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border-color: rgba(245, 248, 50, 0.5);
+}
+
+/* Subsecciones */
+.subsection {
+  position: relative;
+  background: rgba(26, 32, 44, 0.7);
+  border: 1px solid rgba(74, 85, 104, 0.6);
+  border-radius: 1rem;
+  padding: 1.8rem;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.subsection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(245, 248, 50, 0.6), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.subsection:hover::before {
+  transform: translateX(100%);
+}
+
+.subsection:hover {
+  background: rgba(26, 32, 44, 0.9);
+  border-color: rgba(245, 248, 50, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Títulos principales */
+.title-Shock {
+  position: relative;
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-align: center;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 3rem 0 2rem 0;
+  padding: 1rem;
+  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  border-radius: 1rem;
+  border: 2px solid rgba(245, 248, 50, 0.3);
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.title-Shock::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgb(245, 248, 50), transparent);
+  border-radius: 2px;
+}
+
+.title-Shock::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgb(245, 248, 50), 
+    #ffffff, 
+    rgb(245, 248, 50), 
+    transparent);
+  border-radius: 2px;
+}
+
+/* Subtítulos de sección */
+.subtitles {
+  position: relative;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: rgb(245, 248, 50);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.2rem;
+  padding-left: 2.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.subtitles::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgb(245, 248, 50), rgb(240, 36, 36), 233)116, 114;
+  box-shadow: 0 0 15px rgba(245, 248, 50, 0.5);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Indicadores simples por sección */
+.subsection:nth-child(1) .subtitles::after {
+  content: '';
+  width: 20px;
+  height: 4px;
+  background: linear-gradient(to right, rgb(245, 248, 50), #ffffff);
+  border-radius: 2px;
+  margin-left: 1rem;
+}
+
+.subsection:nth-child(2) .subtitles::after {
+  content: '';
+  width: 20px;
+  height: 4px;
+  background: linear-gradient(to right, rgb(245, 248, 50), #ffffff);
+  border-radius: 2px;
+  margin-left: 1rem;
+}
+
+.subsection:nth-child(3) .subtitles::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, rgb(245, 248, 50), #ffffff);
+  border-radius: 50%;
+  margin-left: 1rem;
+}
+
+.subsection:nth-child(4) .subtitles::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background: linear-gradient(45deg, 
+    rgb(245, 248, 50) 0%, 
+    #ffffff 25%, 
+    #e2e8f0 50%, 
+    #ffffff 75%, 
+    rgb(245, 248, 50) 100%);
+  border-radius: 3px;
+  margin-left: 1rem;
+  animation: rotate-indicator 4s linear infinite;
+}
+
+.subtitles::after {
+  opacity: 0.9;
+  display: inline-block;
+}
+
+/* Listas */
+.Sublists {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.Sublists li {
+  background: rgba(45, 55, 72, 0.4);
+  border: 1px solid rgba(74, 85, 104, 0.3);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.Sublists li::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(245, 248, 50, 0.1), 
+    transparent);
+  transition: left 0.6s ease;
+}
+
+.Sublists li:hover::before {
+  left: 100%;
+}
+
+.Sublists li:hover {
+  background: rgba(45, 55, 72, 0.7);
+  border-color: rgba(245, 248, 50, 0.4);
+  transform: translateX(5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+
+
+/* Estilo para el nombre del campo */
+.field-label {
+  font-weight: 500;
+  color: #a0aec0;
+  text-transform: capitalize;
+  letter-spacing: 0.025em;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+/* Estilo para el valor del campo */
+.field-value {
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 1.50em;
+  text-align: right;
+  min-width: 120px;
+  padding: 0.4rem 1rem;
+  background: rgba(6, 7, 10, 0.8);
+  border-radius: 0.4rem;
+  border-left: 3px solid rgb(245, 248, 50);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.sizeli::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, rgb(245, 248, 50), #ff6b35);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 8px rgba(245, 248, 50, 0.4);
+  color:#f7f4f4;
+}
+
+.sizeli:hover {
+  color: rgb(245, 248, 50);
+  transform: translateX(3px);
+}
+
+.sizeli:hover::before {
+  transform: translateY(-50%) scale(1.3);
+  box-shadow: 0 0 15px rgba(245, 248, 50, 0.8);
+}
+
+/* Estados especiales para campos importantes */
+.field-important {
+  background: rgba(245, 248, 50, 0.05);
+  border: 1px solid rgba(245, 248, 50, 0.2);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.field-important .field-value {
+  background: rgba(245, 248, 50, 0.15);
+  color: #ffffff;
+  font-weight: 800;
+  border-left: 4px solid rgb(245, 248, 50);
+}
+
+/* Animaciones */
+@keyframes shimmer {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 15px rgba(245, 248, 50, 0.5);
+    transform: translateY(-50%) scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 25px rgba(245, 248, 50, 0.8);
+    transform: translateY(-50%) scale(1.1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .body-list-client {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .title-Shock {
+    font-size: 2rem;
+    margin: 2rem 0 1.5rem 0;
+  }
+  
+  .subtitles {
+    font-size: 1.2rem;
+  }
+  
+  .sizeli {
+    padding-left: 1rem;
+  }
+}
+
+/* Estados especiales */
+.body-list-client:empty::before {
+  content: '🔧 No hay datos técnicos disponibles 🏍️';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  font-size: 1.2rem;
+  color: #a0aec0;
+  text-align: center;
+}
+
+/* Estilos adicionales para elementos específicos */
+.observation-field {
+  justify-content: center;
+  text-align: center;
+}
+
+.observation-text {
+  background: rgba(74, 85, 104, 0.3);
+  border: 1px solid rgba(160, 174, 192, 0.3);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-style: italic;
+  color: #a0aec0;
+  min-width: auto;
+  text-align: left;
+  border-left: 3px solid #718096;
+}
+
+.no-data-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  background: rgba(26, 32, 44, 0.7);
+  border: 2px dashed rgba(74, 85, 104, 0.5);
+  border-radius: 1rem;
+  color: #a0aec0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 2rem auto;
+  max-width: 500px;
+}
+
+/* Estados especiales para campos importantes */
+.field-important {
+  background: rgba(245, 248, 50, 0.05);
+  border: 1px solid rgba(245, 248, 50, 0.2);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.field-important .field-value {
+  background: rgba(245, 248, 50, 0.15);
+  color: #ffffff;
+  font-weight: 800;
+  border-left: 4px solid rgb(245, 248, 50);
+}
+
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+
+
+//estilos para cliente
+
+// Variables de colores Ohlins
+$ohlins-black: #000000;
+$ohlins-gray-900: #111827;
+$ohlins-gray-800: #1f2937;
+$ohlins-gray-700: #374151;
+$ohlins-gray-600: #4b5563;
+$ohlins-gray-400: #9ca3af;
+$ohlins-gray-300: #d1d5db;
+$ohlins-yellow: #fbbf24;
+$ohlins-yellow-light: #fcd34d;
+$ohlins-yellow-dark: #f59e0b;
+$ohlins-white: #ffffff;
+
+// Mixins para animaciones
+@mixin smooth-transition($duration: 0.3s) {
+  transition: all $duration ease-in-out;
+}
+
+@mixin hover-scale($scale: 1.05) {
+  transform: scale($scale);
+}
+
+@mixin ohlins-shadow($color: $ohlins-yellow) {
+  box-shadow: 0 10px 25px rgba($color, 0.2);
+}
+
+// Componente principal del cliente
+.uleach-customer {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 1.5rem;
+
+  // Header del cliente
+  &__header {
+    background: linear-gradient(135deg, $ohlins-black 0%, $ohlins-gray-900 50%, $ohlins-black 100%);
+    padding: 2rem;
+    border-radius: 1rem 1rem 0 0;
+    border-left: 4px solid $ohlins-yellow;
+    @include smooth-transition();
+    @include ohlins-shadow();
+
+    &:hover {
+      @include hover-scale(1.02);
+    }
+
+    &-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    &-avatar {
+      width: 4rem;
+      height: 4rem;
+      background: $ohlins-yellow;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba($ohlins-yellow, 0.4);
+      animation: avatarPulse 2s infinite;
+
+      svg {
+        width: 2rem;
+        height: 2rem;
+        color: $ohlins-black;
+      }
+    }
+
+    &-info {
+      h2 {
+        font-size: 1.75rem;
+        font-weight: bold;
+        color: $ohlins-white;
+        margin: 0 0 0.25rem 0;
+      }
+
+      p {
+        color: $ohlins-gray-300;
+        font-size: 0.875rem;
+        margin: 0;
+      }
+    }
+  }
+
+  // Sección de información
+  &__info {
+    background: $ohlins-gray-900;
+    padding: 2rem;
+    border-left: 4px solid $ohlins-gray-700;
+    border-right: 4px solid $ohlins-gray-700;
+
+    &-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    &-card {
+      background: $ohlins-gray-800;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid $ohlins-gray-600;
+      @include smooth-transition();
+
+      &:hover {
+        border-color: $ohlins-yellow;
+        @include ohlins-shadow($ohlins-yellow);
+        transform: translateY(-2px);
+
+        .uleach-customer__info-icon {
+          background: $ohlins-yellow;
+          color: $ohlins-black;
+        }
+      }
+
+      &-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+    }
+
+    &-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      background: $ohlins-gray-700;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      @include smooth-transition();
+
+      svg {
+        width: 1.25rem;
+        height: 1.25rem;
+        color: $ohlins-yellow;
+      }
+    }
+
+    &-text {
+      flex: 1;
+
+      &-label {
+        color: $ohlins-gray-400;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        margin: 0 0 0.25rem 0;
+      }
+
+      &-value {
+        color: $ohlins-white;
+        font-weight: 500;
+        margin: 0;
+      }
+    }
+  }
+
+  // Sección de motocicletas
+  &__bikes {
+    background: $ohlins-gray-800;
+    padding: 2rem;
+    border-left: 4px solid $ohlins-gray-700;
+    border-right: 4px solid $ohlins-gray-700;
+
+    &-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: $ohlins-white;
+      margin: 0 0 1.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      svg {
+        width: 1.5rem;
+        height: 1.5rem;
+        color: $ohlins-yellow;
+      }
+    }
+
+    &-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      @media (min-width: 640px) {
+        flex-direction: row;
+      }
+    }
+  }
+
+  // Footer
+  &__footer {
+    background: linear-gradient(135deg, $ohlins-black 0%, $ohlins-gray-900 50%, $ohlins-black 100%);
+    padding: 2rem;
+    border-radius: 0 0 1rem 1rem;
+    border-left: 4px solid $ohlins-yellow;
+    @include ohlins-shadow();
+  }
+
+  // Elemento decorativo
+  &__decorator {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+
+    &-line {
+      width: 3rem;
+      height: 0.25rem;
+      background: linear-gradient(90deg, transparent 0%, $ohlins-yellow 50%, transparent 100%);
+      border-radius: 2px;
+      animation: decoratorPulse 1.5s infinite;
+    }
+  }
+}
+
+// Botones estilo Ohlins
+.ohlins-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  @include smooth-transition();
+  cursor: pointer;
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.5rem;
+    @include smooth-transition();
+  }
+
+  &:hover {
+    @include hover-scale();
+    @include ohlins-shadow();
+  }
+
+  // Botón primario (amarillo)
+  &--primary {
+    background: linear-gradient(135deg, $ohlins-yellow 0%, $ohlins-yellow-light 100%);
+    color: $ohlins-black;
+
+    &:hover {
+      background: linear-gradient(135deg, $ohlins-yellow-light 0%, $ohlins-yellow-dark 100%);
+      
+      svg {
+        animation: iconBounce 0.6s ease-in-out;
+      }
+    }
+  }
+
+  // Botón secundario (outline)
+  &--secondary {
+    background: transparent;
+    color: $ohlins-white;
+    border: 2px solid $ohlins-gray-600;
+
+    &:hover {
+      border-color: $ohlins-yellow;
+      background: $ohlins-gray-600;
+
+      svg {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  // Botón outline amarillo
+  &--outline {
+    background: transparent;
+    color: $ohlins-yellow;
+    border: 2px solid $ohlins-yellow;
+
+    &:hover {
+      background: $ohlins-yellow;
+      color: $ohlins-black;
+
+      svg {
+        transform: rotate(12deg);
+      }
+    }
+  }
+}
+
+// Animaciones
+@keyframes avatarPulse {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba($ohlins-yellow, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba($ohlins-yellow, 0.6);
+  }
+}
+
+@keyframes decoratorPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .uleach-customer {
+    padding: 1rem;
+
+    &__header {
+      padding: 1.5rem;
+
+      &-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+    }
+
+    &__info, &__bikes, &__footer {
+      padding: 1.5rem;
+    }
   }
 }
