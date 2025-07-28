@@ -18,8 +18,8 @@ function UleachCustomUser({ Custom, listBikes }) {
 
   return (
     <>
-      <div className="ulListBikes">
-        <li>
+      <div className="custom-list">
+        <li className="listMotocicle">
           <p>Cliente: {safeDisplay(Custom.Cliente)}</p>
           <p>Email: {safeDisplay(Custom.Email)}</p>
           <p>Teléfono: {safeDisplay(Custom.telefono)}</p>

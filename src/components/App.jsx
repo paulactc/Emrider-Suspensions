@@ -13,6 +13,7 @@ import dataUsers from "../data/ListUsers.json";
 import FormNewUser from "./Page.Custom/FormNewUser";
 import TechnicalDataCustomer from "./user/TechnicalDataCustomer";
 import FormBike from "./admin/forms/FormBike";
+import FormTechnicalDataCustomer from "./admin/forms/FormTechnicalDataCustomer";
 import Cliente from "./user/Cliente";
 import ListBike from "./Page.Bike/ListBike";
 import ListBikeadmin from "./Page.Bike/ListBikeadmin";
@@ -306,12 +307,21 @@ function App() {
           }
         />
         <Route
+          path="/FormtechnicalDataCustomer"
+          element={
+            <FormTechnicalDataCustomer
+              handleChange={handleChange}
+              formData={formData}
+            />
+          }
+        />
+
+        <Route
           path="/TechnicalDataCustomer"
           element={<TechnicalDataCustomer />}
         />
         <Route path="/TechnicalDataAdmin" element={<TechnicalDataAdmin />} />
       </Routes>
-
       <Footer />
     </>
   );

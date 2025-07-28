@@ -8,7 +8,7 @@ function Cliente({ listCustom, listBikes }) {
 
   return (
     <>
-      <h3>TUS DATOS DE CLIENTE</h3>
+      <h3 className="list-title">TUS DATOS DE CLIENTE</h3>
       {customToRender ? ( // Verifica si el elemento existe antes de renderizar
         <UleachCustomUser
           key={customToRender.id} // Asegúrate de que cada elemento en listCustom tenga una propiedad 'id' única.
@@ -16,7 +16,7 @@ function Cliente({ listCustom, listBikes }) {
           listBikes={listBikes}
         />
       ) : (
-        <p>No hay datos de cliente para mostrar en esta posición.</p>
+        <p>No hay datos de cliente para mostrar .</p>
       )}
     </>
   );

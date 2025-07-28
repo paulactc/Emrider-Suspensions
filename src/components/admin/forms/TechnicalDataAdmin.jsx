@@ -19,7 +19,7 @@ function TechnicalDataAdmin({ listTechnical }) {
         motoId={id}
       />
 
-      <NavLink className="Newcustom" to="/FormTechnicalDataCustom">
+      <NavLink className="Newcustom" to="/FormtechnicalDataCustomer">
         Crear nuevos datos tecnicos
       </NavLink>
     </>

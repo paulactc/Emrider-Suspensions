@@ -49,7 +49,7 @@ function LandingPage(props) {
         </p>
       </div>
 
-      <section className="form-body">
+      <section className="form-login-body">
         <h2 className="header-title">ACCESO</h2>
         <label className="input-label">Usuario:</label>
         <input
@@ -73,7 +73,7 @@ function LandingPage(props) {
           Acceso
         </button>
         <NavLink className="btngo" to="/nuevo-usuario">
-          Crear nueva cuenta
+          Nueva cuenta
         </NavLink>
       </section>
     </div>
