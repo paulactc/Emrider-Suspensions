@@ -1,7 +1,17 @@
 import { NavLink } from "react-router";
+import { Edit3 } from "lucide-react";
+import { useNavigate } from "react-router";
 
 function UleachCustom({ eachCustom, listBikes, listTechnical }) {
   console.log("5. eachCustom en UleachCustom (al inicio):", eachCustom);
+
+  const navigate = useNavigate();
+
+  const handleEditarCliente = (cliente) => {
+    navigate(`/editar-cliente/${cliente.id}`, {
+      state: { clientData: cliente },
+    });
+  };
 
   if (!eachCustom) {
     console.warn("UleachCustom recibió un 'eachCustom' indefinido o nulo.");
@@ -29,7 +39,14 @@ function UleachCustom({ eachCustom, listBikes, listTechnical }) {
 
   return (
     <>
-      <li className="listMotocicle">
+      <li className="listclient">
+        <button
+          onClick={() => handleEditarCliente(eachCustom)}
+          className="Newcustom"
+        >
+          <Edit3 />
+          Editar
+        </button>
         <p className="datos-cliente">
           Cliente: {safeDisplay(eachCustom.Cliente)}
         </p>
@@ -73,7 +90,7 @@ function UleachCustom({ eachCustom, listBikes, listTechnical }) {
                   to="/formBike"
                   state={{
                     clienteId: eachCustom.id,
-                    clienteData: eachCustom,
+                    clientData: eachCustom,
                     listTechnical,
                   }}
                 >

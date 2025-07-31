@@ -18,11 +18,13 @@ function UleachBikeAdmin({ listBikes, clientId, listTechnical }) {
   return (
     <ul>
       {clientBikes.map((bike) => (
-        <li key={bike.id} className="listMotocicle">
-          <p>Marca: {bike.marca}</p>
-          <p>Modelo: {bike.modelo}</p>
-          <p>Año de fabricación: {bike.anoFabricacion}</p>
-          <p>Matrícula: {bike.Matricula}</p>
+        <li key={bike.id} className="listclient">
+          <p className="datos-cliente">Marca: {bike.marca}</p>
+          <p className="datos-cliente">Modelo: {bike.modelo}</p>
+          <p className="datos-cliente">
+            Año de fabricación: {bike.anoFabricacion}
+          </p>
+          <p className="datos-cliente">Matrícula: {bike.Matricula}</p>
 
           <NavLink
             className="Newcustom"

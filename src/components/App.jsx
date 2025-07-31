@@ -20,6 +20,7 @@ import ListBikeadmin from "./Page.Bike/ListBikeadmin";
 import TechnicalDataAdmin from "./admin/forms/TechnicalDataAdmin";
 import { useEffect } from "react";
 import { useLocation } from "react-router";
+import EditarDatosCliente from "./Page.Custom/EditarDatosCliente";
 function ScrollToTop() {
   const { pathname } = useLocation();
 
@@ -261,6 +262,10 @@ function App() {
         <Route
           path="/cliente"
           element={<Cliente listCustom={listCustom} listBikes={listBikes} />}
+        />
+        <Route
+          path="/editar-cliente/:id"
+          element={<EditarDatosCliente listCustom={listCustom} />}
         />
 
         <Route

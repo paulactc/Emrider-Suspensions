@@ -81,6 +81,9 @@ function ListCustom({
             {i + 1}
           </button>
         ))}
+        <div className="total-clientes">
+          <em>Número de clientes: {dataToUse.length}</em>
+        </div>
       </div>
     </>
   );

@@ -83,6 +83,9 @@ gap:0.3em;
 
 .parra {
   margin-top: 10px;
+  color: rgba(165, 149, 149, 0.966);
+  font-size: large;
+  font-size: 1.2em;
 }
 
   
@@ -118,6 +121,25 @@ gap:0.3em;
     outline: none;
     box-shadow: 0 0 0 2px rgb(217, 218, 208) 0 0 0 4px #111827; /* focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 focus:ring-offset-gray-900 */
   }
+}
+
+.Newcustombike{
+  background: linear-gradient(135deg, rgb(245, 248, 50) 0%, #fcd34d 100%);
+  border: 2px solid rgb(22, 22, 22);
+      border-radius: 0.5rem;
+  cursor: pointer;
+  display: inline-flex;
+      text-decoration: none;
+             transition: all 0.3s ease-in-out;
+    transform: scale(1);
+    text-transform: uppercase;
+          font-weight: 600;
+          color: rgb(20, 19, 17);
+          font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+          text-align: center;
+          align-items: center;
+          gap: 0.5em;
+          width: 50%;
 }
        
      .Newcustom{
@@ -190,8 +212,7 @@ header {
 
 .header_container {
   display: flex;
-  background-color: rgb(196, 196, 171);
-  color: rgb(228, 217, 227);
+background: linear-gradient(to bottom right, #12151a, #474d55, #b3b3b3);
   gap:6em;;
   min-width: 100%;  
   align-items: center;
@@ -211,8 +232,8 @@ header {
 
 .vibeH {
   font-size: 1.5rem;
-  font-family: "Lobster Two", sans-serif;
-  color: rgb(19, 14, 18);
+  font-family:Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  color: rgb(255, 255, 255);
 }
 
 /*footer*/
@@ -222,8 +243,8 @@ footer {
   justify-content: space-between;
   align-items: center;
   margin-inline: auto;
-  background-color: rgb(196, 196, 171);
-  color: black;
+    background: linear-gradient(to bottom right, #12151a, #474d55, #b3b3b3);
+  
   width: 100%;
   padding: 4px;
  
@@ -235,8 +256,9 @@ footer {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  color: rgb(14, 12, 11);
+  color: rgb(252, 251, 251);
   font-size: 0.75rem;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
 }
 
 .rrss {
@@ -267,41 +289,15 @@ footer {
 
 //  TechnicalDataCustomer
 
-.body-list-client{
-  background-color: rgb(10, 8, 17);
-  color: aliceblue;
-}
-.title-Shock{
-color:rgb(245, 248, 50)
-}
-    
 
 
-.subsection{
- display:flex; 
- flex-direction: column;
- gap:0.3em;
- margin:0.3em;
- border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  background-color: rgba(94, 87, 87, 0.568); // sutil fondo translúcido
-  backdrop-filter: blur(2px);
-  box-shadow: 0 1px 6px rgba(87, 83, 83, 0.3);
-}
 
-.title-Shock{
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  padding-block: 0.3em;
-}
 
 //filters 
 
 .filters{
   margin:1em;
+  padding:1em;
     border: 2px solid #d1d5db;
   border-radius: 8px;
   transition: all 0.3s ease;
@@ -309,40 +305,27 @@ color:rgb(245, 248, 50)
 
 }
 
-.inputs{
-  font-family: "Lobster Two", sans-serif;
-  display:flex;
-  gap: 0.3em;
-  margin:0.7em;
-    background-color: #ffffff;
-  
-}
 
-.field-container{
-    width: 100%;
-  padding: 12px 16px;
-  font-size: 16px;
-  font-family: inherit;
-  color: #1f2937;
 
-}
-
-.listMotocicle{
+.listclient{
  
   display:flex;
   flex-direction: column;
-   gap:0.3em;
- margin:0.3em;
+  gap:0.2em;
+ margin:0.1em;
  border: 1px solid rgba(15, 14, 14, 0.15);
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  background-color: rgba(10, 10, 10, 0.568); // sutil 
+background: linear-gradient(to bottom right, #12151a, #474d55, #b3b3b3);// sutil 
   
 }
 .datos-cliente{
 
-color:#f3eeee
+color:#ffffff;
+  font-size: 1.2em;
+  font-weight: 500;
+  margin-bottom: 0.5em;
  }
 
 
@@ -393,6 +376,13 @@ color:#f3eeee
   cursor: default;
   font-weight: bold;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.total-clientes {
+  margin-top: 8px;
+  text-align: right;
+  font-style: italic;
+  color: #e9e7e7;
+  font-size: 1rem;
 }
 
 //FormNewUser
@@ -585,6 +575,7 @@ color:#f3eeee
 .input-field {
   width: 100%;
   padding: 0.75rem 1rem; /* px-4 py-3 */
+  margin-bottom: 0.5em;
   background-color: #1f2937; /* bg-gray-800 */
   border: 1px solid #4b5563; /* border border-gray-600 */
   border-radius: 0.5rem; /* rounded-lg */
@@ -602,6 +593,29 @@ color:#f3eeee
     border-color: #6b7280; /* hover:border-gray-500 */
   }
 }
+
+.input-error{
+   width: 100%;
+  padding: 0.75rem 1rem; /* px-4 py-3 */
+  margin-bottom: 0.5em;
+  background-color: #e78535; /* bg-gray-800 */
+  border: 1px solid #4b5563; /* border border-gray-600 */
+  border-radius: 0.5rem; /* rounded-lg */
+  color: #ffffff; /* text-white */
+  &::placeholder {
+    color: #e92b3b; /* placeholder-gray-400 */
+  }
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px (245, 248, 50); /* focus:ring-2 focus:ring-yellow-400 */
+    border-color: transparent; /* focus:border-transparent */
+  }
+  transition: all 0.3s ease-in-out; /* transition-all duration-300 */
+  &:hover {
+    border-color: #e40606; /* hover:border-gray-500 */
+  }
+}
+
 
 .submit-button {
   width: 100%;
@@ -687,13 +701,15 @@ color:#f3eeee
 .list-title {
   font-size: 1.875rem; /* text-3xl */
   font-weight: 700; /* font-bold */
-  color: rgb(31, 31, 29); /* Color actualizado */
+  color: rgb(255, 255, 255); /* Color actualizado */
+
   text-align: center;
-  margin-bottom: 1.5rem;
+  
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid rgb(107, 107, 92); /* Color actualizado */
+  background-color: rgba(143, 143, 143, 0.966);;
 }
 
 .custom-list {
@@ -717,6 +733,7 @@ color:#f3eeee
   color: #9ca3af; /* gray-400 */
   font-style: italic;
   font-size: 1rem;
+  font-weight: 500; /* font-medium */
 }
 
 .pagination-controls {
@@ -763,451 +780,6 @@ color:#f3eeee
   }
 }
 
-/* =============================================================================
-   ESTILOS PARA UlEachDatesTechnical - TEMÁTICA MOTOCICLISMO & SUSPENSIONES
-   ============================================================================= */
-
-/* Container principal */
-.body-list-client {
-  position: relative;
-  background: linear-gradient(135deg, #0f1419 0%, #1a202c 50%, #2d3748 100%);
-  border: 2px solid #4a5568;
-  border-radius: 1.5rem;
-  margin: 2rem auto;
-  max-width: 900px;
-  padding: 2.5rem;
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.8),
-    0 0 0 1px rgba(245, 248, 50, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.body-list-client::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, 
-    rgb(245, 248, 50) 0%, 
-    #ffffff 25%, 
-    #e2e8f0 50%, 
-    #ffffff 75%, 
-    rgb(245, 248, 50) 100%);
-  animation: shimmer 3s ease-in-out infinite;
-}
-
-/* Decoración minimalista */
-.body-list-client::after {
-  content: '';
-  position: absolute;
-  top: 1rem;
-  right: 1.5rem;
-  width: 6px;
-  height: 6px;
-  background: rgb(245, 248, 50);
-  border-radius: 50%;
-  opacity: 0.3;
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-
-/* Hover effect del container */
-.body-list-client:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 
-    0 35px 70px -15px rgba(0, 0, 0, 0.9),
-    0 0 0 1px rgba(245, 248, 50, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  border-color: rgba(245, 248, 50, 0.5);
-}
-
-/* Subsecciones */
-.subsection {
-  position: relative;
-  background: rgba(26, 32, 44, 0.7);
-  border: 1px solid rgba(74, 85, 104, 0.6);
-  border-radius: 1rem;
-  padding: 1.8rem;
-  margin-bottom: 1.5rem;
-  backdrop-filter: blur(5px);
-  transition: all 0.3s ease;
-  overflow: hidden;
-}
-
-.subsection::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(245, 248, 50, 0.6), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-}
-
-.subsection:hover::before {
-  transform: translateX(100%);
-}
-
-.subsection:hover {
-  background: rgba(26, 32, 44, 0.9);
-  border-color: rgba(245, 248, 50, 0.4);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
-
-/* Títulos principales */
-.title-Shock {
-  position: relative;
-  font-size: 2.5rem;
-  font-weight: 900;
-  text-align: center;
-  color: #ffffff;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin: 3rem 0 2rem 0;
-  padding: 1rem;
-  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-  border-radius: 1rem;
-  border: 2px solid rgba(245, 248, 50, 0.3);
-  box-shadow: 
-    0 15px 35px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.title-Shock::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, rgb(245, 248, 50), transparent);
-  border-radius: 2px;
-}
-
-.title-Shock::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  height: 3px;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgb(245, 248, 50), 
-    #ffffff, 
-    rgb(245, 248, 50), 
-    transparent);
-  border-radius: 2px;
-}
-
-/* Subtítulos de sección */
-.subtitles {
-  position: relative;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: rgb(245, 248, 50);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 1.2rem;
-  padding-left: 2.5rem;
-  display: flex;
-  align-items: center;
-}
-
-.subtitles::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, rgb(245, 248, 50), rgb(240, 36, 36), 233)116, 114;
-  box-shadow: 0 0 15px rgba(245, 248, 50, 0.5);
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-/* Indicadores simples por sección */
-.subsection:nth-child(1) .subtitles::after {
-  content: '';
-  width: 20px;
-  height: 4px;
-  background: linear-gradient(to right, rgb(245, 248, 50), #ffffff);
-  border-radius: 2px;
-  margin-left: 1rem;
-}
-
-.subsection:nth-child(2) .subtitles::after {
-  content: '';
-  width: 20px;
-  height: 4px;
-  background: linear-gradient(to right, rgb(245, 248, 50), #ffffff);
-  border-radius: 2px;
-  margin-left: 1rem;
-}
-
-.subsection:nth-child(3) .subtitles::after {
-  content: '';
-  width: 12px;
-  height: 12px;
-  background: linear-gradient(135deg, rgb(245, 248, 50), #ffffff);
-  border-radius: 50%;
-  margin-left: 1rem;
-}
-
-.subsection:nth-child(4) .subtitles::after {
-  content: '';
-  width: 16px;
-  height: 16px;
-  background: linear-gradient(45deg, 
-    rgb(245, 248, 50) 0%, 
-    #ffffff 25%, 
-    #e2e8f0 50%, 
-    #ffffff 75%, 
-    rgb(245, 248, 50) 100%);
-  border-radius: 3px;
-  margin-left: 1rem;
-  animation: rotate-indicator 4s linear infinite;
-}
-
-.subtitles::after {
-  opacity: 0.9;
-  display: inline-block;
-}
-
-/* Listas */
-.Sublists {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.Sublists li {
-  background: rgba(45, 55, 72, 0.4);
-  border: 1px solid rgba(74, 85, 104, 0.3);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.Sublists li::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(245, 248, 50, 0.1), 
-    transparent);
-  transition: left 0.6s ease;
-}
-
-.Sublists li:hover::before {
-  left: 100%;
-}
-
-.Sublists li:hover {
-  background: rgba(45, 55, 72, 0.7);
-  border-color: rgba(245, 248, 50, 0.4);
-  transform: translateX(5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
-
-
-
-/* Estilo para el nombre del campo */
-.field-label {
-  font-weight: 500;
-  color: #a0aec0;
-  text-transform: capitalize;
-  letter-spacing: 0.025em;
-  font-size: 0.95rem;
-  opacity: 0.9;
-}
-
-/* Estilo para el valor del campo */
-.field-value {
-  font-weight: 700;
-  color: #ffffff;
-  font-size: 1.50em;
-  text-align: right;
-  min-width: 120px;
-  padding: 0.4rem 1rem;
-  background: rgba(6, 7, 10, 0.8);
-  border-radius: 0.4rem;
-  border-left: 3px solid rgb(245, 248, 50);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.sizeli::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 8px;
-  height: 8px;
-  background: linear-gradient(135deg, rgb(245, 248, 50), #ff6b35);
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 8px rgba(245, 248, 50, 0.4);
-  color:#f7f4f4;
-}
-
-.sizeli:hover {
-  color: rgb(245, 248, 50);
-  transform: translateX(3px);
-}
-
-.sizeli:hover::before {
-  transform: translateY(-50%) scale(1.3);
-  box-shadow: 0 0 15px rgba(245, 248, 50, 0.8);
-}
-
-/* Estados especiales para campos importantes */
-.field-important {
-  background: rgba(245, 248, 50, 0.05);
-  border: 1px solid rgba(245, 248, 50, 0.2);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin: 1rem 0;
-}
-
-.field-important .field-value {
-  background: rgba(245, 248, 50, 0.15);
-  color: #ffffff;
-  font-weight: 800;
-  border-left: 4px solid rgb(245, 248, 50);
-}
-
-/* Animaciones */
-@keyframes shimmer {
-  0%, 100% { transform: translateX(-100%); }
-  50% { transform: translateX(100%); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { 
-    box-shadow: 0 0 15px rgba(245, 248, 50, 0.5);
-    transform: translateY(-50%) scale(1);
-  }
-  50% { 
-    box-shadow: 0 0 25px rgba(245, 248, 50, 0.8);
-    transform: translateY(-50%) scale(1.1);
-  }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .body-list-client {
-    margin: 1rem;
-    padding: 1.5rem;
-  }
-  
-  .title-Shock {
-    font-size: 2rem;
-    margin: 2rem 0 1.5rem 0;
-  }
-  
-  .subtitles {
-    font-size: 1.2rem;
-  }
-  
-  .sizeli {
-    padding-left: 1rem;
-  }
-}
-
-/* Estados especiales */
-.body-list-client:empty::before {
-  content: '🔧 No hay datos técnicos disponibles 🏍️';
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-  font-size: 1.2rem;
-  color: #a0aec0;
-  text-align: center;
-}
-
-/* Estilos adicionales para elementos específicos */
-.observation-field {
-  justify-content: center;
-  text-align: center;
-}
-
-.observation-text {
-  background: rgba(74, 85, 104, 0.3);
-  border: 1px solid rgba(160, 174, 192, 0.3);
-  padding: 1rem;
-  border-radius: 0.5rem;
-  font-style: italic;
-  color: #a0aec0;
-  min-width: auto;
-  text-align: left;
-  border-left: 3px solid #718096;
-}
-
-.no-data-message {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-  background: rgba(26, 32, 44, 0.7);
-  border: 2px dashed rgba(74, 85, 104, 0.5);
-  border-radius: 1rem;
-  color: #a0aec0;
-  font-size: 1.2rem;
-  font-weight: 600;
-  text-align: center;
-  margin: 2rem auto;
-  max-width: 500px;
-}
-
-/* Estados especiales para campos importantes */
-.field-important {
-  background: rgba(245, 248, 50, 0.05);
-  border: 1px solid rgba(245, 248, 50, 0.2);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin: 1rem 0;
-}
-
-.field-important .field-value {
-  background: rgba(245, 248, 50, 0.15);
-  color: #ffffff;
-  font-weight: 800;
-  border-left: 4px solid rgb(245, 248, 50);
-}
-
-
-/* Mejoras de accesibilidad */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
 
 
 
@@ -1222,7 +794,7 @@ $ohlins-gray-700: #374151;
 $ohlins-gray-600: #4b5563;
 $ohlins-gray-400: #9ca3af;
 $ohlins-gray-300: #d1d5db;
-$ohlins-yellow: #fbbf24;
+$ohlins-yellow: rgb(245, 248, 50);
 $ohlins-yellow-light: #fcd34d;
 $ohlins-yellow-dark: #f59e0b;
 $ohlins-white: #ffffff;
@@ -1329,7 +901,7 @@ $ohlins-white: #ffffff;
         transform: translateY(-2px);
 
         .uleach-customer__info-icon {
-          background: $ohlins-yellow;
+          
           color: $ohlins-black;
         }
       }
@@ -1498,7 +1070,7 @@ $ohlins-white: #ffffff;
     border: 2px solid $ohlins-yellow;
 
     &:hover {
-      background: $ohlins-yellow;
+      
       color: $ohlins-black;
 
       svg {
@@ -1556,3 +1128,945 @@ $ohlins-white: #ffffff;
     }
   }
 }
+
+//estilos para la lista de bicicletas usuario cliente; 
+
+// Variables de colores Ohlins (mantenidas del componente original)
+$ohlins-black: #000000;
+$ohlins-gray-900: #111827;
+$ohlins-gray-800: #1f2937;
+$ohlins-gray-700: #374151;
+$ohlins-gray-600: #4b5563;
+$ohlins-gray-400: #9ca3af;
+$ohlins-gray-300: #d1d5db;
+$ohlins-yellow: #eaf825;
+$ohlins-yellow-light: #fcd34d;
+$ohlins-yellow-dark: #f59e0b;
+$ohlins-white: #ffffff;
+
+// Mixins específicos para motocicletas
+@mixin bike-transition($duration: 0.4s) {
+  transition: all $duration cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@mixin bike-hover-effect($translateY: -8px) {
+  transform: translateY($translateY) scale(1.02);
+}
+
+@mixin bike-glow($color: $ohlins-yellow) {
+  box-shadow: 
+    0 4px 20px rgba($color, 0.15),
+    0 8px 40px rgba($color, 0.1),
+    inset 0 1px 0 rgba($ohlins-white, 0.1);
+}
+
+// Contenedor principal de las motocicletas
+.uleach-bikes-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color:rgb(17, 19, 17) ;
+
+  // Header del listado
+  &__header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(90deg, transparent 0%, $ohlins-yellow 50%, transparent 100%);
+      border-radius: 2px;
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: $ohlins-white;
+      margin: 0;
+      text-shadow: 0 2px 10px rgba($ohlins-black, 0.5);
+    }
+
+    p {
+      color: $ohlins-gray-400;
+      font-size: 1.1rem;
+      margin-top: 0.5rem;
+    }
+  }
+
+  // Grid de motocicletas
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 2rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  // Estado vacío
+  &__empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: $ohlins-gray-800;
+    border-radius: 1rem;
+    border: 2px dashed $ohlins-gray-600;
+
+    p {
+      color: $ohlins-gray-400;
+      font-size: 1.2rem;
+      margin: 0;
+    }
+  }
+}
+
+// Tarjeta individual de motocicleta
+.listMotocicle {
+  background: linear-gradient(145deg, $ohlins-gray-900 0%, $ohlins-gray-800 100%);
+  border-radius: 1.25rem;
+  padding: 0;
+  border: 1px solid $ohlins-gray-700;
+  position: relative;
+  overflow: hidden;
+  @include bike-transition();
+  @include bike-glow($ohlins-gray-600);
+
+  &:hover {
+    @include bike-hover-effect();
+    @include bike-glow($ohlins-yellow);
+    border-color: $ohlins-yellow;
+
+    .listMotocicle__bike-icon {
+      transform: rotate(5deg) scale(1.1);
+      color: $ohlins-yellow-light;
+    }
+
+    .listMotocicle__content::before {
+      opacity: 1;
+    }
+
+    .Newcustom {
+      background: linear-gradient(135deg, $ohlins-yellow 0%, $ohlins-yellow-light 100%);
+      color: $ohlins-black;
+      transform: translateY(-2px);
+    }
+  }
+
+  // Indicador visual de motocicleta
+  &__bike-visual {
+    position: relative;
+    background: $ohlins-black;
+    padding: 1.5rem;
+    border-radius: 1.25rem 1.25rem 0 0;
+    border-bottom: 3px solid $ohlins-yellow;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__bike-icon {
+    width: 3rem;
+    height: 3rem;
+    background: $ohlins-yellow;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include bike-transition();
+    position: relative;
+    
+    &::before {
+      content: '🏍️';
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border: 2px solid transparent;
+      border-radius: 50%;
+      background: linear-gradient(45deg, $ohlins-yellow, transparent, $ohlins-yellow) 
+                  border-box;
+      mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      animation: bikePulse 3s infinite;
+    }
+  }
+
+  &__badge {
+    background: rgba($ohlins-yellow, 0.15);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5 em;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid rgba($ohlins-yellow, 0.4);
+    text-shadow: 0 1px 2px rgba($ohlins-black, 0.3);
+  }
+
+  // Contenido principal
+  &__content {
+    padding: 2rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 120px); // Ajustar para el header
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, $ohlins-yellow 50%, transparent 100%);
+      opacity: 0;
+      @include bike-transition();
+    }
+  }
+
+  &__specs {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex: 1; // Esto hace que los specs ocupen el espacio disponible
+  }
+
+  &__spec-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: $ohlins-gray-800;
+    border-radius: 0.5rem;
+    border-left: 3px solid $ohlins-gray-600;
+    @include bike-transition();
+
+    &:hover {
+      border-left-color: $ohlins-yellow;
+      background: rgba($ohlins-yellow, 0.05);
+    }
+
+    &-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      color: $ohlins-yellow;
+      flex-shrink: 0;
+    }
+
+    &-label {
+      color: $ohlins-gray-400;
+      font-size: 0.875rem;
+      font-weight: 500;
+      min-width: 80px;
+    }
+
+    &-value {
+      color: $ohlins-white;
+      font-weight: 600;
+      flex: 1;
+    }
+  }
+
+  // Patrón decorativo de fondo
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background-image: 
+      radial-gradient(circle at 20px 20px, rgba($ohlins-yellow, 0.05) 2px, transparent 2px),
+      radial-gradient(circle at 60px 60px, rgba($ohlins-yellow, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px, 20px 20px;
+    border-radius: 0 1.25rem 0 0;
+    pointer-events: none;
+  }
+}
+
+// Botón de acción técnica
+.Newcustom {
+  
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  padding: 1em;
+  margin :1em;
+  background: linear-gradient(135deg, $ohlins-gray-700 0%, $ohlins-gray-600 100%);
+  color: $ohlins-white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: 0.75rem;
+  border: 2px solid $ohlins-gray-600;
+  position: relative;
+  overflow: hidden;
+  @include bike-transition();
+  margin-top: auto; // Esto empuja el botón hacia abajo
+
+  svg {
+    margin-right: 0.5rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    @include bike-transition();
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba($ohlins-white, 0.1), transparent);
+    @include bike-transition(0.6s);
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, $ohlins-yellow 0%, $ohlins-yellow-light 100%);
+    color: $ohlins-black;
+    transform: translateY(-2px);
+
+    svg {
+      transform: rotate(90deg);
+    }
+
+    &::after {
+      left: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(1px) scale(0.98);
+  }
+}
+
+// Animaciones específicas
+@keyframes bikePulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes bikeReveal {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Aplicar animación de revelado a las tarjetas
+.listMotocicle {
+  animation: bikeReveal 0.6s ease-out forwards;
+
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+  &:nth-child(5) { animation-delay: 0.5s; }
+  &:nth-child(6) { animation-delay: 0.6s; }
+}
+
+// Responsive design
+@media (max-width: 1024px) {
+  .uleach-bikes-container {
+    padding: 1.5rem;
+
+    &__grid {
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .uleach-bikes-container {
+    padding: 1rem;
+
+    &__header h2 {
+      font-size: 2rem;
+    }
+
+    &__grid {
+      gap: 1rem;
+    }
+  }
+
+  .listMotocicle {
+    &__bike-visual {
+      padding: 1rem;
+    }
+
+    &__content {
+      padding: 1.5rem;
+    }
+
+    &__bike-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+
+      &::before {
+        font-size: 1.25rem;
+      }
+    }
+  }
+}
+
+// Efectos adicionales para mejorar la experiencia
+.uleach-bikes-container:hover .listMotocicle:not(:hover) {
+  opacity: 0.7;
+  transform: scale(0.98);
+}
+
+// Loading state (opcional)
+.listMotocicle--loading {
+  .listMotocicle__content {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .listMotocicle__bike-icon::after {
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// ESTILOS PARA LISTA DE DATOS TÉCNICOS DE CARA AL CLIENTE: 
+
+// Variables de colores Ohlins (mantenidas)
+$ohlins-black: #000000;
+$ohlins-gray-900: #111827;
+$ohlins-gray-800: #1f2937;
+$ohlins-gray-700: #374151;
+$ohlins-gray-600: #4b5563;
+$ohlins-gray-400: #9ca3af;
+$ohlins-gray-300: #d1d5db;
+$ohlins-yellow: rgb(245, 248, 50);
+$ohlins-yellow-light: #fcd34d;
+$ohlins-yellow-dark: #f59e0b;
+$ohlins-white: #ffffff;
+
+// Mixins específicos para datos técnicos
+@mixin tech-transition($duration: 0.3s) {
+  transition: all $duration cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@mixin tech-glow($color: $ohlins-yellow) {
+  box-shadow: 
+    0 2px 15px rgba($color, 0.1),
+    0 4px 30px rgba($color, 0.05),
+    inset 0 1px 0 rgba($ohlins-white, 0.05);
+}
+
+@mixin tech-border-effect() {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, $ohlins-yellow 0%, $ohlins-yellow-light 50%, $ohlins-yellow 100%);
+    @include tech-transition();
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  &:hover::before {
+    transform: scaleX(1);
+  }
+}
+
+// Contenedor global de datos técnicos
+.tech-data-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, $ohlins-gray-900 0%, $ohlins-black 100%);
+  min-height: 100vh;
+  background:black;
+
+  // Patrón de fondo técnico
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      linear-gradient(45deg, transparent 49%, rgba($ohlins-yellow, 0.02) 50%, transparent 51%),
+      linear-gradient(-45deg, transparent 49%, rgba($ohlins-yellow, 0.02) 50%, transparent 51%);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+// Mensaje sin datos
+.no-data-message {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, $ohlins-gray-800 0%, $ohlins-gray-700 100%);
+  border-radius: 1rem;
+  border: 2px dashed $ohlins-gray-600;
+  color: $ohlins-gray-400;
+  font-size: 1.2rem;
+  font-weight: 500;
+  
+  &::before {
+    content: '⚠️';
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.6;
+  }
+}
+
+// Contenedor principal del listado
+.body-list-client {
+  background: linear-gradient(145deg, $ohlins-gray-800 0%, $ohlins-gray-900 100%);
+  border-radius: 1.5rem;
+  padding: 0;
+  margin-bottom: 3rem;
+  border: 1px solid $ohlins-gray-700;
+  overflow: hidden;
+  position: relative;
+  @include tech-glow();
+  @include tech-transition();
+
+  &:hover {
+    @include tech-glow($ohlins-yellow);
+    border-color: rgba($ohlins-yellow, 0.3);
+    transform: translateY(-4px);
+  }
+
+  // Decoración lateral
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, $ohlins-yellow 0%, $ohlins-yellow-light 50%, $ohlins-yellow 100%);
+  }
+
+  // Patrón técnico interno
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 150px;
+    height: 150px;
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba($ohlins-yellow, 0.03) 2px, transparent 2px),
+      radial-gradient(circle at 80% 80%, rgba($ohlins-yellow, 0.02) 1px, transparent 1px);
+    background-size: 30px 30px, 15px 15px;
+    border-radius: 0 1.5rem 0 0;
+    pointer-events: none;
+  }
+}
+
+// Subsecciones
+.subsection {
+  padding: 2rem;
+  position: relative;
+  @include tech-border-effect();
+
+  &:not(:last-child) {
+    border-bottom: 1px solid rgba($ohlins-gray-600, 0.3);
+  }
+
+  // Animación de entrada
+  animation: slideInUp 0.6s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+}
+
+// Títulos principales y subtítulos
+.subtitles {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: $ohlins-white;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 1.5rem 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  &::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    background: $ohlins-yellow;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba($ohlins-yellow, 0.5);
+    animation: pulse 2s infinite;
+  }
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba($ohlins-yellow, 0.5) 0%, transparent 100%);
+  }
+}
+
+// Título principal de datos técnicos
+.title-Shock {
+  font-size: 2rem;
+  font-weight: 800;
+  color: white;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin: 3rem 0 2rem 0;
+  position: relative;
+  text-shadow: 0 2px 10px rgba($ohlins-yellow, 0.3);
+
+  &::before {
+    content: '⚙️';
+    position: absolute;
+    left: -3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    animation: rotate 4s linear infinite;
+  }
+
+  &::after {
+    content: '⚙️';
+    position: absolute;
+    right: -3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    animation: rotate 4s linear infinite reverse;
+  }
+}
+
+// Listas de datos
+.Sublists {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// Items de campo individual
+.sizeli {
+  color:white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, $ohlins-gray-700 0%, $ohlins-gray-800 100%);
+  border-radius: 0.75rem;
+  border: 1px solid $ohlins-gray-600;
+  @include tech-transition();
+  position: relative;
+
+  &:hover {
+    background: linear-gradient(135deg, $ohlins-gray-600 0%, $ohlins-gray-700 100%);
+    border-color: $ohlins-yellow;
+    transform: translateX(4px);
+
+    .field-label::before {
+      transform: scale(1.2);
+      color: $ohlins-yellow;
+    }
+  }
+
+  // Indicador visual
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: rgb(196, 196, 171);
+    @include tech-transition();
+  }
+
+  &:hover::before {
+    background: $ohlins-yellow;
+    box-shadow: 0 0 10px rgba($ohlins-yellow, 0.5);
+  }
+}
+
+// Labels de campo
+.field-label {
+  color:white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &::before {
+    content: '▸';
+    color:rgb(196, 196, 171);
+    font-size: 0.8rem;
+    @include tech-transition();
+  }
+}
+
+// Valores de campo
+.field-value {
+  color: $ohlins-white;
+  font-weight: 500;
+  font-size: 1rem;
+  text-align: right;
+  font-family: 'Courier New', monospace;
+  background: rgba($ohlins-black, 0.3);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgba($ohlins-yellow, 0.2);
+}
+
+// Campo importante (destacado)
+
+
+  .field-label {
+    color: white;
+    font-weight: 700;
+
+    &::before {
+      color: white;
+      content: '●';
+      animation: pulse 2s infinite;
+    }
+  }
+
+  .field-value {
+    background: rgba($ohlins-yellow, 0.1);
+    border-color: $ohlins-yellow;
+    color: $ohlins-yellow-light;
+    font-weight: 700;
+  }
+
+
+
+// Campo de observaciones
+.observation-field {
+  grid-column: 1 / -1;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 120px;
+  
+  .observation-text {
+    width: 100%;
+    text-align: left;
+    line-height: 1.6;
+    font-family: inherit;
+    background: rgba($ohlins-gray-900, 0.5);
+    padding: 1rem;
+    border-radius: 0.5rem;
+   
+    color: $ohlins-gray-300;
+    font-style: italic;
+    
+    &::before {
+      content: '💭 ';
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Animaciones específicas
+@keyframes slideInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+// Estados especiales para diferentes tipos de datos
+.subsection {
+  // Información general
+  &:has(.subtitles:contains("INFORMACIÓN")) {
+    background: linear-gradient(135deg, rgba(rgb(196, 196, 171), 0.05) 0%, transparent 100%);
+  }
+
+  // Suspensión
+  &:has(.subtitles:contains("SUSPENSION")) {
+    background: linear-gradient(135deg, rgba(rgb(196, 196, 171), 0.03) 0%, transparent 100%);
+
+    .sizeli {
+      border-left-color: rgb(245, 248, 50);
+    }
+  }
+
+  // Setting técnico
+  &:has(.subtitles:contains("SETTING")) {
+    background: linear-gradient(135deg, rgba($ohlins-yellow, 0.08) 0%, transparent 100%);
+    
+    .field-value {
+      font-weight: 700;
+      color: $ohlins-yellow-light;
+    }
+  }
+
+  // Observaciones
+  &:has(.subtitles:contains("OBSERVACIONES")) {
+    background: linear-gradient(135deg, rgba($ohlins-gray-600, 0.1) 0%, transparent 100%);
+  }
+}
+
+// Responsive design
+@media (max-width: 1024px) {
+  .tech-data-container {
+    padding: 1.5rem;
+  }
+
+  .body-list-client {
+    margin-bottom: 2rem;
+  }
+
+  .subsection {
+    padding: 1.5rem;
+  }
+
+  .title-Shock {
+    font-size: 1.5rem;
+    
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .tech-data-container {
+    padding: 1rem;
+  }
+
+  .subsection {
+    padding: 1rem;
+  }
+
+  .sizeli {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    
+    .field-value {
+      text-align: left;
+      width: 100%;
+    }
+  }
+
+  .subtitles {
+    font-size: 1rem;
+    
+    &::after {
+      display: none;
+    }
+  }
+
+  .title-Shock {
+    font-size: 1.25rem;
+    margin: 2rem 0 1rem 0;
+  }
+}
+
+// Efectos de carga y entrada
+.body-list-client {
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.3s; }
+  &:nth-child(3) { animation-delay: 0.5s; }
+}
+
+// Hover effect global para mejorar la experiencia
+.tech-data-container:hover .body-list-client:not(:hover) {
+  opacity: 0.8;
+  transform: scale(0.99);
+}
+
+
+//MANTENIMIENTO CADUCADO!!
+
+@keyframes parpadeo {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.mantenimiento-caducado {
+  border: 2px solid #dc2626; /* rojo */
+  background-color: #fee2e2; /* rojo claro */
+  animation: parpadeo 1.5s infinite;}
+

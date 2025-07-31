@@ -97,7 +97,7 @@ function UleachCustomUser({ Custom, listBikes }) {
             ) : (
               <NavLink
                 to="/FormBike"
-                state={{ clienteId: Custom.id, clienteData: Custom }}
+                state={{ clienteId: Custom.id, clientData: Custom }}
                 className="ohlins-btn ohlins-btn--secondary"
               >
                 <Plus />

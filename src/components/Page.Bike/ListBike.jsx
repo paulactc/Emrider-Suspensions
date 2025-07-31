@@ -43,7 +43,6 @@ function ListBike({ listBikes, listTechnical }) {
   if (motosDelCliente.length === 0) {
     return (
       <div>
-        <h3>DATOS MOTOCICLETA</h3>
         <p>Este cliente no tiene motocicletas registradas</p>
       </div>
     );
@@ -51,7 +50,6 @@ function ListBike({ listBikes, listTechnical }) {
 
   return (
     <>
-      <h3>DATOS MOTOCICLETA</h3>
       <ul className="ulListBikes">
         <UleachBike
           listBikes={motosDelCliente} // Pasar solo las motos del cliente
