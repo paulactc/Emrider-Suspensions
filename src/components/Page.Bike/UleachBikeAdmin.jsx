@@ -25,6 +25,7 @@ function UleachBikeAdmin({ listBikes, clientId, listTechnical }) {
             Año de fabricación: {bike.anoFabricacion}
           </p>
           <p className="datos-cliente">Matrícula: {bike.Matricula}</p>
+           <p className="datos-cliente">Bastidor: {bike.bastidor}</p>
 
           <NavLink
             className="Newcustom"

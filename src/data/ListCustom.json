@@ -1,6 +1,7 @@
 [
   {
-    "Cliente": "Victor Manuel Gomez",
+    "nombre": "Victor",
+    "apellidos": "Manuel Gomez",
     "Email": "victor@hotmail.es",
     "telefono": 658998547,
     "Dirección": "C/Rey 58 ",
@@ -10,7 +11,8 @@
     "id": 1
   },
   {
-    "Cliente": "Juan Perez Martinez",
+    "nombre": "Juan ",
+    "apellidos": "Perez Martinez",
     "Email": "juan@hotmail.es",
     "telefono": 722439479,
     "Dirección": "C/Delicias 20 ",
@@ -20,7 +22,8 @@
     "id": 2
   },
   {
-    "Cliente": "Maria Sanchez",
+    "nombre": "Maria ",
+    "apellidos": "Sanchez Martinez",
     "Email": "Maria@hotmail.es",
     "telefono": 655855477,
     "Dirección": "C/barrio nuevo 20 ",
@@ -30,7 +33,8 @@
     "id": 3
   },
   {
-    "Cliente": "Pedro Benitez Ruiz",
+    "nombre": "Pedro ",
+    "apellidos": "Benitez Ruiz",
     "Email": "Pedro@hotmail.es",
     "telefono": 69857785,
     "Dirección": "C/Fresas rojas 20 ",
@@ -40,7 +44,8 @@
     "id": 4
   },
   {
-    "Cliente": "Sandra sanchez Calvo",
+    "nombre": "Sandra" ,
+    "apellidos": "sanchez Calvo",
     "Email": "Sandra@hotmail.es",
     "telefono": 698858475,
     "Dirección": "C/Esperanza 1 ",
@@ -50,7 +55,8 @@
     "id": 5
   },
   {
-    "Cliente": "María Carmen López",
+    "nombre": "María ",
+    "apellidos": "Carmen López",
     "Email": "mariac@gmail.com",
     "telefono": 612345678,
     "Dirección": "Av. Constitución 25",
@@ -60,7 +66,8 @@
     "id": 6
   },
   {
-    "Cliente": "José Antonio Ruiz",
+    "nombre": "José ",
+    "apellidos": "Antonio Ruiz",
     "Email": "joseantonio@yahoo.es",
     "telefono": 654789123,
     "Dirección": "C/Larios 14, 3ºB",
@@ -70,7 +77,8 @@
     "id": 7
   },
   {
-    "Cliente": "Ana Belén Martínez",
+    "nombre": "Ana ",
+    "apellidos": "Belén Martínez",
     "Email": "anabelen@outlook.com",
     "telefono": 678912345,
     "Dirección": "Plaza España 7",
@@ -80,7 +88,8 @@
     "id": 8
   },
   {
-    "Cliente": "Francisco Javier Moreno",
+    "nombre": "Francisco ",
+    "apellidos": "Javier Moreno",
     "Email": "fmoreno@hotmail.es",
     "telefono": 689234567,
     "Dirección": "C/Sierpes 89",
@@ -90,7 +99,8 @@
     "id": 9
   },
   {
-    "Cliente": "Carmen Rosa Jiménez",
+    "nombre": "Carmen ",
+    "apellidos": "Rosa Jiménez",
     "Email": "carmenrosa@gmail.com",
     "telefono": 645123789,
     "Dirección": "Av. Andalucía 156",
@@ -100,7 +110,8 @@
     "id": 10
   },
   {
-    "Cliente": "Manuel Jesús Fernández",
+    "nombre": "Manuel ",
+    "apellidos": "Jesús Fernández",
     "Email": "manujesus@yahoo.es",
     "telefono": 697456123,
     "Dirección": "C/Victoria 23, 1ºA",
@@ -110,7 +121,8 @@
     "id": 11
   },
   {
-    "Cliente": "Rocío del Carmen Santos",
+    "nombre": "Rocío ",
+    "apellidos": "del Carmen Santos",
     "Email": "rociosantos@outlook.com",
     "telefono": 632178945,
     "Dirección": "Paseo de la Estación 45",
@@ -120,7 +132,8 @@
     "id": 12
   },
   {
-    "Cliente": "Antonio Miguel García",
+    "nombre": "Antonio ",
+    "apellidos": "Miguel García",
     "Email": "antoniomiguel@gmail.com",
     "telefono": 658741236,
     "Dirección": "C/Real 78",
@@ -130,7 +143,8 @@
     "id": 13
   },
   {
-    "Cliente": "Isabel María Herrera",
+    "nombre": "Isabel ",
+    "apellidos": "María Herrera",
     "Email": "isabelmaria@hotmail.es",
     "telefono": 674582139,
     "Dirección": "Av. de la Paz 34, 4ºC",
@@ -140,7 +154,8 @@
     "id": 14
   },
   {
-    "Cliente": "Juan Carlos Romero",
+    "nombre": "Juan ",
+    "apellidos": "Carlos Romero",
     "Email": "juancarlos@yahoo.es",
     "telefono": 691357824,
     "Dirección": "C/Alcalá Galiano 12",
@@ -150,7 +165,8 @@
     "id": 15
   },
   {
-    "Cliente": "Dolores Pilar Vázquez",
+    "nombre": "Dolores ",
+    "apellidos": "Pilar Vázquez",
     "Email": "lolap@gmail.com",
     "telefono": 617829346,
     "Dirección": "Plaza del Carmen 9",
@@ -160,7 +176,8 @@
     "id": 16
   },
   {
-    "Cliente": "Rafael Ángel Muñoz",
+    "nombre": "Rafael ",
+    "apellidos": "Ángel Muñoz",
     "Email": "rafaelangel@outlook.com",
     "telefono": 653974125,
     "Dirección": "C/Mesones 67, 2ºD",
@@ -170,7 +187,8 @@
     "id": 17
   },
   {
-    "Cliente": "Esperanza Concepción Díaz",
+    "nombre": "Esperanza ",
+    "apellidos": "Concepción Díaz",
     "Email": "esperanzac@hotmail.es",
     "telefono": 689517348,
     "Dirección": "Av. Gran Capitán 145",
@@ -180,7 +198,8 @@
     "id": 18
   },
   {
-    "Cliente": "Fernando José Castro",
+    "nombre": "Fernando ",
+    "apellidos": "José Castro",
     "Email": "fernandoj@gmail.com",
     "telefono": 672485139,
     "Dirección": "C/Colón 56",
@@ -190,7 +209,8 @@
     "id": 19
   },
   {
-    "Cliente": "Amparo Remedios Gil",
+    "nombre": "Amparo ",
+    "apellidos": "Remedios Gil",
     "Email": "amparogil@yahoo.es",
     "telefono": 648293715,
     "Dirección": "Plaza de Armas 18, 3ºB",
@@ -200,7 +220,8 @@
     "id": 20
   },
   {
-    "Cliente": "Miguel Ángel Ortega",
+    "nombre": "Miguel ",
+    "apellidos": "Ángel Ortega",
     "Email": "miguelangel@outlook.com",
     "telefono": 695174823,
     "Dirección": "C/Rambla 23",
@@ -210,7 +231,8 @@
     "id": 21
   },
   {
-    "Cliente": "Pastora Inmaculada Peña",
+    "nombre": "Pastora",
+    "apellidos": " Inmaculada Peña",
     "Email": "pastorai@gmail.com",
     "telefono": 634851729,
     "Dirección": "Av. del Puerto 78",
@@ -220,7 +242,8 @@
     "id": 22
   },
   {
-    "Cliente": "Sebastián David Morales",
+    "nombre": "Sebastián ",
+    "apellidos": "David Morales",
     "Email": "sebastiand@hotmail.es",
     "telefono": 671528394,
     "Dirección": "C/Betis 34, 1ºC",
@@ -230,7 +253,8 @@
     "id": 23
   },
   {
-    "Cliente": "Encarnación Soledad Ramos",
+    "nombre": "Encarnación ",
+    "apellidos": "Soledad Ramos",
     "Email": "encarnis@yahoo.es",
     "telefono": 687419265,
     "Dirección": "Plaza Nueva 15",
@@ -240,7 +264,8 @@
     "id": 24
   },
   {
-    "Cliente": "Cristóbal Alejandro Navarro",
+    "nombre": "Cristóbal ",
+    "apellidos": "Alejandro Navarro",
     "Email": "cristobala@outlook.com",
     "telefono": 652738149,
     "Dirección": "C/Cánovas del Castillo 91, 2ºA",
@@ -250,7 +275,8 @@
     "id": 25
   },
   {
-    "Cliente": "Patricia Ángeles Torres",
+    "nombre": "Patricia ",
+    "apellidos": "Ángeles Torres",
     "Email": "patriciaa@gmail.com",
     "telefono": 619483752,
     "Dirección": "C/Alhambra 42",

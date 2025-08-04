@@ -35,7 +35,8 @@ function App() {
   const listCustom = dataCustom;
 
   const [filters, setFilters] = useState({
-    Cliente: "",
+    Nombre: "",
+    Apellidos:"",
     telefono: "",
   });
 
@@ -44,7 +45,8 @@ function App() {
   const listUsers = dataUsers;
 
   const [clientData, setClientData] = useState({
-    Cliente: "",
+    Nombre: "",
+    Apellidos:"",
     Email: "",
     teléfono: "",
     Dirección: "",
@@ -54,12 +56,15 @@ function App() {
   });
 
   const [motoData, setMotoData] = useState({
-    clienteId: null,
+    
     id: "",
     Marca: "",
     Modelo: "",
     Añodefabricacion: "",
     Matricula: "",
+    cif_propietario: null,
+    propietario: null,
+    bastidor:"",
   });
 
   const [formData, setFormData] = useState({
@@ -113,9 +118,13 @@ function App() {
         (item) => item === undefined
       ).length;
       const nullCount = listCustom.filter((item) => item === null).length;
-      const validCount = listCustom.filter(
-        (item) => item && typeof item === "object" && item.Cliente
-      ).length;
+     const validCount = listCustom.filter(
+  (item) =>
+    item &&
+    typeof item === "object" &&
+    typeof item.nombre === "string" &&
+    typeof item.apellidos === "string"
+).length;
 
       console.log(
         `Stats: ${validCount} válidos, ${undefinedCount} undefined, ${nullCount} null`
@@ -166,40 +175,46 @@ function App() {
     }
 
     const cleanedData = data.filter((customer) => {
-      if (!customer || typeof customer !== "object") {
-        console.warn("Cliente inválido encontrado:", customer);
-        return false;
-      }
+  if (!customer || typeof customer !== "object") {
+    console.warn("Cliente inválido encontrado:", customer);
+    return false;
+  }
 
-      if (!customer.Cliente || customer.Cliente.trim() === "") {
-        console.warn("Cliente sin nombre encontrado:", customer);
-        return false;
-      }
+  const tieneNombre = typeof customer.nombre === "string" && customer.nombre.trim() !== "";
+  const tieneApellidos = typeof customer.apellidos === "string" && customer.apellidos.trim() !== "";
 
-      return true;
-    });
+  if (!tieneNombre || !tieneApellidos) {
+    console.warn("Cliente sin nombre y/o apellidos:", customer);
+    return false;
+  }
 
-    console.log("Datos limpios:", cleanedData);
+  return true;
+});
 
-    const filteredData = cleanedData.filter((customer) => {
-      if (filters.Cliente && filters.Cliente.trim() !== "") {
-        const clientName = customer.Cliente.toLowerCase();
-        const searchTerm = filters.Cliente.toLowerCase();
-        if (!clientName.includes(searchTerm)) {
-          return false;
-        }
-      }
+console.log("Datos limpios:", cleanedData);
 
-      if (filters.telefono && filters.telefono.trim() !== "") {
-        const phoneNumber = customer.telefono || "";
-        const searchPhone = filters.telefono.toString();
-        if (!phoneNumber.toString().includes(searchPhone)) {
-          return false;
-        }
-      }
+ const filteredData = cleanedData.filter((customer) => {
+  if (filters.Nombre && filters.Nombre.trim() !== "") {
+    const nombre = customer.nombre?.toLowerCase() || "";
+    const apellidos = customer.apellidos?.toLowerCase() || "";
+    const nombreCompleto = `${nombre} ${apellidos}`;
+    const searchTerm = filters.Nombre.toLowerCase();
+    if (!nombreCompleto.includes(searchTerm)) {
+      return false;
+    }
+  }
 
-      return true;
-    });
+  if (filters.telefono && filters.telefono.trim() !== "") {
+    const phoneNumber = customer.telefono || "";
+    const searchPhone = filters.telefono.toString();
+    if (!phoneNumber.toString().includes(searchPhone)) {
+      return false;
+    }
+  }
+
+  return true;
+});
+
 
     console.log("Datos filtrados:", filteredData);
     return filteredData;

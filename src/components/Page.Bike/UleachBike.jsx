@@ -8,6 +8,7 @@ import {
   Hash,
   Settings,
   AlertTriangle,
+  BookAlert 
 } from "lucide-react";
 import Caducidad from "../user/Caducidad";
 
@@ -46,7 +47,7 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
         </p>
       </div>
 
-      <ul className="uleach-bikes-container__grid">
+      <ul className="uleach-bikes-container">
         {clientBikes.map((bike) => {
           const caducado = mantenimientoCaducado[bike.id] === true;
 
@@ -57,28 +58,20 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
                 caducado ? "mantenimiento-caducado" : ""
               }`}
             >
-              <div className="listMotocicle__bike-visual relative">
-                <div className="listMotocicle__bike-icon"></div>
-                {caducado && (
-                  <div className="absolute top-1 left-12 flex items-center gap-1 text-red-600 animate-pulse">
-                    <AlertTriangle size={16} />
-                    <span className="text-sm font-semibold">
-                      Mantenimiento caducado
-                    </span>
-                  </div>
-                )}
-                <div className="listMotocicle__badge">{bike.marca}</div>
-              </div>
+             <div className="listMotocicle__bike-visual">
+  <div className="listMotocicle__bike-icon"></div>
 
-              <div className="listMotocicle__content">
-                {caducado && (
-                  <div className="alerta-aviso mb-2 text-red-600 flex items-center">
-                    <AlertTriangle size={16} className="mr-2" />
-                    <span className="error-message">
-                      Mantenimiento caducado
-                    </span>
-                  </div>
-                )}
+  {caducado && (
+    <div className="mantenimiento-alerta">
+      <AlertTriangle size={16} />
+      <span className="text-sm font-semibold">Mantenimiento caducado</span>
+    </div>
+  )}
+
+  <div className="listMotocicle__badge">{bike.marca}</div>
+</div>
+              
+                <div className="listMotocicle__content">
 
                 <div className="listMotocicle__specs">
                   <div className="listMotocicle__spec-item">
@@ -108,7 +101,7 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
                       {bike.anoFabricacion}
                     </span>
                   </div>
-
+                  
                   <div className="listMotocicle__spec-item">
                     <Hash className="listMotocicle__spec-item-icon" />
                     <span className="listMotocicle__spec-item-label">
@@ -117,6 +110,16 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
                     <span className="listMotocicle__spec-item-value">
                       {bike.Matricula}
                     </span>
+                    </div> 
+                     <div className="listMotocicle__spec-item">
+                    <BookAlert className="listMotocicle__spec-item-icon" />
+                     <span className="listMotocicle__spec-item-label">
+                      Bastidor:
+                    </span>
+                    <span className="listMotocicle__spec-item-value">
+                      {bike.bastidor}
+                    </span>
+                   
                   </div>
                 </div>
 
@@ -125,7 +128,7 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
                   to={`/custom/datos-tecnicos/${bike.id}`}
                   state={{ listTechnical }}
                 >
-                  <Settings /> Ver datos técnicos
+                  <Settings /> Ver Servicios realizados
                 </NavLink>
 
                 <Caducidad

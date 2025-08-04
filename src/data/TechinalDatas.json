@@ -3,6 +3,7 @@
     {
       "id": 1,
       "motoId": 1,
+      "fechaCreacion": "2024-01-15",
       "spring": {
         "mainRate": "9.5",
         "springRef": "SPR-95-300",
@@ -121,6 +122,7 @@
     {
       "id": 1,
       "motoId": 1,
+      "fechaCreacion": "2023-01-15",
       "spring": {
         "mainRate": "9.5",
         "springRef": "SPR-95-300",
@@ -239,6 +241,7 @@
     {
       "id": 2,
       "motoId": 2,
+      "fechaCreacion": "2025-01-15",
       "spring": {
         "mainRate": "8.0",
         "springRef": "SPR-80-280",
@@ -364,6 +367,7 @@
     {
       "id": 3,
       "motoId": 3,
+      "fechaCreacion": "2023-01-15",
       "spring": {
         "mainRate": "11.2",
         "springRef": "SPR-112-320",

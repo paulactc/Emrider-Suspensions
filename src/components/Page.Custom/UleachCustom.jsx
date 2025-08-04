@@ -18,10 +18,10 @@ function UleachCustom({ eachCustom, listBikes, listTechnical }) {
     return null;
   }
 
-  if (!eachCustom.Cliente) {
-    console.warn("UleachCustom recibió un cliente sin nombre:", eachCustom);
-    return null;
-  }
+  if (!eachCustom.nombre && !eachCustom.apellidos) {
+  console.warn("UleachCustom sin nombre ni apellidos:", eachCustom);
+  return null;
+}
 
   const safeDisplay = (value) => value || "No disponible";
 
@@ -48,8 +48,8 @@ function UleachCustom({ eachCustom, listBikes, listTechnical }) {
           Editar
         </button>
         <p className="datos-cliente">
-          Cliente: {safeDisplay(eachCustom.Cliente)}
-        </p>
+  Cliente: {safeDisplay(`${eachCustom.nombre || ""} ${eachCustom.apellidos || ""}`.trim())}
+</p>
         <p className="datos-cliente">Email: {safeDisplay(eachCustom.Email)}</p>
         <p className="datos-cliente">
           Teléfono: {safeDisplay(eachCustom.telefono)}

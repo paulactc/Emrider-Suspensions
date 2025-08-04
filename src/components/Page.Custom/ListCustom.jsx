@@ -44,17 +44,17 @@ function ListCustom({
       <ul className="custom-list">
         {clientesActuales && clientesActuales.length > 0 ? (
           clientesActuales.map((eachCustom, index) => {
-            if (
-              !eachCustom ||
-              typeof eachCustom !== "object" ||
-              !eachCustom.Cliente
-            ) {
-              return null;
+           if (
+  !eachCustom ||
+  typeof eachCustom !== "object" ||
+  (!eachCustom.nombre && !eachCustom.apellidos)
+) {
+  return null;
             }
             return (
               <UleachCustom
                 eachCustom={eachCustom}
-                key={eachCustom.Cliente || `custom-${index}`}
+               key={`${eachCustom.nombre || "anon"}-${eachCustom.apellidos || "user"}-${index}`}
                 listBikes={listBikes}
               />
             );

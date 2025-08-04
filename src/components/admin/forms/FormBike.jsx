@@ -47,6 +47,16 @@ function MotoForm({ motoData, handleChangeMotos }) {
               value={motoData.Mmatricula}
               onChange={handleChangeMotos}
             />
+              <legend className="input-label">Bastidor</legend>
+            <input
+              className="input-field"
+              type="number"
+              name="bastidor"
+              id="bastidor"
+              placeholder="1234ABC"
+              value={motoData.bastidor}
+              onChange={handleChangeMotos}
+            />
             <button className="Newcustom">Guardar datos</button>
           </fieldset>
         </form>

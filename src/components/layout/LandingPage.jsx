@@ -1,5 +1,5 @@
 import { useState } from "react";
-import logoEmrider from "../../images/Logomonoemrider.jpeg";
+import logoEmrider from "/images/Logomonoemrider.jpeg";
 import { NavLink } from "react-router";
 
 import { useNavigate } from "react-router";

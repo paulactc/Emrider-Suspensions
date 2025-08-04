@@ -1,4 +1,4 @@
-import logoEmrider from "../../images/Logomonoemrider.jpeg";
+import logoEmrider from "/images/Logomonoemrider.jpeg";
 import { Link, NavLink } from "react-router";
 
 const Header = () => {
