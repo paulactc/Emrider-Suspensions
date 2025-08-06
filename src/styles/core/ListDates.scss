@@ -1,0 +1,377 @@
+// ======= ESTILOS PARA DATOS TÉCNICOS =======
+
+.tech-data-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, $ohlins-gray-900 0%, $ohlins-black 100%);
+  min-height: 100vh;
+}
+
+.no-data-message {
+  background: linear-gradient(135deg, $ohlins-gray-800 0%, $ohlins-gray-700 100%);
+  border: 2px dashed rgba($ohlins-yellow, 0.3);
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+  color: $ohlins-gray-300;
+  font-size: 18px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+.body-list-client {
+  background: linear-gradient(135deg, $ohlins-gray-900 0%, $ohlins-gray-800 100%);
+  border-radius: 20px;
+  padding: 52px;
+  margin-bottom: 32px;
+  box-shadow:
+
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba($ohlins-yellow, 0.15),
+    inset 0 1px 0 rgba($ohlins-yellow, 0.1);
+  border: 1px solid rgba($ohlins-yellow, 0.2);
+  position: relative;
+  overflow: hidden;
+
+  // Efecto de brillo superior
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      $ohlins-yellow 50%, 
+      transparent 100%);
+    opacity: 0.8;
+  }
+
+  // Efecto de resplandor lateral
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, 
+      $ohlins-yellow 0%, 
+      transparent 50%, 
+      $ohlins-yellow 100%);
+    opacity: 0.6;
+  }
+}
+
+.subsection {
+  margin-bottom: 32px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.subtitles {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: yellow;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba($ohlins-yellow, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+
+  // Línea decorativa
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: $ohlins-yellow;
+    border-radius: 1px;
+  }
+
+  svg {
+    color: $ohlins-yellow;
+    filter: drop-shadow(0 0 6px rgba($ohlins-yellow, 0.3));
+  }
+}
+
+.title-Shock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 900;
+  color: $ohlins-yellow;
+  margin: 48px 0 32px 0;
+  padding: 24px;
+  background: linear-gradient(135deg, 
+    rgba($ohlins-yellow, 0.1) 0%, 
+    rgba($ohlins-yellow, 0.03) 100%);
+  border: 2px solid rgba($ohlins-yellow, 0.3);
+  border-radius: 16px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+  backdrop-filter: blur(15px);
+  box-shadow: 
+    0 8px 32px rgba($ohlins-yellow, 0.2),
+    inset 0 1px 0 rgba($ohlins-yellow, 0.2);
+
+  svg {
+    color: $ohlins-yellow;
+    filter: drop-shadow(0 0 8px rgba($ohlins-yellow, 0.4));
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  // Efecto de pulso en el fondo
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, 
+      rgba($ohlins-yellow, 0.1) 0%, 
+      transparent 70%);
+    border-radius: 16px;
+    animation: pulse 3s ease-in-out infinite;
+  }
+}
+
+@keyframes glow {
+  from { filter: drop-shadow(0 0 8px rgba($ohlins-yellow, 0.4)); }
+  to { filter: drop-shadow(0 0 16px rgba($ohlins-yellow, 0.8)); }
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% { 
+    opacity: 0.1; 
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+.Sublists {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-top: 1em;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.sizeli {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+ 
+  border-radius: 12px;
+  border: 1px solid rgba($ohlins-yellow, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  backdrop-filter: blur(10px);
+  margin-bottom: 8px;
+
+  &:hover {
+    background-color: rgba($ohlins-gray-700, 0.8);
+    border-color: rgba($ohlins-yellow, 0.3);
+    transform: translateX(4px);
+    box-shadow: 
+      0 4px 20px rgba($ohlins-yellow, 0.15),
+      -4px 0 0 0 $ohlins-yellow;
+
+    .field-label svg {
+      
+      transform: scale(1.1);
+    }
+
+   
+  }
+
+  // Línea indicadora izquierda
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    background-color: $ohlins-yellow;
+    transition: height 0.3s ease;
+    border-radius: 0 2px 2px 0;
+  }
+
+  &:hover::before {
+    height: 60%;
+  }
+}
+
+.field-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: $ohlins-gray-300;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+  min-width: 140px;
+
+  svg {
+    color: $ohlins-gray-400;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 4px rgba($ohlins-yellow, 0.2));
+  }
+}
+
+.field-value {
+  font-weight: 700;
+  font-size: 15px;
+  color: $ohlins-white;
+  font-family: 'Roboto', sans-serif;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba($ohlins-yellow, 0.15);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  min-width: 80px;
+  width: 100%;
+    text-align: left;
+}
+
+
+
+  
+
+  
+
+  
+
+
+
+// ======= CAMPO DE OBSERVACIONES =======
+.observation-field {
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+  }
+
+  .observation-text {
+    background-color: rgba($ohlins-gray-700, 0.6);
+    color: $ohlins-gray-300;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid rgba($ohlins-gray-600, 0.3);
+    width: 100%;
+    text-align: left;
+    min-height: 60px;
+    word-wrap: break-word;
+  }
+
+
+// ======= RESPONSIVE =======
+@media (max-width: 768px) {
+  .tech-data-container {
+    padding: 16px;
+  }
+  }
+
+  .body-list-client {
+    padding: 20px;
+    margin-bottom: 50px;
+  }
+
+  .title-Shock {
+    font-size: 20px;
+    padding: 16px;
+    margin: 32px 0 24px 0;
+    
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+
+  .sizeli {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 16px;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 8px 25px rgba($ohlins-yellow, 0.15),
+        0 0 0 2px rgba($ohlins-yellow, 0.2);
+    }
+  }
+
+ 
+
+
+
+// ======= ANIMACIONES DE ENTRADA =======
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.body-list-client {
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+.sizeli {
+  animation: fadeInUp 0.6s ease forwards;
+  
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+}
+
+.subsection {
+  animation: fadeInUp 0.7s ease forwards;
+  
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+}
+

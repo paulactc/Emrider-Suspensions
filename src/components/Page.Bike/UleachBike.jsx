@@ -8,7 +8,7 @@ import {
   Hash,
   Settings,
   AlertTriangle,
-  BookAlert 
+  BookAlert,
 } from "lucide-react";
 import Caducidad from "../user/Caducidad";
 
@@ -40,14 +40,14 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
     <div className="uleach-bikes-container">
       <div className="uleach-bikes-container__header">
         <h2>Mis Motocicletas</h2>
-        <p>
+        <p className="uleach-bikes-container__subheader">
           Consulta tus {clientBikes.length} motocicleta
           {clientBikes.length !== 1 ? "s" : ""} registrada
           {clientBikes.length !== 1 ? "s" : ""}
         </p>
       </div>
 
-      <ul className="uleach-bikes-container">
+      <ul className="uleach-bikes-list">
         {clientBikes.map((bike) => {
           const caducado = mantenimientoCaducado[bike.id] === true;
 
@@ -58,21 +58,23 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
                 caducado ? "mantenimiento-caducado" : ""
               }`}
             >
-             <div className="listMotocicle__bike-visual">
-  <div className="listMotocicle__bike-icon"></div>
+              <div className="listMotocicle__bike-visual">
+                <div className="listMotocicle__bike-icon">🏍️</div>
 
-  {caducado && (
-    <div className="mantenimiento-alerta">
-      <AlertTriangle size={16} />
-      <span className="text-sm font-semibold">Mantenimiento caducado</span>
-    </div>
-  )}
+                {caducado && (
+                  <div className="mantenimiento-alerta">
+                    <AlertTriangle size={16} />
+                    <span className="text-sm font-semibold">
+                      Mantenimiento
+                      <br /> caducado
+                    </span>
+                  </div>
+                )}
 
-  <div className="listMotocicle__badge">{bike.marca}</div>
-</div>
-              
-                <div className="listMotocicle__content">
+                <div className="listMotocicle__badge">{bike.marca}</div>
+              </div>
 
+              <div className="listMotocicle__content">
                 <div className="listMotocicle__specs">
                   <div className="listMotocicle__spec-item">
                     <Tag className="listMotocicle__spec-item-icon" />
@@ -101,7 +103,7 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
                       {bike.anoFabricacion}
                     </span>
                   </div>
-                  
+
                   <div className="listMotocicle__spec-item">
                     <Hash className="listMotocicle__spec-item-icon" />
                     <span className="listMotocicle__spec-item-label">
@@ -110,25 +112,24 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
                     <span className="listMotocicle__spec-item-value">
                       {bike.Matricula}
                     </span>
-                    </div> 
-                     <div className="listMotocicle__spec-item">
+                  </div>
+                  <div className="listMotocicle__spec-item">
                     <BookAlert className="listMotocicle__spec-item-icon" />
-                     <span className="listMotocicle__spec-item-label">
+                    <span className="listMotocicle__spec-item-label">
                       Bastidor:
                     </span>
                     <span className="listMotocicle__spec-item-value">
                       {bike.bastidor}
                     </span>
-                   
                   </div>
                 </div>
 
                 <NavLink
-                  className="Newcustombike mt-4 inline-block"
+                  className="Newcustombike "
                   to={`/custom/datos-tecnicos/${bike.id}`}
                   state={{ listTechnical }}
                 >
-                  <Settings /> Ver Servicios realizados
+                  <Settings /> Servicios realizados
                 </NavLink>
 
                 <Caducidad
