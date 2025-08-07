@@ -4,7 +4,7 @@ require("dotenv").config();
 const PORT = process.env.PORT || 3001;
 
 // Iniciar el servidor
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Servidor Emrider con JWT corriendo en puerto ${PORT}`);
   console.log(`📍 http://localhost:${PORT}`);
   console.log(`🔐 JWT activado y validaciones configuradas`);

@@ -1,5 +1,10 @@
 import { useState } from "react";
 import logoEmrider from "/images/Logomonoemrider.jpeg";
+import logoÖhlins from "/images/Logo.ohlins.png";
+import logoKayaba from "/images/Kayaba.png";
+import logoAndreani from "/images/AndreaniMHS.png";
+import logoShowa from "/images/Showa.png";
+import logoSkf from "/images/SKF.png";
 import { NavLink } from "react-router";
 
 import { useNavigate } from "react-router";
@@ -41,12 +46,33 @@ function LandingPage(props) {
 
       <div className="sectmedium">
         <h3>Accede a tu historial técnico exclusivo con Emrider</h3>
-        <p className="parra">
-          Consulta de forma privada todos los trabajos realizados en tus
-          suspensiones <br />
-          Información precisa, solo para clientes Emrider. Regístrate y llévala
-          siempre contigo.
-        </p>
+
+        <div className="brand-list">
+          <div className="wrapper">
+            <img className="ohlins" src={logoÖhlins} alt="Öhlins Logo" />
+            <img src={logoKayaba} alt="Kayaba Logo" />
+            <img src={logoSkf} alt="Skf Logo" />
+            <img src={logoShowa} alt="Showa Logo" />
+            <img src={logoAndreani} alt="Andreani Logo" />
+            <img className="ohlins" src={logoÖhlins} alt="Öhlins Logo" />
+            <img src={logoKayaba} alt="Kayaba Logo" />
+            <img src={logoSkf} alt="Skf Logo" />
+            <img src={logoShowa} alt="Showa Logo" />
+            <img src={logoAndreani} alt="Andreani Logo" />
+          </div>
+        </div>
+        <div className="contenedor-text">
+          <p className="parra">
+            Consulta de forma exclusiva tu historial técnico de suspensiones{" "}
+            <br />
+            Solo para clientes Emrider.
+            <br />
+            <br />
+            <span className="highlight-text">
+              Regístrate y llévala siempre contigo.
+            </span>
+          </p>
+        </div>
       </div>
 
       <section className="form-login-body">

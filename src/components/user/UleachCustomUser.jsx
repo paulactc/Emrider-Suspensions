@@ -1,5 +1,3 @@
-
-
 import { NavLink } from "react-router";
 import {
   User,
@@ -50,22 +48,21 @@ function UleachCustomUser({ Custom, listBikes }) {
       id: 1,
       nombre: "Emrider baby",
       BananaPoints: { min: 0, max: 499 },
-      imagen: "/images/mono-level1.png", // ✅ Ruta corregida desde components/user
+      imagen: "/images/mono-level1.png",
       alt: "EmRider Baby - Nivel principiante", // Alt text para accesibilidad
       color: "rookie",
       beneficios: [
         "Medición y ajuste SAG gratuito",
         "15% descuento en material de suspensiones",
         "Asesoramiento técnico básico",
-        "Newsletter con tips de mantenimiento"
       ],
-      requisitos: "0-499 BananaPoints 🍌 • Nivel de entrada"
+      requisitos: "0-499 BananaPoints 🍌 • Nivel de entrada",
     },
     {
       id: 2,
       nombre: "Emrider adolescent",
       BananaPoints: { min: 500, max: 1199 },
-      imagen: "/images/mono-level2.png", // ✅ Ruta corregida desde components/user
+      imagen: "/images/mono-level2.png",
       alt: "EmRider Adolescent - Nivel intermedio", // Alt text para accesibilidad
       color: "pro",
       beneficios: [
@@ -73,9 +70,8 @@ function UleachCustomUser({ Custom, listBikes }) {
         "Chequeo completo: 20 BananaPoints 🍌 de revisión",
         "Setup personalizado según pilotaje",
         "Prioridad en citas de taller",
-        
       ],
-      requisitos: "500-1199 BananaPoints 🍌 • Por facturación y asiduidad"
+      requisitos: "500-1199 BananaPoints 🍌 • Por facturación y asiduidad",
     },
     {
       id: 3,
@@ -88,34 +84,46 @@ function UleachCustomUser({ Custom, listBikes }) {
         "45% descuento en todos los materiales",
         "Servicio VIP: recogida y entrega a domicilio",
         "Acceso directo al ingeniero de suspensiones",
-        "Merchandising exclusivo EmRider"
+        "Merchandising exclusivo EmRider",
       ],
-      requisitos: "1200+ BananaPoints 🍌 • Élite de clientes EmRider"
-    }
+      requisitos: "1200+ BananaPoints 🍌 • Élite de clientes EmRider",
+    },
   ];
 
-  const nivelActual = nivelesEmRider.find(nivel => 
-    clienteActual.BananaPoints  >= nivel.BananaPoints .min && 
-    (nivel.BananaPoints.max === null || clienteActual.BananaPoints <= nivel.BananaPoints.max)
+  const nivelActual = nivelesEmRider.find(
+    (nivel) =>
+      clienteActual.BananaPoints >= nivel.BananaPoints.min &&
+      (nivel.BananaPoints.max === null ||
+        clienteActual.BananaPoints <= nivel.BananaPoints.max)
   );
 
-  const siguienteNivel = nivelesEmRider.find(nivel => 
-    nivel.id === nivelActual.id + 1
+  const siguienteNivel = nivelesEmRider.find(
+    (nivel) => nivel.id === nivelActual.id + 1
   );
 
-  const puntosParaSiguienteNivel = siguienteNivel ? 
-    siguienteNivel.BananaPoints.min - clienteActual.BananaPoints : 0;
+  const puntosParaSiguienteNivel = siguienteNivel
+    ? siguienteNivel.BananaPoints.min - clienteActual.BananaPoints
+    : 0;
 
-  const porcentajeProgreso = siguienteNivel ? 
-    ((clienteActual.BananaPoints - nivelActual.BananaPoints.min) / 
-     (siguienteNivel.BananaPoints.min - nivelActual.BananaPoints.min)) * 100 : 100;
+  const porcentajeProgreso = siguienteNivel
+    ? ((clienteActual.BananaPoints - nivelActual.BananaPoints.min) /
+        (siguienteNivel.BananaPoints.min - nivelActual.BananaPoints.min)) *
+      100
+    : 100;
 
   const customerDataEssential = [
     { icon: Phone, label: "Teléfono", value: Custom.telefono },
     { icon: Mail, label: "Email", value: Custom.Email },
-    { icon: MapPin, label: "Ubicación", value: `${Custom.Población || ''}, ${Custom.Provincia || ''}`.replace(/^,\s*|,\s*$/, '') },
+    {
+      icon: MapPin,
+      label: "Ubicación",
+      value: `${Custom.Población || ""}, ${Custom.Provincia || ""}`.replace(
+        /^,\s*|,\s*$/,
+        ""
+      ),
+    },
   ];
-  const progresoEstilo = { width: porcentajeProgreso + '%' };
+  const progresoEstilo = { width: porcentajeProgreso + "%" };
 
   return (
     <div className="uleach-customer-compact">
@@ -126,7 +134,11 @@ function UleachCustomUser({ Custom, listBikes }) {
             <User />
           </div>
           <div className="uleach-customer-compact__basic-info">
-            <h2>{safeDisplay(`${Custom.nombre || ""} ${Custom.apellidos || ""}`.trim())}</h2>
+            <h2>
+              {safeDisplay(
+                `${Custom.nombre || ""} ${Custom.apellidos || ""}`.trim()
+              )}
+            </h2>
             <p>Cliente EmRider</p>
             <div className="uleach-customer-compact__status">
               <Star className="status-icon" />
@@ -134,7 +146,7 @@ function UleachCustomUser({ Custom, listBikes }) {
             </div>
           </div>
         </div>
-        
+
         <div className="uleach-customer-compact__quick-actions">
           <NavLink
             to={`/editar-cliente/${Custom.id}`}
@@ -205,29 +217,37 @@ function UleachCustomUser({ Custom, listBikes }) {
             <div className="current-level">
               <div className="Nivel">TU NIVEL:</div>
               <div className="level-icon">
-                <img 
-                  src={nivelActual.imagen} 
+                <img
+                  src={nivelActual.imagen}
                   alt={nivelActual.alt}
                   className="level-image"
-                  style={{width: '40px', height: '40px', objectFit: 'cover', borderRadius: '50%'}}
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    objectFit: "cover",
+                    borderRadius: "50%",
+                  }}
                   onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'block';
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "block";
                   }}
                 />
-                <div className="level-fallback" style={{display: 'none'}}>
+                <div className="level-fallback" style={{ display: "none" }}>
                   🏍️
                 </div>
               </div>
               <div className="level-info">
                 <h4>{nivelActual.nombre}</h4>
                 <div className="points-display">
-                  <Banana  className="points-icon" />
-                  <span>{clienteActual.BananaPoints.toLocaleString()} BananaPoints 🍌</span>
+                  <Banana className="points-icon" />
+                  <span>
+                    {clienteActual.BananaPoints.toLocaleString()} BananaPoints
+                    🍌
+                  </span>
                 </div>
               </div>
             </div>
-            
+
             {siguienteNivel && (
               <div className="level-progress">
                 <div className="progress-info">
@@ -235,10 +255,7 @@ function UleachCustomUser({ Custom, listBikes }) {
                   <span>{puntosParaSiguienteNivel} BananaPoints restantes</span>
                 </div>
                 <div className="progress-bar">
-                  <div 
-  className="progress-fill" 
-  style={progresoEstilo}
-/>
+                  <div className="progress-fill" style={progresoEstilo} />
                 </div>
               </div>
             )}
@@ -249,32 +266,44 @@ function UleachCustomUser({ Custom, listBikes }) {
         <div className="rider-levels">
           {nivelesEmRider.map((nivel) => {
             const isCurrentLevel = nivel.id === nivelActual.id;
-            const isUnlocked = clienteActual.BananaPoints >= nivel.BananaPoints.min;
-            
+            const isUnlocked =
+              clienteActual.BananaPoints >= nivel.BananaPoints.min;
+
             return (
-              <div 
-                key={nivel.id} 
+              <div
+                key={nivel.id}
                 className={`level-card level-card--${nivel.color} ${
-                  isCurrentLevel ? 'level-card--current' : ''
-                } ${isUnlocked ? 'level-card--unlocked' : 'level-card--locked'}`}
+                  isCurrentLevel ? "level-card--current" : ""
+                } ${
+                  isUnlocked ? "level-card--unlocked" : "level-card--locked"
+                }`}
               >
                 <div className="level-card__header">
                   <div className="level-badge">
                     {isCurrentLevel && <Crown className="current-crown" />}
                     <div className="level-icon-large">
-                      <img 
-                        src={nivel.imagen} 
+                      <img
+                        src={nivel.imagen}
                         alt={nivel.alt}
                         className="level-image-large"
-                        style={{width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px', display: 'block'}}
+                        style={{
+                          width: "60px",
+                          height: "60px",
+                          objectFit: "cover",
+                          borderRadius: "8px",
+                          display: "block",
+                        }}
                         onError={(e) => {
-                          console.log('Error cargando imagen:', nivel.imagen);
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'block';
+                          console.log("Error cargando imagen:", nivel.imagen);
+                          e.target.style.display = "none";
+                          e.target.nextSibling.style.display = "block";
                         }}
                       />
-                      <div className="level-fallback-large" style={{display: 'none'}}>
-                        {nivel.id === 1 ? '🏍️' : nivel.id === 2 ? '🏁' : '🏆'}
+                      <div
+                        className="level-fallback-large"
+                        style={{ display: "none" }}
+                      >
+                        {nivel.id === 1 ? "🏍️" : nivel.id === 2 ? "🏁" : "🏆"}
                       </div>
                     </div>
                   </div>
@@ -283,7 +312,7 @@ function UleachCustomUser({ Custom, listBikes }) {
                     <p>{nivel.requisitos}</p>
                   </div>
                 </div>
-                
+
                 <div className="level-card__benefits">
                   <h5>Beneficios incluidos:</h5>
                   <ul>
@@ -350,7 +379,9 @@ function UleachCustomUser({ Custom, listBikes }) {
             <Zap className="benefits-icon" />
             <div className="benefits-text">
               <h4>¡Maximiza tus beneficios!</h4>
-              <p>Consulta tu historial de BananaPoints 🍌 y próximas recompensas</p>
+              <p>
+                Consulta tu historial de BananaPoints 🍌 y próximas recompensas
+              </p>
             </div>
             <button className="benefits-btn">
               Ver historial

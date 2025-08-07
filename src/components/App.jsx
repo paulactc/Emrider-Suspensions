@@ -32,11 +32,27 @@ function ScrollToTop() {
 }
 
 function App() {
-  const listCustom = dataCustom;
+  const [listCustom, setListCustom] = useState([]);
+
+  useEffect(() => {
+    const fetchClientes = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/clientes");
+        if (!response.ok) throw new Error("Error al obtener los clientes");
+        const data = await response.json();
+        setListCustom(data);
+        console.log("✅ Clientes cargados desde backend:", data);
+      } catch (error) {
+        console.error("❌ Error al cargar clientes:", error);
+      }
+    };
+
+    fetchClientes();
+  }, []);
 
   const [filters, setFilters] = useState({
     Nombre: "",
-    Apellidos:"",
+    Apellidos: "",
     telefono: "",
   });
 
@@ -46,7 +62,7 @@ function App() {
 
   const [clientData, setClientData] = useState({
     Nombre: "",
-    Apellidos:"",
+    Apellidos: "",
     Email: "",
     teléfono: "",
     Dirección: "",
@@ -56,7 +72,6 @@ function App() {
   });
 
   const [motoData, setMotoData] = useState({
-    
     id: "",
     Marca: "",
     Modelo: "",
@@ -64,7 +79,7 @@ function App() {
     Matricula: "",
     cif_propietario: null,
     propietario: null,
-    bastidor:"",
+    bastidor: "",
   });
 
   const [formData, setFormData] = useState({
@@ -118,13 +133,13 @@ function App() {
         (item) => item === undefined
       ).length;
       const nullCount = listCustom.filter((item) => item === null).length;
-     const validCount = listCustom.filter(
-  (item) =>
-    item &&
-    typeof item === "object" &&
-    typeof item.nombre === "string" &&
-    typeof item.apellidos === "string"
-).length;
+      const validCount = listCustom.filter(
+        (item) =>
+          item &&
+          typeof item === "object" &&
+          typeof item.nombre === "string" &&
+          typeof item.apellidos === "string"
+      ).length;
 
       console.log(
         `Stats: ${validCount} válidos, ${undefinedCount} undefined, ${nullCount} null`
@@ -175,46 +190,48 @@ function App() {
     }
 
     const cleanedData = data.filter((customer) => {
-  if (!customer || typeof customer !== "object") {
-    console.warn("Cliente inválido encontrado:", customer);
-    return false;
-  }
+      if (!customer || typeof customer !== "object") {
+        console.warn("Cliente inválido encontrado:", customer);
+        return false;
+      }
 
-  const tieneNombre = typeof customer.nombre === "string" && customer.nombre.trim() !== "";
-  const tieneApellidos = typeof customer.apellidos === "string" && customer.apellidos.trim() !== "";
+      const tieneNombre =
+        typeof customer.nombre === "string" && customer.nombre.trim() !== "";
+      const tieneApellidos =
+        typeof customer.apellidos === "string" &&
+        customer.apellidos.trim() !== "";
 
-  if (!tieneNombre || !tieneApellidos) {
-    console.warn("Cliente sin nombre y/o apellidos:", customer);
-    return false;
-  }
+      if (!tieneNombre || !tieneApellidos) {
+        console.warn("Cliente sin nombre y/o apellidos:", customer);
+        return false;
+      }
 
-  return true;
-});
+      return true;
+    });
 
-console.log("Datos limpios:", cleanedData);
+    console.log("Datos limpios:", cleanedData);
 
- const filteredData = cleanedData.filter((customer) => {
-  if (filters.Nombre && filters.Nombre.trim() !== "") {
-    const nombre = customer.nombre?.toLowerCase() || "";
-    const apellidos = customer.apellidos?.toLowerCase() || "";
-    const nombreCompleto = `${nombre} ${apellidos}`;
-    const searchTerm = filters.Nombre.toLowerCase();
-    if (!nombreCompleto.includes(searchTerm)) {
-      return false;
-    }
-  }
+    const filteredData = cleanedData.filter((customer) => {
+      if (filters.Nombre && filters.Nombre.trim() !== "") {
+        const nombre = customer.nombre?.toLowerCase() || "";
+        const apellidos = customer.apellidos?.toLowerCase() || "";
+        const nombreCompleto = `${nombre} ${apellidos}`;
+        const searchTerm = filters.Nombre.toLowerCase();
+        if (!nombreCompleto.includes(searchTerm)) {
+          return false;
+        }
+      }
 
-  if (filters.telefono && filters.telefono.trim() !== "") {
-    const phoneNumber = customer.telefono || "";
-    const searchPhone = filters.telefono.toString();
-    if (!phoneNumber.toString().includes(searchPhone)) {
-      return false;
-    }
-  }
+      if (filters.telefono && filters.telefono.trim() !== "") {
+        const phoneNumber = customer.telefono || "";
+        const searchPhone = filters.telefono.toString();
+        if (!phoneNumber.toString().includes(searchPhone)) {
+          return false;
+        }
+      }
 
-  return true;
-});
-
+      return true;
+    });
 
     console.log("Datos filtrados:", filteredData);
     return filteredData;

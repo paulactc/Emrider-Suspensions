@@ -9,22 +9,12 @@ const dbConfig = {
   database: process.env.DB_NAME || "emrider_db",
   port: process.env.DB_PORT || 3306,
 
-  // Configuraciones del pool de conexiones
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 
-  // Configuraciones de tiempo
-  acquireTimeout: 60000,
-  timeout: 60000,
-
-  // Configuraciones de reconexión
-  reconnect: true,
-
-  // Configuraciones de timezone
   timezone: "+00:00",
 
-  // Configuraciones SSL (deshabilitado para desarrollo)
   ssl: false,
 };
 

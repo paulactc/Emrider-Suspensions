@@ -9,12 +9,9 @@ app.use(cors());
 app.use(express.json());
 
 // Ruta de prueba
-app.get("/", (req, res) => {
-  res.json({
-    message: "API Emrider funcionando correctamente",
-    version: "1.0.0",
-  });
-});
+const clienteRoutes = require("./routes/cliente");
+app.use("/api/clientes", clienteRoutes);
+module.exports = app;
 
 // CRUCIAL: Exportar la app
 module.exports = app;
