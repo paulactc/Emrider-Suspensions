@@ -8,10 +8,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Ruta de prueba
+// Ruta de cliente
 const clienteRoutes = require("./routes/cliente");
 app.use("/api/clientes", clienteRoutes);
 module.exports = app;
+
+//Ruta de motos:
+const motosRoutes = require("./routes/motos");
+app.use("/api/motos", motosRoutes);
 
 // CRUCIAL: Exportar la app
 module.exports = app;

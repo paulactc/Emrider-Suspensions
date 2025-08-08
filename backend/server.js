@@ -1,23 +1,36 @@
-const app = require("./src/app");
+const express = require("express");
+const cors = require("cors");
 require("dotenv").config();
 
-const PORT = process.env.PORT || 3001;
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Iniciar el servidor
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Servidor Emrider con JWT corriendo en puerto ${PORT}`);
-  console.log(`📍 http://localhost:${PORT}`);
-  console.log(`🔐 JWT activado y validaciones configuradas`);
-  console.log(`⏰ Iniciado en: ${new Date().toLocaleString()}`);
+const { testConnection } = require("../backend/src/config/database");
+
+// Probar conexión al iniciar el servidor
+testConnection();
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Rutas básicas
+app.get("/", (req, res) => {
+  res.json({ message: "Servidor funcionando correctamente" });
 });
 
-// Manejo de errores del servidor
-process.on("uncaughtException", (error) => {
-  console.error("Error no capturado:", error);
-  process.exit(1);
+// Rutas API
+app.use("/api/clientes", require("./src/routes/cliente"));
+app.use("/api/motos", require("./src/routes/motos"));
+app.use("/api/datos-tecnicos", require("./src/routes/datosTecnicos"));
+
+// Manejo de errores
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Error interno del servidor" });
 });
 
-process.on("unhandledRejection", (reason, promise) => {
-  console.error("Promesa rechazada no manejada en:", promise, "razón:", reason);
-  process.exit(1);
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });
