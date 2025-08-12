@@ -3,15 +3,24 @@ const express = require("express");
 const router = express.Router();
 const { pool } = require("../config/database");
 
-// GET - Obtener motos por CIF (CON CAMPOS DEL CUESTIONARIO)
+// GET - Obtener motos por CIF (CON CAMPOS DEL CUESTIONARIO CORREGIDOS)
 router.get("/by-cif/:cif", async (req, res) => {
   try {
     const { cif } = req.params;
     console.log("🔍 Buscando motos para CIF:", cif);
 
     const [rows] = await pool.execute(
-      `SELECT id, marca, modelo, anio, matricula, bastidor, cif_propietario,
-              especialidad, tipo_conduccion, preferencia_rigidez
+      `SELECT 
+        id, 
+        marca, 
+        modelo, 
+        anio, 
+        matricula, 
+        bastidor, 
+        cif_propietario AS cifPropietario,
+        especialidad, 
+        tipo_conduccion AS tipoConduccion, 
+        preferencia_rigidez AS preferenciaRigidez
        FROM motos
        WHERE cif_propietario = ?
        ORDER BY marca, modelo`,
@@ -19,6 +28,7 @@ router.get("/by-cif/:cif", async (req, res) => {
     );
 
     console.log(`🏍️ Encontradas ${rows.length} motos para CIF ${cif}`);
+    console.log("🔍 Datos de motos obtenidas:", rows); // Para debug
     res.json(rows);
   } catch (e) {
     console.error("Error obteniendo motos por CIF:", e);
@@ -26,12 +36,21 @@ router.get("/by-cif/:cif", async (req, res) => {
   }
 });
 
-// GET - Obtener todas las motos (CON CAMPOS DEL CUESTIONARIO)
+// GET - Obtener todas las motos (CON CAMPOS DEL CUESTIONARIO CORREGIDOS)
 router.get("/", async (req, res) => {
   try {
     const [rows] = await pool.execute(
-      `SELECT id, marca, modelo, anio, matricula, bastidor, cif_propietario,
-              especialidad, tipo_conduccion, preferencia_rigidez
+      `SELECT 
+        id, 
+        marca, 
+        modelo, 
+        anio, 
+        matricula, 
+        bastidor, 
+        cif_propietario AS cifPropietario,
+        especialidad, 
+        tipo_conduccion AS tipoConduccion, 
+        preferencia_rigidez AS preferenciaRigidez
        FROM motos
        ORDER BY marca, modelo`
     );
@@ -42,13 +61,22 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET - Obtener moto por ID (CON CAMPOS DEL CUESTIONARIO)
+// GET - Obtener moto por ID (CON CAMPOS DEL CUESTIONARIO CORREGIDOS)
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const [rows] = await pool.execute(
-      `SELECT id, marca, modelo, anio, matricula, bastidor, cif_propietario,
-              especialidad, tipo_conduccion, preferencia_rigidez
+      `SELECT 
+        id, 
+        marca, 
+        modelo, 
+        anio, 
+        matricula, 
+        bastidor, 
+        cif_propietario AS cifPropietario,
+        especialidad, 
+        tipo_conduccion AS tipoConduccion, 
+        preferencia_rigidez AS preferenciaRigidez
        FROM motos
        WHERE id = ?`,
       [id]
@@ -74,13 +102,13 @@ router.post("/", async (req, res) => {
       anio,
       matricula,
       bastidor,
-      cif_propietario,
-      especialidad, // ✨ NUEVO CAMPO
-      tipo_conduccion, // ✨ NUEVO CAMPO
-      preferencia_rigidez, // ✨ NUEVO CAMPO
+      cifPropietario, // Frontend envía en camelCase
+      especialidad,
+      tipoConduccion, // Frontend envía en camelCase
+      preferenciaRigidez, // Frontend envía en camelCase
     } = req.body;
 
-    if (!marca || !modelo || !cif_propietario) {
+    if (!marca || !modelo || !cifPropietario) {
       return res.status(400).json({
         message: "Marca, modelo y CIF del propietario son obligatorios",
       });
@@ -98,10 +126,10 @@ router.post("/", async (req, res) => {
       anio,
       matricula,
       bastidor,
-      cif_propietario,
+      cifPropietario, // Se guarda como cif_propietario en DB
       especialidad,
-      tipo_conduccion,
-      preferencia_rigidez,
+      tipoConduccion, // Se guarda como tipo_conduccion en DB
+      preferenciaRigidez, // Se guarda como preferencia_rigidez en DB
     ]);
 
     res.status(201).json({
@@ -114,7 +142,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// PUT - Actualizar moto (CON CAMPOS DEL CUESTIONARIO)
+// PUT - Actualizar moto (CON CAMPOS DEL CUESTIONARIO CORREGIDOS)
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -124,10 +152,10 @@ router.put("/:id", async (req, res) => {
       anio,
       matricula,
       bastidor,
-      cif_propietario,
-      especialidad, // ✨ NUEVO CAMPO
-      tipo_conduccion, // ✨ NUEVO CAMPO
-      preferencia_rigidez, // ✨ NUEVO CAMPO
+      cifPropietario, // Frontend envía en camelCase
+      especialidad,
+      tipoConduccion, // Frontend envía en camelCase
+      preferenciaRigidez, // Frontend envía en camelCase
     } = req.body;
 
     const query = `
@@ -143,10 +171,10 @@ router.put("/:id", async (req, res) => {
       anio,
       matricula,
       bastidor,
-      cif_propietario,
+      cifPropietario, // Se guarda como cif_propietario en DB
       especialidad,
-      tipo_conduccion,
-      preferencia_rigidez,
+      tipoConduccion, // Se guarda como tipo_conduccion en DB
+      preferenciaRigidez, // Se guarda como preferencia_rigidez en DB
       id,
     ]);
 

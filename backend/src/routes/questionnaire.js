@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const { pool } = require("../config/database");
 
-console.log("🔥 QUESTIONNAIRE ROUTE LOADED"); // ← Mover DESPUÉS de declarar router
+console.log("🔥 QUESTIONNAIRE ROUTE LOADED");
 
 // Endpoint para guardar respuestas del cuestionario
 router.post("/", async (req, res) => {
@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
   try {
     console.log("📝 Guardando cuestionario:", { cliente, motocicletas });
 
-    // Actualizar datos del cliente
+    // Actualizar datos del cliente (camelCase frontend -> snake_case DB)
     const updateClienteQuery = `
       UPDATE clientes 
       SET peso = ?, 
@@ -24,11 +24,11 @@ router.post("/", async (req, res) => {
 
     await pool.execute(updateClienteQuery, [
       cliente.peso,
-      cliente.nivelPilotaje,
+      cliente.nivelPilotaje, // Frontend: nivelPilotaje -> DB: nivel_pilotaje
       cliente.id,
     ]);
 
-    // Actualizar datos de motocicletas
+    // Actualizar datos de motocicletas (camelCase frontend -> snake_case DB)
     for (const moto of motocicletas) {
       const updateMotoQuery = `
         UPDATE motos 
@@ -40,11 +40,22 @@ router.post("/", async (req, res) => {
 
       await pool.execute(updateMotoQuery, [
         moto.especialidad,
-        moto.tipoConduccion,
-        moto.preferenciaRigidez,
+        moto.tipoConduccion, // Frontend: tipoConduccion -> DB: tipo_conduccion
+        moto.preferenciaRigidez, // Frontend: preferenciaRigidez -> DB: preferencia_rigidez
         moto.id,
       ]);
+
+      console.log(`✅ Moto ${moto.id} actualizada con:`, {
+        especialidad: moto.especialidad,
+        tipoConduccion: moto.tipoConduccion,
+        preferenciaRigidez: moto.preferenciaRigidez,
+      });
     }
+
+    console.log(`✅ Cliente ${cliente.id} actualizado con:`, {
+      peso: cliente.peso,
+      nivelPilotaje: cliente.nivelPilotaje,
+    });
 
     res.json({
       success: true,
@@ -69,7 +80,10 @@ router.get("/status/:id", async (req, res) => {
     console.log("🔍 Verificando estado del cuestionario para cliente:", id);
 
     const query = `
-      SELECT peso, nivel_pilotaje, fecha_ultima_confirmacion 
+      SELECT 
+        peso, 
+        nivel_pilotaje AS nivelPilotaje, 
+        fecha_ultima_confirmacion AS fechaUltimaConfirmacion 
       FROM clientes 
       WHERE id = ?
     `;
@@ -90,12 +104,12 @@ router.get("/status/:id", async (req, res) => {
 
     const necesitaCuestionario =
       !cliente.peso ||
-      !cliente.nivel_pilotaje ||
-      !cliente.fecha_ultima_confirmacion ||
-      new Date(cliente.fecha_ultima_confirmacion) < unAnoAtras;
+      !cliente.nivelPilotaje ||
+      !cliente.fechaUltimaConfirmacion ||
+      new Date(cliente.fechaUltimaConfirmacion) < unAnoAtras;
 
     const tipoRequerido =
-      !cliente.peso || !cliente.nivel_pilotaje ? "first-time" : "confirmation";
+      !cliente.peso || !cliente.nivelPilotaje ? "first-time" : "confirmation";
 
     console.log("📊 Estado del cuestionario:", {
       clienteId: id,

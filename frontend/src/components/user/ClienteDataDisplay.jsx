@@ -1,9 +1,31 @@
-// ClienteDataDisplay.js
 import React from "react";
 import { Weight, Target, User } from "lucide-react";
 
 const ClienteDataDisplay = ({ cliente }) => {
-  if (!cliente) return null;
+  console.log("🐛 ClienteDataDisplay - Props recibidas:", cliente);
+
+  // Validación temprana - si no hay cliente, no renderizar nada
+  if (!cliente) {
+    console.log("🐛 ClienteDataDisplay - Sin cliente, no se renderiza");
+    return null;
+  }
+
+  // Función segura para obtener valores
+  const getSafeValue = (value, fallback = null) => {
+    return value !== null && value !== undefined && value !== ""
+      ? value
+      : fallback;
+  };
+
+  // Obtener peso de manera segura
+  const peso = getSafeValue(cliente.peso);
+  const nivelPilotaje =
+    getSafeValue(cliente.nivelPilotaje) || getSafeValue(cliente.nivel_pilotaje);
+
+  console.log("🐛 ClienteDataDisplay - Valores extraídos:", {
+    peso,
+    nivelPilotaje,
+  });
 
   // Mapear valores a etiquetas legibles
   const getNivelPilotajeLabel = (nivel) => {
@@ -17,30 +39,66 @@ const ClienteDataDisplay = ({ cliente }) => {
     return niveles[nivel] || nivel;
   };
 
-  // Verificar si tiene datos del cuestionario
-  const tieneRespuestas = cliente.peso || cliente.nivelPilotaje;
+  // Crear array de datos solo con valores que existen
+  const customerDataPilotaje = [];
 
-  if (!tieneRespuestas) {
-    return null; // No mostrar nada si no hay respuestas
-  }
-
-  const customerDataPilotaje = [
-    {
+  if (peso) {
+    customerDataPilotaje.push({
       icon: Weight,
       label: "Peso",
-      value: cliente.peso ? `${cliente.peso} kg` : null,
-    },
-    {
+      value: `${peso} kg`,
+    });
+  }
+
+  if (nivelPilotaje) {
+    customerDataPilotaje.push({
       icon: Target,
       label: "Nivel",
-      value: cliente.nivelPilotaje
-        ? getNivelPilotajeLabel(cliente.nivelPilotaje)
-        : null,
-    },
-  ].filter((item) => item.value); // Solo mostrar items que tienen valor
+      value: getNivelPilotajeLabel(nivelPilotaje),
+    });
+  }
+
+  console.log(
+    "🐛 ClienteDataDisplay - Items a renderizar:",
+    customerDataPilotaje
+  );
+
+  // Si no hay datos del cuestionario, no mostrar nada
+  if (customerDataPilotaje.length === 0) {
+    console.log("🐛 ClienteDataDisplay - Sin datos del cuestionario");
+    return (
+      <div className="uleach-customer-compact__info">
+        <div
+          style={{
+            padding: "0.5rem",
+            background: "#646360ff",
+            borderRadius: "4px",
+            fontSize: "0.8em",
+            color: "white",
+          }}
+        >
+          ℹ️ Completa el cuestionario para ver tus datos de pilotaje
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="uleach-customer-compact__info">
+      {/* Debug info temporal */}
+      <div
+        style={{
+          background: "#d4edda",
+          padding: "0.5rem",
+          marginBottom: "0.5rem",
+          borderRadius: "4px",
+          fontSize: "0.8em",
+        }}
+      >
+        🐛 Datos del cuestionario encontrados: {customerDataPilotaje.length}{" "}
+        items
+      </div>
+
       {customerDataPilotaje.map((item, index) => {
         const IconComponent = item.icon;
         return (

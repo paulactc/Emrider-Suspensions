@@ -240,8 +240,14 @@ function App() {
     }));
   };
 
+  // ✅ MOSTRAR PANTALLA DE CARGA GLOBAL SI ES NECESARIO
   if (loading) {
-    return <div>Cargando...</div>;
+    return (
+      <div style={{ textAlign: "center", padding: "2rem" }}>
+        <h2>🔄 Cargando aplicación...</h2>
+        <p>Por favor espera mientras cargamos los datos iniciales.</p>
+      </div>
+    );
   }
 
   return (
@@ -250,12 +256,15 @@ function App() {
       <ScrollToTop />
 
       <Routes>
+        {/* 🏠 PÁGINA PRINCIPAL */}
         <Route
           path="/"
           element={
             <LandingPage handleButton={handleButton} listUsers={listUsers} />
           }
         />
+
+        {/* 👥 ADMINISTRACIÓN DE CLIENTES */}
         <Route
           path="/admin/clientes"
           element={
@@ -268,10 +277,28 @@ function App() {
             />
           }
         />
+
+        {/* ✅ RUTA CORREGIDA: CLIENTE CON PROPS */}
         <Route
           path="/cliente"
           element={<Cliente listCustom={listCustom} listBikes={listBikes} />}
         />
+
+        {/* ✅ NUEVA RUTA: LISTA DE CLIENTES (si es necesaria) */}
+        <Route
+          path="/list"
+          element={
+            <ListCustom
+              Custom={filteredCustom}
+              handleInputFilter={handleInputFilter}
+              filters={filters}
+              listBikes={listBikes}
+              listCustom={listCustom}
+            />
+          }
+        />
+
+        {/* ✏️ EDITAR CLIENTE */}
         <Route
           path="/editar-cliente/:id"
           element={
@@ -282,6 +309,7 @@ function App() {
           }
         />
 
+        {/* 🏍️ GESTIÓN DE MOTOS */}
         <Route
           path="/admin/motos/:id"
           element={
@@ -292,6 +320,8 @@ function App() {
           path="/admin/motosadmin/:id"
           element={<ListBikeadmin listBikes={listBikes} />}
         />
+
+        {/* 📊 DATOS TÉCNICOS */}
         <Route
           path="/custom/datos-tecnicos/:id"
           element={
@@ -306,6 +336,8 @@ function App() {
           path="/admin/datos-tecnicos-admin/:id"
           element={<TechnicalDataAdmin listTechnical={listTechnical} />}
         />
+
+        {/* 📝 FORMULARIOS */}
         <Route
           path="/formsCustom"
           element={
@@ -335,7 +367,6 @@ function App() {
             />
           }
         />
-
         <Route
           path="/TechnicalDataCustomer"
           element={<TechnicalDataCustomer />}

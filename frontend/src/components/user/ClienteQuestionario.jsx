@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   User,
   Bike,
@@ -17,7 +17,8 @@ import {
 
 const ClienteQuestionario = ({
   cliente,
-  motocicletas = [],
+  motos: motosProp, // ← nombre que envía el padre
+  motocicletas = [], // ← compat. por si aún llega con este nombre
   onComplete,
   onSkip,
   esConfirmacion = false,
@@ -31,22 +32,37 @@ const ClienteQuestionario = ({
   const [motosData, setMotosData] = useState({});
   const [isCompleting, setIsCompleting] = useState(false);
 
-  // Inicializar datos de motos
+  // ✅ array de motos con referencia estable (usa la que venga)
+  const motos = useMemo(
+    () => motosProp ?? motocicletas ?? [],
+    [motosProp, motocicletas]
+  );
+
+  // ✅ inicializar datos de motos (sin bucles)
   useEffect(() => {
-    const initialMotosData = {};
-    motocicletas.forEach((moto) => {
-      initialMotosData[moto.id] = {
-        especialidad: moto.especialidad || "",
-        tipoConduccion: moto.tipoConduccion || "",
-        preferenciaRigidez: moto.preferenciaRigidez || "",
+    const initial = {};
+    motos.forEach((m) => {
+      initial[m.id] = {
+        especialidad: m.especialidad || "",
+        tipoConduccion: m.tipoConduccion || "",
+        preferenciaRigidez: m.preferenciaRigidez || "",
       };
     });
-    setMotosData(initialMotosData);
-  }, [motocicletas]);
+    setMotosData((prev) =>
+      JSON.stringify(prev) === JSON.stringify(initial) ? prev : initial
+    );
+  }, [motos]);
 
-  // Definir pasos del cuestionario
+  // ✅ seleccionar primera moto por defecto (solo una vez)
+  useEffect(() => {
+    if (selectedMoto == null && motos.length > 0) {
+      setSelectedMoto(motos[0].id);
+    }
+  }, [motos, selectedMoto]);
+
+  // -------- Pasos --------
   const steps = [
-    // Paso 0: Información del cliente - Peso
+    // Paso 0
     {
       id: "cliente-peso",
       type: "cliente",
@@ -66,7 +82,7 @@ const ClienteQuestionario = ({
           : "El peso debe estar entre 40 y 200 kg";
       },
     },
-    // Paso 1: Información del cliente - Nivel de pilotaje
+    // Paso 1
     {
       id: "cliente-nivel",
       type: "cliente",
@@ -106,8 +122,8 @@ const ClienteQuestionario = ({
     },
   ];
 
-  // Si hay múltiples motos, agregar paso de selección
-  if (motocicletas.length > 1) {
+  // Paso de selección de moto si hay varias
+  if (motos.length > 1) {
     steps.push({
       id: "seleccionar-moto",
       type: "selection",
@@ -117,14 +133,17 @@ const ClienteQuestionario = ({
       question: "¿Para qué motocicleta quieres configurar los ajustes?",
       field: "selectedMoto",
       inputType: "moto-select",
-      motos: motocicletas,
     });
   }
 
-  // Agregar pasos para cada motocicleta
-  motocicletas.forEach((moto, index) => {
-    // Solo agregar si es moto única o si hay selección múltiple
-    const motoPrefix = motocicletas.length > 1 ? `Moto seleccionada: ` : "";
+  // Solo añadimos pasos de la moto seleccionada (o la única)
+  const motosToAsk =
+    motos.length > 1 && selectedMoto
+      ? motos.filter((m) => m.id === selectedMoto)
+      : motos;
+
+  motosToAsk.forEach((moto, index) => {
+    const motoPrefix = motos.length > 1 ? `Moto seleccionada: ` : "";
 
     // Especialidad
     steps.push({
@@ -133,7 +152,9 @@ const ClienteQuestionario = ({
       motoId: moto.id,
       motoIndex: index,
       title: `${motoPrefix}${moto.marca} ${moto.modelo}`,
-      subtitle: `Configuremos tu ${moto.marca} ${moto.modelo} (${moto.matricula})`,
+      subtitle: `Configuremos tu ${moto.marca} ${moto.modelo} (${
+        moto.matricula || ""
+      })`,
       icon: Bike,
       question: "¿Para qué tipo de terreno usas principalmente esta moto?",
       field: "especialidad",
@@ -212,41 +233,52 @@ const ClienteQuestionario = ({
     });
   });
 
-  const currentStepData = steps[currentStep];
   const totalSteps = steps.length;
+  const currentStepData = steps[currentStep];
   const isLastStep = currentStep === totalSteps - 1;
 
   const getCurrentValue = () => {
     if (currentStepData.type === "cliente") {
       return clienteData[currentStepData.field] || "";
-    } else {
-      return motosData[currentStepData.motoId]?.[currentStepData.field] || "";
     }
+    if (
+      currentStepData.inputType === "moto-select" ||
+      currentStepData.type === "selection"
+    ) {
+      return selectedMoto || "";
+    }
+    return motosData[currentStepData.motoId]?.[currentStepData.field] || "";
   };
 
   const updateValue = (value) => {
     if (currentStepData.type === "cliente") {
-      setClienteData((prev) => ({
-        ...prev,
-        [currentStepData.field]: value,
-      }));
-    } else {
-      setMotosData((prev) => ({
-        ...prev,
-        [currentStepData.motoId]: {
-          ...prev[currentStepData.motoId],
-          [currentStepData.field]: value,
-        },
-      }));
+      setClienteData((prev) => ({ ...prev, [currentStepData.field]: value }));
+      return;
     }
+    if (
+      currentStepData.inputType === "moto-select" ||
+      currentStepData.type === "selection"
+    ) {
+      setSelectedMoto(value);
+      return;
+    }
+    setMotosData((prev) => ({
+      ...prev,
+      [currentStepData.motoId]: {
+        ...prev[currentStepData.motoId],
+        [currentStepData.field]: value,
+      },
+    }));
   };
 
   const validateCurrentStep = () => {
     const value = getCurrentValue();
-    if (!value) return "Este campo es obligatorio";
-    if (currentStepData.validation) {
-      return currentStepData.validation(value);
+    if (!value) {
+      return currentStepData.inputType === "moto-select"
+        ? "Selecciona una motocicleta"
+        : "Este campo es obligatorio";
     }
+    if (currentStepData.validation) return currentStepData.validation(value);
     return null;
   };
 
@@ -263,19 +295,13 @@ const ClienteQuestionario = ({
 
   const handleComplete = async () => {
     setIsCompleting(true);
-
-    // Preparar datos para enviar
     const dataToSend = {
-      cliente: {
-        id: cliente.id,
-        ...clienteData,
-      },
+      cliente: { id: cliente.id, ...clienteData },
       motocicletas: Object.keys(motosData).map((motoId) => ({
-        id: parseInt(motoId),
+        id: isNaN(Number(motoId)) ? motoId : Number(motoId),
         ...motosData[motoId],
       })),
     };
-
     try {
       await onComplete(dataToSend);
     } catch (error) {
@@ -349,6 +375,43 @@ const ClienteQuestionario = ({
         </div>
       );
     }
+
+    if (currentStepData.inputType === "moto-select") {
+      return (
+        <div className="options-grid">
+          {motos.map((m) => (
+            <button
+              key={m.id}
+              onClick={() => updateValue(m.id)}
+              className={`option-card ${
+                selectedMoto === m.id ? "selected" : ""
+              }`}
+            >
+              <div className="option-header">
+                <Bike size={24} />
+                <h4>
+                  {m.marca} {m.modelo}
+                </h4>
+              </div>
+              <p>{m.matricula || m.bastidor || "Sin matrícula"}</p>
+              {selectedMoto === m.id && (
+                <div className="selected-indicator">
+                  <Check size={20} />
+                </div>
+              )}
+            </button>
+          ))}
+          {error && (
+            <div className="error-message full-width">
+              <AlertCircle size={16} />
+              <span>{error}</span>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -362,7 +425,8 @@ const ClienteQuestionario = ({
         </div>
         <div className="step-info">
           <span>
-            Paso {currentStep + 1} de {totalSteps}
+            {" "}
+            Paso {currentStep + 1} de {totalSteps}{" "}
           </span>
           {esConfirmacion && (
             <span className="confirmation-badge">Confirmación anual</span>
@@ -373,7 +437,10 @@ const ClienteQuestionario = ({
       <div className="questionnaire-content">
         <div className="step-header">
           <div className="step-icon">
-            <currentStepData.icon size={32} />
+            {(() => {
+              const StepIcon = currentStepData.icon;
+              return <StepIcon size={32} />;
+            })()}
           </div>
           <div className="step-text">
             <h2>{currentStepData.title}</h2>
@@ -391,18 +458,16 @@ const ClienteQuestionario = ({
         <div className="button-group">
           {currentStep > 0 && (
             <button
-              onClick={() => setCurrentStep((prev) => prev - 1)}
+              onClick={() => setCurrentStep((p) => p - 1)}
               className="btn-secondary"
             >
-              <ChevronLeft size={20} />
-              Anterior
+              <ChevronLeft size={20} /> Anterior
             </button>
           )}
 
           {!esConfirmacion && (
             <button onClick={onSkip} className="btn-skip">
-              <SkipForward size={20} />
-              Omitir por ahora
+              <SkipForward size={20} /> Omitir por ahora
             </button>
           )}
 
@@ -415,13 +480,12 @@ const ClienteQuestionario = ({
               "Guardando..."
             ) : isLastStep ? (
               <>
-                <Save size={20} />
+                <Save size={20} />{" "}
                 {esConfirmacion ? "Confirmar datos" : "Finalizar"}
               </>
             ) : (
               <>
-                Continuar
-                <ChevronRight size={20} />
+                Continuar <ChevronRight size={20} />
               </>
             )}
           </button>

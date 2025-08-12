@@ -6,7 +6,7 @@ const { pool } = require("../config/database");
 // (Opcional) ping para probar el router
 router.get("/ping", (req, res) => res.json({ message: "pong" }));
 
-// GET - Obtener todos los clientes (CON CAMPOS DEL CUESTIONARIO)
+// GET - Obtener todos los clientes (CON CAMPOS DEL CUESTIONARIO CORREGIDOS)
 router.get("/", async (req, res) => {
   try {
     const [rows] = await pool.execute(`
@@ -18,11 +18,11 @@ router.get("/", async (req, res) => {
         cif,
         direccion                        AS direccion,
         localidad                        AS poblacion,
-        codigo_postal                    AS codigoPostal,
+        codigo_postal                    AS codigo_postal,
         provincia                        AS provincia,
         peso,
-        nivel_pilotaje,
-        fecha_ultima_confirmacion
+        nivel_pilotaje                   AS nivelPilotaje,
+        fecha_ultima_confirmacion        AS fechaUltimaConfirmacion
       FROM clientes
       ORDER BY nombre
     `);
@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET - Obtener un cliente por ID (CON CAMPOS DEL CUESTIONARIO)
+// GET - Obtener un cliente por ID (CON CAMPOS DEL CUESTIONARIO CORREGIDOS)
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -41,8 +41,12 @@ router.get("/:id", async (req, res) => {
       `
       SELECT 
         id, nombre, apellidos, telefono, cif, direccion, 
-        localidad AS poblacion, codigo_postal AS codigoPostal, provincia,
-        peso, nivel_pilotaje, fecha_ultima_confirmacion
+        localidad AS poblacion, 
+        codigo_postal AS codigo_postal, 
+        provincia,
+        peso, 
+        nivel_pilotaje AS nivelPilotaje, 
+        fecha_ultima_confirmacion AS fechaUltimaConfirmacion
       FROM clientes 
       WHERE id = ?
     `,
@@ -70,9 +74,9 @@ router.post("/", async (req, res) => {
       codigo_postal,
       poblacion,
       provincia,
-      cif, // Agregar CIF si no estaba
-      peso, // ✨ NUEVO CAMPO
-      nivel_pilotaje, // ✨ NUEVO CAMPO
+      cif,
+      peso,
+      nivelPilotaje, // Frontend envía en camelCase
     } = req.body;
 
     if (!nombre || !apellidos) {
@@ -83,7 +87,7 @@ router.post("/", async (req, res) => {
 
     const query = `
       INSERT INTO clientes 
-      (nombre, apellidos, email, telefono, direccion, codigo_postal, poblacion, provincia, cif, peso, nivel_pilotaje, fecha_ultima_confirmacion) 
+      (nombre, apellidos, email, telefono, direccion, codigo_postal, localidad, provincia, cif, peso, nivel_pilotaje, fecha_ultima_confirmacion) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     `;
 
@@ -94,11 +98,11 @@ router.post("/", async (req, res) => {
       telefono,
       direccion,
       codigo_postal,
-      poblacion,
+      poblacion, // Nota: El campo en DB es 'localidad'
       provincia,
       cif,
       peso,
-      nivel_pilotaje,
+      nivelPilotaje, // Se guarda como nivel_pilotaje en DB
     ]);
 
     res.status(201).json({
@@ -111,7 +115,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// PUT - Actualizar cliente (CON CAMPOS DEL CUESTIONARIO)
+// PUT - Actualizar cliente (CON CAMPOS DEL CUESTIONARIO CORREGIDOS)
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -125,14 +129,14 @@ router.put("/:id", async (req, res) => {
       poblacion,
       provincia,
       cif,
-      peso, // ✨ NUEVO CAMPO
-      nivel_pilotaje, // ✨ NUEVO CAMPO
+      peso,
+      nivelPilotaje, // Frontend envía en camelCase
     } = req.body;
 
     const query = `
       UPDATE clientes 
       SET nombre = ?, apellidos = ?, email = ?, telefono = ?, 
-          direccion = ?, codigo_postal = ?, poblacion = ?, provincia = ?, cif = ?,
+          direccion = ?, codigo_postal = ?, localidad = ?, provincia = ?, cif = ?,
           peso = ?, nivel_pilotaje = ?, fecha_ultima_confirmacion = NOW()
       WHERE id = ?
     `;
@@ -144,11 +148,11 @@ router.put("/:id", async (req, res) => {
       telefono,
       direccion,
       codigo_postal,
-      poblacion,
+      poblacion, // Nota: El campo en DB es 'localidad'
       provincia,
       cif,
       peso,
-      nivel_pilotaje,
+      nivelPilotaje, // Se guarda como nivel_pilotaje en DB
       id,
     ]);
 
