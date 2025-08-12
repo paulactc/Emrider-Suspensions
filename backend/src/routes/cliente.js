@@ -6,7 +6,7 @@ const { pool } = require("../config/database");
 // (Opcional) ping para probar el router
 router.get("/ping", (req, res) => res.json({ message: "pong" }));
 
-// GET - Obtener todos los clientes
+// GET - Obtener todos los clientes (CON CAMPOS DEL CUESTIONARIO)
 router.get("/", async (req, res) => {
   try {
     const [rows] = await pool.execute(`
@@ -19,7 +19,10 @@ router.get("/", async (req, res) => {
         direccion                        AS direccion,
         localidad                        AS poblacion,
         codigo_postal                    AS codigoPostal,
-        provincia                        AS provincia
+        provincia                        AS provincia,
+        peso,
+        nivel_pilotaje,
+        fecha_ultima_confirmacion
       FROM clientes
       ORDER BY nombre
     `);
@@ -30,13 +33,22 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET - Obtener un cliente por ID
+// GET - Obtener un cliente por ID (CON CAMPOS DEL CUESTIONARIO)
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const [rows] = await pool.execute("SELECT * FROM clientes WHERE id = ?", [
-      id,
-    ]);
+    const [rows] = await pool.execute(
+      `
+      SELECT 
+        id, nombre, apellidos, telefono, cif, direccion, 
+        localidad AS poblacion, codigo_postal AS codigoPostal, provincia,
+        peso, nivel_pilotaje, fecha_ultima_confirmacion
+      FROM clientes 
+      WHERE id = ?
+    `,
+      [id]
+    );
+
     if (rows.length === 0)
       return res.status(404).json({ message: "Cliente no encontrado" });
     res.json(rows[0]);
@@ -58,17 +70,23 @@ router.post("/", async (req, res) => {
       codigo_postal,
       poblacion,
       provincia,
+      cif, // Agregar CIF si no estaba
+      peso, // ✨ NUEVO CAMPO
+      nivel_pilotaje, // ✨ NUEVO CAMPO
     } = req.body;
+
     if (!nombre || !apellidos) {
       return res
         .status(400)
         .json({ message: "Nombre y apellidos son obligatorios" });
     }
+
     const query = `
       INSERT INTO clientes 
-      (nombre, apellidos, email, telefono, direccion, codigo_postal, poblacion, provincia) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      (nombre, apellidos, email, telefono, direccion, codigo_postal, poblacion, provincia, cif, peso, nivel_pilotaje, fecha_ultima_confirmacion) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     `;
+
     const [result] = await pool.execute(query, [
       nombre,
       apellidos,
@@ -78,7 +96,11 @@ router.post("/", async (req, res) => {
       codigo_postal,
       poblacion,
       provincia,
+      cif,
+      peso,
+      nivel_pilotaje,
     ]);
+
     res.status(201).json({
       message: "Cliente creado exitosamente",
       clienteId: result.insertId,
@@ -89,7 +111,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// PUT - Actualizar cliente
+// PUT - Actualizar cliente (CON CAMPOS DEL CUESTIONARIO)
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -102,13 +124,19 @@ router.put("/:id", async (req, res) => {
       codigo_postal,
       poblacion,
       provincia,
+      cif,
+      peso, // ✨ NUEVO CAMPO
+      nivel_pilotaje, // ✨ NUEVO CAMPO
     } = req.body;
+
     const query = `
       UPDATE clientes 
       SET nombre = ?, apellidos = ?, email = ?, telefono = ?, 
-          direccion = ?, codigo_postal = ?, poblacion = ?, provincia = ?
+          direccion = ?, codigo_postal = ?, poblacion = ?, provincia = ?, cif = ?,
+          peso = ?, nivel_pilotaje = ?, fecha_ultima_confirmacion = NOW()
       WHERE id = ?
     `;
+
     const [result] = await pool.execute(query, [
       nombre,
       apellidos,
@@ -118,8 +146,12 @@ router.put("/:id", async (req, res) => {
       codigo_postal,
       poblacion,
       provincia,
+      cif,
+      peso,
+      nivel_pilotaje,
       id,
     ]);
+
     if (result.affectedRows === 0)
       return res.status(404).json({ message: "Cliente no encontrado" });
     res.json({ message: "Cliente actualizado exitosamente" });

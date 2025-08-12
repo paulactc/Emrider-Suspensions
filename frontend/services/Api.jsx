@@ -120,6 +120,63 @@ class ApiService {
       body: JSON.stringify(datosData),
     });
   }
+
+  // ===== 🆕 CUESTIONARIO =====
+
+  // Guardar respuestas del cuestionario
+  async saveQuestionnaire(questionnaireData) {
+    console.log("📤 Enviando cuestionario:", questionnaireData);
+    return this.makeRequest("/questionnaire", {
+      method: "POST",
+      body: JSON.stringify(questionnaireData),
+    });
+  }
+
+  // Verificar estado del cuestionario para un cliente
+  async getQuestionnaireStatus(clienteId) {
+    console.log(
+      "🔍 Verificando estado del cuestionario para cliente:",
+      clienteId
+    );
+    return this.makeRequest(`/questionnaire/status/${clienteId}`);
+  }
+
+  // Obtener cliente con datos del cuestionario incluidos
+  async getClienteCompleto(clienteId) {
+    console.log("👤 Obteniendo cliente completo:", clienteId);
+    return this.makeRequest(`/clientes/${clienteId}`);
+  }
+
+  // Obtener motos con datos del cuestionario incluidos
+  async getMotosByCifCompleto(cif) {
+    console.log("🏍️ Obteniendo motos completas por CIF:", cif);
+    // Reutilizamos el método existente ya que las motos incluirán los nuevos campos
+    return this.getMotosByCif(cif);
+  }
+
+  // ===== 🆕 MÉTODOS AUXILIARES PARA EL CUESTIONARIO =====
+
+  // Verificar si un cliente necesita completar el cuestionario
+  async clienteNecesitaCuestionario(clienteId) {
+    try {
+      const status = await this.getQuestionnaireStatus(clienteId);
+      return status.necesitaCuestionario;
+    } catch (error) {
+      console.error("Error verificando necesidad de cuestionario:", error);
+      return true; // Por seguridad, asumir que sí necesita
+    }
+  }
+
+  // Obtener tipo de cuestionario requerido
+  async getTipoCuestionarioRequerido(clienteId) {
+    try {
+      const status = await this.getQuestionnaireStatus(clienteId);
+      return status.tipoRequerido || "first-time";
+    } catch (error) {
+      console.error("Error obteniendo tipo de cuestionario:", error);
+      return "first-time";
+    }
+  }
 }
 
 // Crear instancia única del servicio

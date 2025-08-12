@@ -23,7 +23,12 @@ app.get("/", (req, res) => {
 // Rutas API
 app.use("/api/clientes", require("./src/routes/cliente"));
 app.use("/api/motos", require("./src/routes/motos"));
-app.use("/api/datos-tecnicos", require("./src/routes/datosTecnicos"));
+//app.use("/api/datos-tecnicos", require("./src/routes/datosTecnicos"));
+app.use("/api/questionnaire", require("./src/routes/questionnaire"));
+console.log("✅ Rutas registradas:");
+console.log("  - /api/clientes");
+console.log("  - /api/motos");
+console.log("  - /api/questionnaire");
 
 // Manejo de errores
 app.use((err, req, res, next) => {

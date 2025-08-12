@@ -1,4 +1,5 @@
 // UleachBike.js
+import MotoDataDisplay from "../user/MotoDataDisplay";
 import { useState } from "react";
 import { NavLink } from "react-router";
 import {
@@ -110,6 +111,7 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
                       {bike.matricula}
                     </span>
                   </div>
+
                   <div className="listMotocicle__spec-item">
                     <BookAlert className="listMotocicle__spec-item-icon" />
                     <span className="listMotocicle__spec-item-label">
@@ -120,6 +122,9 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
                     </span>
                   </div>
                 </div>
+
+                {/* Datos del cuestionario de configuración de suspensión */}
+                <MotoDataDisplay moto={bike} />
 
                 <NavLink
                   className="Newcustombike "

@@ -2,6 +2,8 @@
 @import "./core/variables";
 @import "./core/ListMotocicleUser";
 @import "./core/ListDates.scss";
+@import "./core/clientecuestionario.scss";
+
 
 // Mixins para animaciones Ohlins
 @mixin smooth-transition($duration: 0.3s) {
@@ -1206,11 +1208,16 @@ footer {
     padding: 1rem;
 
     &__header {
-      flex-direction: column;
-      gap: 1rem;
-      text-align: center;
-      padding: 1.25rem;
-    }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  background: rgb(188, 190, 190);
+  border: solid 3px rgb(224, 255, 46); // Removido el "040" extra
+  padding: 1rem; // Añadido padding
+  border-radius: 8px; // Añadido border-radius
+}
 
     &__info {
       grid-template-columns: 1fr;
@@ -1954,52 +1961,75 @@ footer {
     gap: 1rem;
     margin-bottom: 1rem;
     background: rgb(188, 190, 190);
-    border: solid 3px rgb(224, 255, 46)040;
+    border: solid 3px rgb(224, 255, 46); // Corregido
+    padding: 1rem;
+    border-radius: 8px;
+  }
 
+  &__profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
 
-    & .uleach-customer-compact__profile {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
+  &__avatar {
+    width: 48px;
+    height: 48px;
+    background-color: rgba(255, 255, 0, 0.644);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-      .uleach-customer-compact__avatar {
-        width: 48px;
-        height: 48px;
-        background-color: rgba(255, 255, 0, 0.644);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .uleach-customer-compact__basic-info {
-        h2 {
-          margin: 0;
-          font-size: 1.2rem;
-          font-weight: 600;
-        }
-
-        p {
-          margin: 0;
-          color: #ffffff;
-          font-size: 0.875rem;
-        }
-      }
+  &__basic-info {
+    h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #333;
     }
 
-    &__status {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+    p {
+      margin: 0;
+      color: #ffffff;
+      font-size: 0.875rem;
+    }
+  }
 
-      img {
-        width: 40px;
-        height: 40px;
-      }
+  &__status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 
-      span {
-        font-weight: bold;
-        color: #444;
+    img {
+      width: 40px;
+      height: 40px;
+    }
+
+    span {
+      font-weight: bold;
+      color: #444;
+    }
+  }
+
+  &__quick-actions {
+    .quick-action-btn {
+      text-decoration: none;
+      border: solid 2px #ffd700;
+      background: #3a3a3a;
+      padding: 0.5rem;
+      border-radius: 4px;
+      color: #ffd700; text-decoration: none;
+      border: solid 2px #ffd700;
+      background: #3a3a3a;
+      padding: 0.5rem;
+      border-radius: 4px;
+      color: #ffd700;
+      
+      &:hover {
+        background: #ffd700;
+        color: #3a3a3a;
       }
     }
   }
@@ -2009,8 +2039,12 @@ footer {
     flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1rem;
+  }
 
-    .uleach-customer-compact__bikes {
+  &__bikes {
+    margin-bottom: 1.5rem;
+    
+    .bike-link {
       width: 2.75rem;
       height: 2.75rem;
       background: #3a3a3a;
@@ -2023,18 +2057,6 @@ footer {
       transition: all 0.3s ease-in-out;
       border: 1px solid #4a4a4a;
     }
-
-    .info-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.95rem;
-      color: #333;
-    }
-  }
-
-  &__bikes {
-    margin-bottom: 1.5rem;
   }
 
   &__level {
@@ -2067,12 +2089,6 @@ footer {
       }
     }
 
-
-    .quick-action-btn{
-      text-decoration: none;
-      border:solid 2px #ffd700;
-      background: #3a3a3a;
-    }
     .benefits {
       h5 {
         margin-bottom: 0.5rem;

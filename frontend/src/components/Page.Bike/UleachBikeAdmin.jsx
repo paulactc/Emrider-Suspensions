@@ -1,42 +1,111 @@
 import { NavLink } from "react-router";
+import {
+  Tag,
+  Bike,
+  Calendar,
+  Hash,
+  Settings,
+  AlertTriangle,
+  BookAlert,
+} from "lucide-react";
 
 function UleachBikeAdmin({ listBikes, clientId, listTechnical }) {
-  // ✅ Recibir listTechnical
   if (!Array.isArray(listBikes) || listBikes.length === 0) {
-    return <div>No hay motocicletas disponibles</div>;
+    return (
+      <div className="uleach-bikes-container">
+        <div className="uleach-bikes-container__header">
+          <h2>Motocicletas del Cliente</h2>
+        </div>
+        <div className="uleach-bikes-container__empty">
+          <p>No hay motocicletas disponibles</p>
+        </div>
+      </div>
+    );
   }
 
-  // Filtrar las motocicletas por el clienteId proporcionado
-  const clientBikes = listBikes.filter(
-    (bike) => bike.clienteId === parseInt(clientId)
-  );
-
-  if (clientBikes.length === 0) {
-    return <div>No se encontraron motocicletas para este cliente</div>;
-  }
+  // Ya no necesitamos filtrar por clienteId porque las motos vienen filtradas del backend por CIF
+  const clientBikes = listBikes;
 
   return (
-    <ul>
-      {clientBikes.map((bike) => (
-        <li key={bike.id} className="listclient">
-          <p className="datos-cliente">Marca: {bike.marca}</p>
-          <p className="datos-cliente">Modelo: {bike.modelo}</p>
-          <p className="datos-cliente">
-            Año de fabricación: {bike.anoFabricacion}
-          </p>
-          <p className="datos-cliente">Matrícula: {bike.Matricula}</p>
-           <p className="datos-cliente">Bastidor: {bike.bastidor}</p>
+    <div className="uleach-bikes-container">
+      <div className="uleach-bikes-container__header">
+        <h2>Motocicletas del Cliente</h2>
+        <p className="uleach-bikes-container__subheader">
+          Se encontraron {clientBikes.length} motocicleta
+          {clientBikes.length !== 1 ? "s" : ""} registrada
+          {clientBikes.length !== 1 ? "s" : ""}
+        </p>
+      </div>
 
-          <NavLink
-            className="Newcustom"
-            to={`/admin/datos-tecnicos-admin/${bike.id}`}
-            state={{ listTechnical }}
-          >
-            Ver datos técnicos
-          </NavLink>
-        </li>
-      ))}
-    </ul>
+      <ul className="uleach-bikes-list">
+        {clientBikes.map((bike) => (
+          <li key={bike.id} className="listMotocicle">
+            <div className="listMotocicle__bike-visual">
+              <div className="listMotocicle__bike-icon">🏍️</div>
+              <div className="listMotocicle__badge">{bike.marca}</div>
+            </div>
+
+            <div className="listMotocicle__content">
+              <div className="listMotocicle__specs">
+                <div className="listMotocicle__spec-item">
+                  <Tag className="listMotocicle__spec-item-icon" />
+                  <span className="listMotocicle__spec-item-label">Marca:</span>
+                  <span className="listMotocicle__spec-item-value">
+                    {bike.marca || "No disponible"}
+                  </span>
+                </div>
+
+                <div className="listMotocicle__spec-item">
+                  <Bike className="listMotocicle__spec-item-icon" />
+                  <span className="listMotocicle__spec-item-label">
+                    Modelo:
+                  </span>
+                  <span className="listMotocicle__spec-item-value">
+                    {bike.modelo || "No disponible"}
+                  </span>
+                </div>
+
+                <div className="listMotocicle__spec-item">
+                  <Calendar className="listMotocicle__spec-item-icon" />
+                  <span className="listMotocicle__spec-item-label">Año:</span>
+                  <span className="listMotocicle__spec-item-value">
+                    {bike.anio || bike.anoFabricacion || "No disponible"}
+                  </span>
+                </div>
+
+                <div className="listMotocicle__spec-item">
+                  <Hash className="listMotocicle__spec-item-icon" />
+                  <span className="listMotocicle__spec-item-label">
+                    Matrícula:
+                  </span>
+                  <span className="listMotocicle__spec-item-value">
+                    {bike.matricula || bike.Matricula || "No disponible"}
+                  </span>
+                </div>
+
+                <div className="listMotocicle__spec-item">
+                  <BookAlert className="listMotocicle__spec-item-icon" />
+                  <span className="listMotocicle__spec-item-label">
+                    Bastidor:
+                  </span>
+                  <span className="listMotocicle__spec-item-value">
+                    {bike.bastidor || "No disponible"}
+                  </span>
+                </div>
+              </div>
+
+              <NavLink
+                className="Newcustombike"
+                to={`/admin/datos-tecnicos-admin/${bike.id}`}
+                state={{ listTechnical }}
+              >
+                <Settings /> Ver datos técnicos
+              </NavLink>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

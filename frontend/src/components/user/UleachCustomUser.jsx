@@ -1,3 +1,4 @@
+import ClienteDataDisplay from "./ClienteDataDisplay";
 import { NavLink } from "react-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -174,6 +175,9 @@ function UleachCustomUser({ Custom }) {
           );
         })}
       </div>
+
+      {/* Datos del cuestionario de pilotaje */}
+      <ClienteDataDisplay cliente={Custom} />
 
       {/* Motocicletas - versión compacta */}
       <div className="uleach-customer-compact__bikes">

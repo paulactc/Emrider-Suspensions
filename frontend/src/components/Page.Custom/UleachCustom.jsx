@@ -1,11 +1,35 @@
 import { NavLink } from "react-router";
 import { Edit3 } from "lucide-react";
 import { useNavigate } from "react-router";
+import React, { useEffect, useState } from "react";
+import api from "../../../services/Api"; // Asegúrate de que la ruta sea correcta
 
 function UleachCustom({ eachCustom, listBikes, listTechnical }) {
   console.log("5. eachCustom en UleachCustom (al inicio):", eachCustom);
 
   const navigate = useNavigate();
+  const [motos, setMotos] = useState([]);
+  const [loadingMotos, setLoadingMotos] = useState(false);
+
+  // Efecto para cargar las motos por CIF (igual que en UleachCustomUser)
+  useEffect(() => {
+    if (!eachCustom?.cif) return;
+
+    const cargarMotos = async () => {
+      try {
+        setLoadingMotos(true);
+        const motosData = await api.getMotosByCif(eachCustom.cif);
+        setMotos(Array.isArray(motosData) ? motosData : []);
+      } catch (err) {
+        console.error("Error cargando motos por CIF:", err);
+        setMotos([]);
+      } finally {
+        setLoadingMotos(false);
+      }
+    };
+
+    cargarMotos();
+  }, [eachCustom?.cif]);
 
   const handleEditarCliente = (cliente) => {
     navigate(`/editar-cliente/${cliente.id}`, {
@@ -25,11 +49,8 @@ function UleachCustom({ eachCustom, listBikes, listTechnical }) {
 
   const safeDisplay = (value) => value || "No disponible";
 
-  // ✅ CORRECCIÓN: Solo filtrar por clienteId
-  const motosDelCliente =
-    listBikes?.motos?.filter((moto) => moto.clienteId === eachCustom.id) || [];
-
-  const tieneMotos = motosDelCliente.length > 0;
+  // Usar las motos cargadas por CIF
+  const tieneMotos = motos.length > 0;
 
   return (
     <>
@@ -51,6 +72,7 @@ function UleachCustom({ eachCustom, listBikes, listTechnical }) {
         <p className="datos-cliente">
           Teléfono: {safeDisplay(eachCustom.telefono)}
         </p>
+        <p className="datos-cliente">CIF: {safeDisplay(eachCustom.cif)}</p>
         <p className="datos-cliente">
           Dirección: {safeDisplay(eachCustom.direccion)}
         </p>
@@ -67,14 +89,20 @@ function UleachCustom({ eachCustom, listBikes, listTechnical }) {
         {/* Mostrar datos de moto o botón de crear */}
         {eachCustom.id && (
           <div className="moto-actions">
-            {tieneMotos ? (
+            {loadingMotos ? (
+              <p className="loading-message">Cargando motocicletas...</p>
+            ) : tieneMotos ? (
               <div className="tiene-motos">
                 <NavLink
                   className="Newcustom"
                   to={`/admin/motosadmin/${eachCustom.id}`}
-                  state={{ listBikes, listTechnical }}
+                  state={{
+                    motos: motos, // Pasar las motos cargadas
+                    cif: eachCustom.cif, // Pasar el CIF
+                    listTechnical,
+                  }}
                 >
-                  Ver motocicletas ({motosDelCliente.length})
+                  Ver motocicletas ({motos.length})
                 </NavLink>
               </div>
             ) : (

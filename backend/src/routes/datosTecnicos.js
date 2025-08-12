@@ -1,3 +1,6 @@
+const express = require("express");
+const router = express.Router();
+
 // routes/datos-tecnicos.js
 router.get("/moto/:motoId", async (req, res) => {
   const { motoId } = req.params;
@@ -7,3 +10,4 @@ router.get("/moto/:motoId", async (req, res) => {
   );
   res.json(rows);
 });
+module.exports = router;

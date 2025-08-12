@@ -30,60 +30,160 @@ function ListCustom({
     setPaginaActual(numero);
   };
 
+  // Función para generar números de página visibles
+  const generarNumerosPagina = () => {
+    const delta = 2; // Número de páginas a mostrar a cada lado de la actual
+    const range = [];
+    const rangeWithDots = [];
+
+    // Calcular el rango de páginas a mostrar
+    for (
+      let i = Math.max(2, paginaActual - delta);
+      i <= Math.min(totalPaginas - 1, paginaActual + delta);
+      i++
+    ) {
+      range.push(i);
+    }
+
+    // Siempre mostrar la primera página
+    if (paginaActual - delta > 2) {
+      rangeWithDots.push(1, "...");
+    } else {
+      rangeWithDots.push(1);
+    }
+
+    // Agregar el rango calculado (evitar duplicar la página 1)
+    range.forEach((i) => {
+      if (i !== 1) {
+        rangeWithDots.push(i);
+      }
+    });
+
+    // Siempre mostrar la última página
+    if (paginaActual + delta < totalPaginas - 1) {
+      rangeWithDots.push("...", totalPaginas);
+    } else if (totalPaginas > 1 && !rangeWithDots.includes(totalPaginas)) {
+      rangeWithDots.push(totalPaginas);
+    }
+
+    return rangeWithDots;
+  };
+
   return (
     <>
-      <div className="list-custom-container">
+      <div>
+        <div>
+          <h2>LISTA DE CLIENTES</h2>
+        </div>
+
         <InputSearchCustom
           handleInputFilter={handleInputFilter}
           filters={filters}
         />
-      </div>
 
-      <h3 className="list-title">LISTA DE CLIENTES</h3>
+        <div>
+          {clientesActuales && clientesActuales.length > 0 ? (
+            clientesActuales.map((eachCustom, index) => {
+              if (
+                !eachCustom ||
+                typeof eachCustom !== "object" ||
+                (!eachCustom.nombre && !eachCustom.apellidos)
+              ) {
+                return null;
+              }
 
-      <ul className="custom-list">
-        {clientesActuales && clientesActuales.length > 0 ? (
-          clientesActuales.map((eachCustom, index) => {
-           if (
-  !eachCustom ||
-  typeof eachCustom !== "object" ||
-  (!eachCustom.nombre && !eachCustom.apellidos)
-) {
-  return null;
-            }
-            return (
-              <UleachCustom
-                eachCustom={eachCustom}
-               key={`${eachCustom.nombre || "anon"}-${eachCustom.apellidos || "user"}-${index}`}
-                listBikes={listBikes}
-              />
-            );
-          })
-        ) : (
-          <li className="no-results-message">
-            <p>No hay datos disponibles para mostrar.</p>
-          </li>
-        )}
-      </ul>
-
-      {/* Controles de paginación */}
-      <div className="pagination-controls">
-        {Array.from({ length: totalPaginas }, (_, i) => (
-          <button
-            key={i + 1}
-            onClick={() => cambiarPagina(i + 1)}
-            disabled={paginaActual === i + 1}
-            // Aplica la clase del botón y la clase 'active' condicionalmente
-            className={`paginationButton ${
-              paginaActual === i + 1 ? "active" : ""
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-        <div className="total-clientes">
-          <em>Número de clientes: {dataToUse.length}</em>
+              return (
+                <UleachCustom
+                  key={eachCustom.id || index}
+                  eachCustom={eachCustom}
+                  listBikes={listBikes}
+                />
+              );
+            })
+          ) : (
+            <div>
+              <p>No hay datos disponibles para mostrar.</p>
+            </div>
+          )}
         </div>
+
+        {/* Controles de paginación mejorados */}
+        {totalPaginas > 1 && (
+          <div className="pagination-container">
+            <div className="pagination-controls">
+              {/* Botón Primera página */}
+              <button
+                onClick={() => cambiarPagina(1)}
+                disabled={paginaActual === 1}
+                className="paginationButton"
+                title="Primera página"
+              >
+                &#171;
+              </button>
+
+              {/* Botón Anterior */}
+              <button
+                onClick={() => cambiarPagina(paginaActual - 1)}
+                disabled={paginaActual === 1}
+                className="paginationButton"
+                title="Página anterior"
+              >
+                &#8249;
+              </button>
+
+              {/* Números de página */}
+              {generarNumerosPagina().map((numero, index) => (
+                <React.Fragment key={index}>
+                  {numero === "..." ? (
+                    <span className="pagination-dots">...</span>
+                  ) : (
+                    <button
+                      onClick={() => cambiarPagina(numero)}
+                      disabled={paginaActual === numero}
+                      className={`paginationButton ${
+                        paginaActual === numero ? "active" : ""
+                      }`}
+                    >
+                      {numero}
+                    </button>
+                  )}
+                </React.Fragment>
+              ))}
+
+              {/* Botón Siguiente */}
+              <button
+                onClick={() => cambiarPagina(paginaActual + 1)}
+                disabled={paginaActual === totalPaginas}
+                className="paginationButton"
+                title="Página siguiente"
+              >
+                &#8250;
+              </button>
+
+              {/* Botón Última página */}
+              <button
+                onClick={() => cambiarPagina(totalPaginas)}
+                disabled={paginaActual === totalPaginas}
+                className="paginationButton"
+                title="Última página"
+              >
+                &#187;
+              </button>
+            </div>
+
+            {/* Información adicional */}
+            <div className="pagination-info">
+              <span>
+                Página {paginaActual} de {totalPaginas}
+              </span>
+              <span>
+                Mostrando {indicePrimerCliente + 1} -{" "}
+                {Math.min(indiceUltimoCliente, dataToUse.length)} de{" "}
+                {dataToUse.length} clientes
+              </span>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

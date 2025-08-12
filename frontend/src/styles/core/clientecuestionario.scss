@@ -1,0 +1,814 @@
+
+        .questionnaire-container {
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 2rem;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .questionnaire-header {
+          margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+          height: 8px;
+          background: #e5e7eb;
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, $ohlins-yellow, $ohlins-yellow-light);
+          border-radius: 4px;
+          position: relative;
+        }
+
+        .step-info {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          color: #6b7280;
+          font-size: 0.875rem;
+        }
+
+        .confirmation-badge {
+          background: #fef3c7;
+          color: #92400e;
+          padding: 0.25rem 0.75rem;
+          border-radius: 12px;
+          font-weight: 500;
+        }
+
+        .questionnaire-content {
+          margin-bottom: 2rem;
+        }
+
+        .step-header {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-bottom: 2rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid #101011;
+        }
+
+        .step-icon {
+          width: 64px;
+          height: 64px;
+          background-color: $ohlins-yellow;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+        }
+
+        .step-text h2 {
+          margin: 0 0 0.5rem 0;
+          color: #111827;
+          font-size: 1.5rem;
+          font-weight: 600;
+        }
+
+        .step-text p {
+          margin: 0;
+          color: #6b7280;
+        }
+
+        .question-section h3 {
+          margin: 0 0 1.5rem 0;
+          color: #111827;
+          font-size: 1.25rem;
+          font-weight: 500;
+        }
+
+        .input-group {
+          max-width: 300px;
+        }
+
+        .number-input-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+
+        .number-input {
+          width: 100%;
+          padding: 0.75rem 3rem 0.75rem 1rem;
+          border: 2px solid #e5e7eb;
+          border-radius: 8px;
+          font-size: 1rem;
+          transition: border-color 0.2s;
+        }
+
+        .number-input:focus {
+          outline: none;
+          border-color: #f59e0b;
+        }
+
+        .number-input.error {
+          border-color: #ef4444;
+        }
+
+        .input-suffix {
+          position: absolute;
+          right: 1rem;
+          color: #6b7280;
+          font-weight: 500;
+        }
+
+        .options-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 1rem;
+        }
+
+        .option-card {
+          position: relative;
+          background: #f9fafb;
+          border: 2px solid #e5e7eb;
+          border-radius: 12px;
+          padding: 1.5rem;
+          text-align: left;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .option-card:hover {
+          background: #f3f4f6;
+          border-color: #d1d5db;
+        }
+
+        .option-card.selected {
+          background: #fef3c7;
+          border-color: #f59e0b;
+          box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+
+        .option-header {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .option-header h4 {
+          margin: 0;
+          color: #111827;
+          font-size: 1rem;
+          font-weight: 600;
+        }
+
+        .option-card p {
+          margin: 0;
+          color: #6b7280;
+          font-size: 0.875rem;
+          line-height: 1.4;
+        }
+
+        .selected-indicator {
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+          background: #f59e0b;
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+        }
+
+        .error-message {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #ef4444;
+          font-size: 0.875rem;
+          margin-top: 0.5rem;
+        }
+
+        .error-message.full-width {
+          grid-column: 1 / -1;
+          justify-self: center;
+        }
+
+        .questionnaire-footer {
+          border-top: 1px solid #e5e7eb;
+          padding-top: 1.5rem;
+        }
+
+        .button-group {
+          display: flex;
+          gap: 1rem;
+          justify-content: flex-end;
+          flex-wrap: wrap;
+        }
+
+        .btn-primary, .btn-secondary, .btn-skip {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.75rem 1.5rem;
+          border-radius: 8px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s;
+          border: none;
+        }
+
+        .btn-primary {
+         text-decoration: none;
+      border: solid 2px #ffd700;
+      background: #3a3a3a;
+      padding: 0.5rem;
+      border-radius: 4px;
+      color: #ffd700;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-primary:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .btn-secondary {
+          background: #f3f4f6;
+          color: #374151;
+          border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+          background: #e5e7eb;
+        }
+
+        .btn-skip {
+          background: transparent;
+          color: #6b7280;
+        }
+
+        .btn-skip:hover {
+          color: #374151;
+        }
+
+        @media (max-width: 640px) {
+          .questionnaire-container {
+            padding: 1rem;
+          }
+
+          .step-header {
+            flex-direction: column;
+            text-align: center;
+          }
+
+          .options-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .button-group {
+            justify-content: stretch;
+          }
+
+          .btn-primary, .btn-secondary, .btn-skip {
+            flex: 1;
+            justify-content: center;
+          }
+        }
+      
+
+        // _cliente.scss - Estilos para Cliente y Cuestionario
+// Usando variables Ohlins definidas en variables.scss
+
+// ==============================================
+// CONTENEDOR PRINCIPAL DEL CLIENTE
+// ==============================================
+.cliente-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  background: linear-gradient(to bottom right, $ohlins-gray-900, $ohlins-gray-800, $ohlins-black);
+  min-height: 100vh;
+}
+
+// ==============================================
+// ESTILOS DEL CUESTIONARIO
+// ==============================================
+.questionnaire-wrapper {
+  margin-bottom: 2rem;
+}
+
+.questionnaire-intro {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, $ohlins-gray-800, $ohlins-gray-900);
+  border-radius: 12px;
+  border: 1px solid $ohlins-gray-700;
+  box-shadow: 0 4px 24px rgba($ohlins-black, 0.3);
+  position: relative;
+  overflow: hidden;
+
+  // Efecto de brillo sutil
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba($ohlins-yellow, 0.05), transparent);
+    animation: shimmer 3s infinite;
+  }
+
+  h1 {
+    margin: 0 0 1rem 0;
+    color: $ohlins-white;
+    font-size: 2rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba($ohlins-black, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  p {
+    margin: 0;
+    color: $ohlins-gray-300;
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+}
+
+// ==============================================
+// ACCIONES DEL CLIENTE
+// ==============================================
+.cliente-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid $ohlins-gray-700;
+}
+
+.btn-update-data {
+  background: linear-gradient(135deg, $ohlins-yellow, $ohlins-yellow-light);
+  color: $ohlins-black;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 15px rgba($ohlins-yellow, 0.3);
+  font-family: inherit;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba($ohlins-yellow, 0.4);
+    background: linear-gradient(135deg, $ohlins-yellow-light, $ohlins-yellow-dark);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// ==============================================
+// CONTENEDOR DEL CUESTIONARIO
+// ==============================================
+.questionnaire-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: $ohlins-gray-800;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba($ohlins-black, 0.3);
+  border: 1px solid $ohlins-gray-700;
+}
+
+// ==============================================
+// HEADER DEL CUESTIONARIO
+// ==============================================
+.questionnaire-header {
+  margin-bottom: 2rem;
+}
+
+.progress-bar {
+  height: 8px;
+  background: $ohlins-gray-600;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, $ohlins-yellow, $ohlins-yellow-light);
+  transition: width 0.3s ease;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba($ohlins-white, 0.4), transparent);
+    animation: progressShimmer 2s infinite;
+  }
+}
+
+.step-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: $ohlins-gray-400;
+  font-size: 0.875rem;
+}
+
+.confirmation-badge {
+  background: rgba($ohlins-yellow, 0.2);
+  color: $ohlins-yellow;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 500;
+  border: 1px solid rgba($ohlins-yellow, 0.3);
+}
+
+// ==============================================
+// CONTENIDO DEL CUESTIONARIO
+// ==============================================
+.questionnaire-content {
+  margin-bottom: 2rem;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid $ohlins-gray-700;
+}
+
+.step-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, $ohlins-yellow, $ohlins-yellow-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $ohlins-black;
+  box-shadow: 0 4px 15px rgba($ohlins-yellow, 0.3);
+}
+
+.step-text {
+  h2 {
+    margin: 0 0 0.5rem 0;
+    color: $ohlins-white;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    color: $ohlins-gray-400;
+  }
+}
+
+.question-section {
+  h3 {
+    margin: 0 0 1.5rem 0;
+    color: $ohlins-white;
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+}
+
+// ==============================================
+// INPUTS DEL CUESTIONARIO
+// ==============================================
+.input-group {
+  max-width: 300px;
+}
+
+.number-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.number-input {
+  width: 100%;
+  padding: 0.75rem 3rem 0.75rem 1rem;
+  border: 2px solid $ohlins-gray-600;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  background: $ohlins-gray-700;
+  color: $ohlins-white;
+
+  &:focus {
+    outline: none;
+    border-color: $ohlins-yellow;
+    box-shadow: 0 0 0 3px rgba($ohlins-yellow, 0.1);
+  }
+
+  &.error {
+    border-color: #ef4444;
+  }
+
+  &::placeholder {
+    color: $ohlins-gray-400;
+  }
+}
+
+.input-suffix {
+  position: absolute;
+  right: 1rem;
+  color: $ohlins-gray-400;
+  font-weight: 500;
+}
+
+// ==============================================
+// OPCIONES DEL CUESTIONARIO
+// ==============================================
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.option-card {
+  position: relative;
+  background: $ohlins-gray-700;
+  border: 2px solid $ohlins-gray-600;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: $ohlins-gray-600;
+    border-color: $ohlins-gray-400
+  }
+
+  &.selected {
+    background: rgba($ohlins-yellow, 0.1);
+    border-color: $ohlins-yellow;
+    box-shadow: 0 0 0 3px rgba($ohlins-yellow, 0.1);
+  }
+}
+
+.option-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+
+  h4 {
+    margin: 0;
+    color: $ohlins-white;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+
+.option-card p {
+  margin: 0;
+  color: $ohlins-gray-400;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.selected-indicator {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: $ohlins-yellow;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $ohlins-black;
+}
+
+// ==============================================
+// SELECTOR DE MOTOS
+// ==============================================
+.moto-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 600px;
+}
+
+.moto-card {
+  position: relative;
+  background: $ohlins-gray-700;
+  border: 2px solid $ohlins-gray-600;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+
+  &:hover {
+    background: $ohlins-gray-600;
+    border-color: $ohlins-gray-400;
+  }
+
+  &.selected {
+    background: rgba($ohlins-yellow, 0.1);
+    border-color: $ohlins-yellow;
+    box-shadow: 0 0 0 3px rgba($ohlins-yellow, 0.1);
+  }
+}
+
+.moto-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.moto-icon {
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $ohlins-gray-600;
+  border-radius: 50%;
+}
+
+.moto-info {
+  h4 {
+    margin: 0 0 0.25rem 0;
+    color: $ohlins-white;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0 0 0.25rem 0;
+    color: $ohlins-gray-400;
+    font-size: 0.875rem;
+  }
+}
+
+.moto-bastidor {
+  color: $ohlins-gray-400;
+  font-size: 0.75rem;
+}
+
+// ==============================================
+// MENSAJES DE ERROR
+// ==============================================
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+
+  &.full-width {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+}
+
+// ==============================================
+// FOOTER DEL CUESTIONARIO
+// ==============================================
+.questionnaire-footer {
+  border-top: 1px solid $ohlins-gray-700;
+  padding-top: 1.5rem;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-skip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, $ohlins-yellow, $ohlins-yellow-light);
+  color: $ohlins-black;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($ohlins-yellow, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-secondary {
+  background: $ohlins-gray-600;
+  color: $ohlins-white;
+  border: 1px solid $ohlins-gray-400;
+
+  &:hover {
+    background: $ohlins-gray-400;
+  }
+}
+
+.btn-skip {
+  background: transparent;
+  color: $ohlins-gray-400;
+
+  &:hover {
+    color: $ohlins-white;
+  }
+}
+
+// ==============================================
+// ANIMACIONES
+// ==============================================
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes progressShimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+// ==============================================
+// RESPONSIVE DESIGN
+// ==============================================
+@media (max-width: 640px) {
+  .questionnaire-container {
+    padding: 1rem;
+  }
+
+  .step-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .moto-selector {
+    max-width: 100%;
+  }
+
+  .button-group {
+    justify-content: stretch;
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-skip {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+}
