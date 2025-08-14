@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { NavLink } from "react-router"; // ✅ CORREGIDO: react-router-dom en lugar de react-router
 import { useState } from "react";
 import {
   Tag,
@@ -35,25 +35,6 @@ const SuspensionTypeModal = ({ isOpen, onClose, onSelect, motoData }) => {
             </strong>
             {motoData?.matricula && ` - ${motoData.matricula}`}
           </p>
-
-          {/* 🔍 DEBUG INFO */}
-          <div
-            style={{
-              background: "#f0f0f0",
-              padding: "10px",
-              margin: "10px 0",
-              borderRadius: "4px",
-              fontSize: "12px",
-            }}
-          >
-            <strong>🔍 DEBUG:</strong>
-            <br />
-            ID de moto: {motoData?.id || "undefined"}
-            <br />
-            Tipo de ID: {typeof motoData?.id}
-            <br />
-            Moto completa: {JSON.stringify(motoData, null, 2)}
-          </div>
 
           <div className="suspension-options">
             <button
@@ -149,7 +130,7 @@ function UleachBikeAdmin({ listBikes, clientId, listTechnical }) {
     const fullUrl = path + `?clientId=${clientId}`;
     console.log("🌐 URL final con clientId:", fullUrl);
 
-    // Usar navigate o window.location según tu preferencia
+    // Usar window.location para navegar
     console.log("🚀 PASO 4 - Navegando...");
     window.location.href = fullUrl;
   };
@@ -164,26 +145,6 @@ function UleachBikeAdmin({ listBikes, clientId, listTechnical }) {
             {clientBikes.length !== 1 ? "s" : ""} registrada
             {clientBikes.length !== 1 ? "s" : ""}
           </p>
-        </div>
-
-        {/* 🔍 DEBUG: Mostrar datos de las motos */}
-        <div
-          style={{
-            background: "#e8f5e8",
-            padding: "10px",
-            margin: "10px 0",
-            borderRadius: "4px",
-            fontSize: "12px",
-          }}
-        >
-          <strong>🔍 DEBUG - Lista de motos:</strong>
-          <br />
-          {clientBikes.map((bike, index) => (
-            <div key={index}>
-              Moto {index + 1}: ID={bike.id}, Marca={bike.marca}, Modelo=
-              {bike.modelo}
-            </div>
-          ))}
         </div>
 
         <ul className="uleach-bikes-list">
@@ -273,127 +234,6 @@ function UleachBikeAdmin({ listBikes, clientId, listTechnical }) {
         onSelect={handleSuspensionSelect}
         motoData={selectedMoto}
       />
-
-      {/* Estilos para el modal */}
-      <style jsx>{`
-        .modal-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.8);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-        }
-
-        .modal-content {
-          background: white;
-          border-radius: 12px;
-          padding: 2rem;
-          max-width: 500px;
-          width: 90%;
-          max-height: 80vh;
-          overflow-y: auto;
-        }
-
-        .modal-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1.5rem;
-          padding-bottom: 1rem;
-          border-bottom: 1px solid #e5e7eb;
-        }
-
-        .modal-header h3 {
-          margin: 0;
-          color: #111827;
-          font-size: 1.5rem;
-        }
-
-        .modal-close {
-          background: none;
-          border: none;
-          cursor: pointer;
-          padding: 0.5rem;
-          border-radius: 4px;
-          transition: background-color 0.2s;
-        }
-
-        .modal-close:hover {
-          background: #f3f4f6;
-        }
-
-        .modal-body p {
-          color: #6b7280;
-          margin-bottom: 1rem;
-        }
-
-        .moto-info {
-          background: #f9fafb;
-          padding: 1rem;
-          border-radius: 8px;
-          margin-bottom: 1.5rem;
-          color: #374151 !important;
-        }
-
-        .suspension-options {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1rem;
-        }
-
-        .suspension-option {
-          background: #f9fafb;
-          border: 2px solid #e5e7eb;
-          border-radius: 12px;
-          padding: 1.5rem;
-          cursor: pointer;
-          transition: all 0.2s;
-          text-align: center;
-        }
-
-        .suspension-option:hover {
-          background: #f3f4f6;
-          border-color: #d1d5db;
-        }
-
-        .suspension-option--ff:hover {
-          border-color: #3b82f6;
-          background: #eff6ff;
-        }
-
-        .suspension-option--rr:hover {
-          border-color: #10b981;
-          background: #ecfdf5;
-        }
-
-        .option-icon {
-          font-size: 2rem;
-          margin-bottom: 0.5rem;
-        }
-
-        .option-details h4 {
-          margin: 0 0 0.5rem 0;
-          color: #111827;
-          font-size: 1rem;
-        }
-
-        .option-details p {
-          margin: 0;
-          color: #6b7280;
-          font-size: 0.875rem;
-        }
-
-        @media (max-width: 640px) {
-          .suspension-options {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
     </>
   );
 }

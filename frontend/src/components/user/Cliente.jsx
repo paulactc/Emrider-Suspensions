@@ -343,34 +343,6 @@ function Cliente({ listCustom, listBikes }) {
   // ✅ MOSTRAR CLIENTE NORMAL
   return (
     <div className="cliente-container">
-      {/* 🐛 INFORMACIÓN DE DEBUG */}
-      <div
-        style={{
-          background: "#e8f5e8",
-          padding: "1rem",
-          margin: "1rem",
-          borderRadius: "4px",
-          border: "1px solid #4caf50",
-          fontSize: "0.9em",
-        }}
-      >
-        <strong>🐛 INFORMACIÓN DE DEBUG:</strong>
-        <br />
-        Cliente ID: {customToRender.id}
-        <br />
-        Nombre: {customToRender.nombre}
-        <br />
-        Apellidos: {customToRender.apellidos}
-        <br />
-        CIF: {customToRender.cif || "No disponible"}
-        <br />
-        Peso: {customToRender.peso || "No definido"}
-        <br />
-        Nivel Pilotaje: {customToRender.nivelPilotaje || "No definido"}
-        <br />
-        Motos cargadas: {clienteMotos.length}
-      </div>
-
       <UleachCustomUser
         key={customToRender.id}
         Custom={customToRender}

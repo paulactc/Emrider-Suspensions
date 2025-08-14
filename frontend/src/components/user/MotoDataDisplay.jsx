@@ -108,19 +108,6 @@ const MotoDataDisplay = ({ moto }) => {
 
   return (
     <div className="listMotocicle__specs">
-      {/* Debug info temporal */}
-      <div
-        style={{
-          background: "#cfe2ff",
-          padding: "0.5rem",
-          marginBottom: "0.5rem",
-          borderRadius: "4px",
-          fontSize: "0.8em",
-        }}
-      >
-        🐛 Configuración de moto encontrada: {configData.length} items
-      </div>
-
       {configData.map((item, index) => {
         const IconComponent = item.icon;
         return (

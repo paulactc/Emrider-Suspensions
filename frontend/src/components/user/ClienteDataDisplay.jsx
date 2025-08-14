@@ -85,20 +85,6 @@ const ClienteDataDisplay = ({ cliente }) => {
 
   return (
     <div className="uleach-customer-compact__info">
-      {/* Debug info temporal */}
-      <div
-        style={{
-          background: "#d4edda",
-          padding: "0.5rem",
-          marginBottom: "0.5rem",
-          borderRadius: "4px",
-          fontSize: "0.8em",
-        }}
-      >
-        🐛 Datos del cuestionario encontrados: {customerDataPilotaje.length}{" "}
-        items
-      </div>
-
       {customerDataPilotaje.map((item, index) => {
         const IconComponent = item.icon;
         return (
