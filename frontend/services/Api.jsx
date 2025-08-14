@@ -59,9 +59,15 @@ class ApiService {
   }
 
   // ===== MOTOS =====
-  // (tu backend actual)
+
+  // Obtener motos por CIF
   getMotosByCif(cif) {
     return this.makeRequest(`/motos/by-cif/${encodeURIComponent(cif)}`);
+  }
+
+  // Obtener una moto por ID
+  async getMoto(id) {
+    return this.makeRequest(`/motos/${id}`);
   }
 
   // Obtener todas las motos
@@ -96,8 +102,78 @@ class ApiService {
       method: "DELETE",
     });
   }
+  // ===== MOTOS - MÉTODOS ADICIONALES =====
+
+  // Obtener una moto específica por ID
+  async getMoto(id) {
+    return this.makeRequest(`/motos/${id}`);
+  }
+
+  // Obtener datos completos de cliente y moto para servicios técnicos
+  async getClienteYMotoParaServicio(motoId) {
+    try {
+      console.log(
+        "🔍 Obteniendo datos completos para servicio técnico, moto ID:",
+        motoId
+      );
+
+      // 1. Obtener datos de la moto
+      const moto = await this.getMoto(motoId);
+      console.log("🏍️ Moto obtenida:", moto);
+
+      // 2. Obtener datos del cliente por CIF
+      let cliente = null;
+      if (moto.cifPropietario) {
+        const clientes = await this.getClientes();
+        cliente = clientes.find((c) => c.cif === moto.cifPropietario);
+        console.log("👤 Cliente encontrado:", cliente);
+      }
+
+      return {
+        moto,
+        cliente,
+        datosCompletos: {
+          clienteData: !!(cliente?.peso && cliente?.nivelPilotaje),
+          motoData: !!(
+            moto.especialidad &&
+            moto.tipoConduccion &&
+            moto.preferenciaRigidez
+          ),
+        },
+      };
+    } catch (error) {
+      console.error("❌ Error obteniendo datos para servicio:", error);
+      throw error;
+    }
+  }
+
+  // Verificar si un cliente necesita completar el cuestionario
+  async verificarEstadoCuestionario(motoId) {
+    try {
+      const datos = await this.getClienteYMotoParaServicio(motoId);
+
+      return {
+        necesitaCuestionario:
+          !datos.datosCompletos.clienteData || !datos.datosCompletos.motoData,
+        clienteCompleto: datos.datosCompletos.clienteData,
+        motoCompleta: datos.datosCompletos.motoData,
+        cliente: datos.cliente,
+        moto: datos.moto,
+      };
+    } catch (error) {
+      console.error("❌ Error verificando estado del cuestionario:", error);
+      return {
+        necesitaCuestionario: true,
+        clienteCompleto: false,
+        motoCompleta: false,
+        cliente: null,
+        moto: null,
+      };
+    }
+  }
 
   // ===== DATOS TÉCNICOS =====
+
   // GET datos técnicos por motoId
   getDatosTecnicosByMoto(motoId) {
     return this.makeRequest(

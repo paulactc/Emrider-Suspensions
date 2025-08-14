@@ -15,6 +15,9 @@ import ListBike from "./Page.Bike/ListBike";
 import ListBikeadmin from "./Page.Bike/ListBikeadmin";
 import TechnicalDataAdmin from "./admin/forms/TechnicalDataAdmin";
 import EditarDatosCliente from "./Page.Custom/EditarDatosCliente";
+import FormTechnicalFF from "./admin/forms/FormTechnicalFF.jsx";
+import FormTechnicalRR from "./admin/forms/FormTechnicalRR.jsx";
+import FormTechnicalDataWithClientData from "./admin/forms/FormTechnicalDataWithClientData";
 
 // Importar el servicio API
 import apiService from "../../services/Api.jsx";
@@ -46,7 +49,6 @@ function App() {
         setLoading(true);
         const clientes = await apiService.getClientes();
         setListCustom(clientes);
-        console.log("✅ Clientes cargados desde API:", clientes);
       } catch (error) {
         console.error("❌ Error al cargar clientes:", error);
         setError("Error al cargar los clientes");
@@ -359,19 +361,40 @@ function App() {
           }
         />
         <Route
-          path="/FormtechnicalDataCustomer"
+          path="/FormtechnicalDataCustomer/:motoId?"
           element={
-            <FormTechnicalDataCustomer
+            <FormTechnicalDataWithClientData
               handleChange={handleChange}
               formData={formData}
             />
           }
         />
+
         <Route
           path="/TechnicalDataCustomer"
           element={<TechnicalDataCustomer />}
         />
         <Route path="/TechnicalDataAdmin" element={<TechnicalDataAdmin />} />
+
+        <Route
+          path="/admin/form-technical-ff/:motoId"
+          element={
+            <FormTechnicalDataWithClientData
+              tipoSuspension="FF"
+              formData={formData}
+            />
+          }
+        />
+
+        <Route
+          path="/admin/form-technical-rr/:motoId"
+          element={
+            <FormTechnicalDataWithClientData
+              tipoSuspension="RR"
+              formData={formData}
+            />
+          }
+        />
       </Routes>
       <Footer />
     </>

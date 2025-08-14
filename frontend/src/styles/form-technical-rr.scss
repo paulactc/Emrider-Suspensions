@@ -1,0 +1,522 @@
+// form-technical-rr.scss
+// Estilos para el formulario de datos técnicos RR (Rear Shock)
+
+
+
+// ======= MIXINS =======
+@mixin smooth-transition($duration: 0.3s) {
+  transition: all $duration ease-in-out;
+}
+
+@mixin ohlins-shadow($color: $ohlins-yellow) {
+  box-shadow: 0 4px 15px rgba($color, 0.2);
+}
+
+@mixin focus-ring($color: $ohlins-yellow) {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba($color, 0.2);
+  border-color: $color;
+}
+
+// ======= CONTENEDOR PRINCIPAL =======
+.form-technical-rr {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, $ohlins-gray-900 0%, $ohlins-black 100%);
+  min-height: 100vh;
+  color: $ohlins-white;
+}
+
+// ======= HEADER DEL FORMULARIO =======
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, $ohlins-gray-800 0%, $ohlins-gray-700 100%);
+  border-radius: 12px;
+  border: 1px solid $ohlins-gray-600;
+  border-left: 4px solid $ohlins-yellow;
+  @include ohlins-shadow($ohlins-gray-600);
+
+  .btn-back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba($ohlins-yellow, 0.1);
+    border: 1px solid rgba($ohlins-yellow, 0.3);
+    color: $ohlins-yellow;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    @include smooth-transition();
+    font-weight: 600;
+
+    &:hover {
+      background: rgba($ohlins-yellow, 0.2);
+      border-color: $ohlins-yellow;
+      transform: translateX(-2px);
+    }
+  }
+
+  .header-title {
+    h1 {
+      margin: 0 0 0.5rem 0;
+      color: $ohlins-white;
+      font-size: 1.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    p {
+      margin: 0;
+      color: $ohlins-gray-400;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+  }
+}
+
+// ======= LOADING =======
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 1rem;
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid $ohlins-gray-600;
+    border-top: 3px solid $ohlins-yellow;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    color: $ohlins-gray-400;
+    font-size: 1.125rem;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// ======= BANNER DE ERROR =======
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: #fca5a5;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+// ======= FORMULARIO TÉCNICO =======
+.technical-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+// ======= SECCIONES DEL FORMULARIO =======
+.form-section {
+  background: linear-gradient(135deg, $ohlins-gray-800 0%, $ohlins-gray-700 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid $ohlins-gray-600;
+  position: relative;
+  overflow: hidden;
+  @include ohlins-shadow($ohlins-gray-600);
+
+  // Efecto de brillo sutil
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      $ohlins-yellow 50%, 
+      transparent 100%);
+    opacity: 0.6;
+  }
+
+  &.questionnaire-section {
+    border-left: 4px solid #3b82f6;
+    
+    &::before {
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        #3b82f6 50%, 
+        transparent 100%);
+    }
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid $ohlins-gray-600;
+
+  svg {
+    color: $ohlins-yellow;
+    filter: drop-shadow(0 0 6px rgba($ohlins-yellow, 0.3));
+  }
+
+  h2 {
+    margin: 0;
+    color: $ohlins-white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  p {
+    margin: 0;
+    color: $ohlins-gray-400;
+    font-size: 0.875rem;
+    margin-left: auto;
+    font-style: italic;
+  }
+}
+
+// ======= GRID DE FORMULARIO =======
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+// ======= GRUPOS DE FORMULARIO =======
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+.form-label {
+  color: $ohlins-gray-300;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba($ohlins-gray-600, 0.6);
+  border: 1px solid $ohlins-gray-400;
+  border-radius: 8px;
+  color: $ohlins-white;
+  font-size: 1rem;
+  @include smooth-transition();
+  backdrop-filter: blur(10px);
+
+  &::placeholder {
+    color: $ohlins-gray-400;
+  }
+
+  &:focus {
+    @include focus-ring($ohlins-yellow);
+    background: rgba($ohlins-gray-600, 0.8);
+  }
+
+  &:hover {
+    border-color: $ohlins-gray-400;
+    background: rgba($ohlins-gray-600, 0.7);
+  }
+
+  &.error {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+
+    &:focus {
+      @include focus-ring(#ef4444);
+    }
+  }
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+
+.error-text {
+  color: #fca5a5;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+// ======= GRID DE ARRAYS =======
+.array-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 1rem;
+  background: rgba($ohlins-gray-600, 0.3);
+  border-radius: 8px;
+  border: 1px solid $ohlins-gray-400;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+.array-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.array-label {
+  color: $ohlins-gray-400;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  min-width: 20px;
+}
+
+.array-input {
+  width: 100%;
+  max-width: 80px;
+  padding: 0.5rem;
+  background: rgba($ohlins-gray-700, 0.8);
+  border: 1px solid $ohlins-gray-400;
+  border-radius: 6px;
+  color: $ohlins-white;
+  font-size: 0.875rem;
+  text-align: center;
+  @include smooth-transition();
+
+  &::placeholder {
+    color: $ohlins-gray-400;
+  }
+
+  &:focus {
+    @include focus-ring($ohlins-yellow);
+    background: rgba($ohlins-gray-600, 0.9);
+  }
+
+  &:hover {
+    border-color: $ohlins-gray-400;
+  }
+}
+
+// ======= ACCIONES DEL FORMULARIO =======
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding: 2rem;
+  border-top: 1px solid $ohlins-gray-600;
+  background: rgba($ohlins-gray-800, 0.5);
+  border-radius: 0 0 16px 16px;
+  backdrop-filter: blur(10px);
+
+  @media (max-width: 768px) {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+  }
+}
+
+.btn-cancel,
+.btn-save {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  @include smooth-transition();
+  border: none;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+}
+
+.btn-cancel {
+  background: rgba($ohlins-gray-600, 0.8);
+  color: $ohlins-gray-300;
+  border: 1px solid $ohlins-gray-400;
+
+  &:hover {
+    background: rgba($ohlins-gray-400, 0.9);
+    color: $ohlins-white;
+    transform: translateY(-1px);
+  }
+}
+
+.btn-save {
+  background: linear-gradient(135deg, $ohlins-yellow, $ohlins-yellow-light);
+  color: $ohlins-black;
+  border: 1px solid $ohlins-yellow-dark;
+  @include ohlins-shadow($ohlins-yellow);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    @include ohlins-shadow($ohlins-yellow);
+    background: linear-gradient(135deg, $ohlins-yellow-light, $ohlins-yellow-dark);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid $ohlins-black;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+// ======= RESPONSIVE =======
+@media (max-width: 1200px) {
+  .form-technical-rr {
+    padding: 1.5rem;
+  }
+
+  .form-section {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .form-technical-rr {
+    padding: 1rem;
+  }
+
+  .form-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+
+    .header-title h1 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .form-section {
+    padding: 1rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+
+    h2 {
+      font-size: 1.25rem;
+    }
+
+    p {
+      margin-left: 0;
+    }
+  }
+
+  .array-grid {
+    padding: 0.75rem;
+  }
+}
+
+// ======= ANIMACIONES DE ENTRADA =======
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-section {
+  animation: fadeInUp 0.6s ease forwards;
+  
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
+}
+
+// ======= ESTADOS ESPECIALES =======
+.form-section--highlight {
+  border-color: $ohlins-yellow;
+  
+  &::before {
+    opacity: 1;
+  }
+}
+
+.form-group--required {
+  .form-label::after {
+    content: ' *';
+    color: #ef4444;
+    font-weight: 700;
+  }
+}
+
+// ======= TOOLTIPS Y AYUDAS =======
+.form-help {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: $ohlins-gray-400;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  font-style: italic;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    color: $ohlins-yellow;
+  }
+}
