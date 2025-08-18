@@ -1357,10 +1357,10 @@ footer {
   margin-bottom: 2rem;
 
   .bike-link {
-    display: flex;
+    
     align-items: center;
-    gap: 0.75rem;
-    padding: 1rem 1.25rem;
+   
+   
     background: $ohlins-gray-800;
     border-radius: 0.90rem;
     text-decoration: none;
@@ -1368,7 +1368,7 @@ footer {
     transition: all 0.3s ease-in-out;
     border: 1px solid $ohlins-yellow;
     font-weight: 600;
-    border-left: 3px solid $ohlins-gray-600;
+    
 
     &:hover {
       background: $ohlins-gray-700;
@@ -1962,7 +1962,7 @@ footer {
     align-items: center;
     gap: 1rem;
     margin-bottom: 1rem;
-    background: rgb(188, 190, 190);
+    background: rgb(56, 59, 59);
     border: solid 3px rgb(224, 255, 46); // Corregido
     padding: 1rem;
     border-radius: 8px;
@@ -1977,7 +1977,7 @@ footer {
   &__avatar {
     width: 48px;
     height: 48px;
-    background-color: rgba(255, 255, 0, 0.644);
+    background-color:rgb(224, 255, 46);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1989,7 +1989,7 @@ footer {
       margin: 0;
       font-size: 1.2rem;
       font-weight: 600;
-      color: #333;
+      color: #f5f2f2;
     }
 
     p {
@@ -2011,26 +2011,25 @@ footer {
 
     span {
       font-weight: bold;
-      color: #444;
+      color: #e1ee2d;
     }
   }
 
   &__quick-actions {
     .quick-action-btn {
       text-decoration: none;
-      border: solid 2px #ffd700;
-      background: #3a3a3a;
+      border: solid 2px #e4e2db;
+      background:rgb(224, 255, 46);
       padding: 0.5rem;
       border-radius: 4px;
-      color: #ffd700; text-decoration: none;
-      border: solid 2px #ffd700;
-      background: #3a3a3a;
-      padding: 0.5rem;
-      border-radius: 4px;
-      color: #ffd700;
+       color: #3a3a3a; 
+      border: solid 2px #f3f2ed;
+      border-radius: 2px;
+      align-items: center;
+     
       
       &:hover {
-        background: #ffd700;
+        background: #ecebe3;
         color: #3a3a3a;
       }
     }

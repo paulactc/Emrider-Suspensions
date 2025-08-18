@@ -8,7 +8,7 @@ function InputSearchCustom({ handleInputFilter, filters }) {
             <label htmlFor="Cliente">Búsqueda de cliente</label>
             <input
               className="input-field"
-              id="Cliente"
+              id="Nombre"
               type="text"
               name="filterName"
               onInput={handleInputFilter}
@@ -23,7 +23,7 @@ function InputSearchCustom({ handleInputFilter, filters }) {
               className="input-field"
               id="telefono"
               name="filterEnrolment"
-              type="number"
+              type="text"
               onInput={handleInputFilter}
               value={filters.telefono}
               placeholder="Ej: 689875855"

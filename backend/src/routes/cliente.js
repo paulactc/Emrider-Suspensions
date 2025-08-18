@@ -122,7 +122,6 @@ router.put("/:id", async (req, res) => {
     const {
       nombre,
       apellidos,
-      email,
       telefono,
       direccion,
       codigo_postal,
@@ -144,7 +143,6 @@ router.put("/:id", async (req, res) => {
     const [result] = await pool.execute(query, [
       nombre,
       apellidos,
-      email,
       telefono,
       direccion,
       codigo_postal,

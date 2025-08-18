@@ -102,12 +102,6 @@ class ApiService {
       method: "DELETE",
     });
   }
-  // ===== MOTOS - MÉTODOS ADICIONALES =====
-
-  // Obtener una moto específica por ID
-  async getMoto(id) {
-    return this.makeRequest(`/motos/${id}`);
-  }
 
   // Obtener datos completos de cliente y moto para servicios técnicos
   async getClienteYMotoParaServicio(motoId) {
