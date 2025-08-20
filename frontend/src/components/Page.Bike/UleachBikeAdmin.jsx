@@ -85,11 +85,6 @@ function UleachBikeAdmin({ listBikes, clientId, listTechnical }) {
   const clientBikes = listBikes;
 
   const handleCreateTechnicalData = (moto) => {
-    console.log("🚀 PASO 1 - Crear datos técnicos para moto:", moto);
-    console.log("🔍 ID de la moto:", moto?.id);
-    console.log("🔍 Tipo de ID:", typeof moto?.id);
-    console.log("🔍 Moto completa:", JSON.stringify(moto, null, 2));
-
     setSelectedMoto(moto);
     setShowModal(true);
 

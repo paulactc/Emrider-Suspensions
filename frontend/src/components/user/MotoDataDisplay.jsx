@@ -94,10 +94,11 @@ const MotoDataDisplay = ({ moto }) => {
         <div
           style={{
             padding: "0.5rem",
-            background: "#fff3cd",
+            background: "#a5a299ff",
             borderRadius: "4px",
             fontSize: "0.8em",
-            color: "#856404",
+            color: "#161614ff",
+            margin: "0.5em",
           }}
         >
           ℹ️ Completa el cuestionario para ver la configuración de esta moto

@@ -9,7 +9,7 @@ import FormsCustom from "./admin/forms/FormsCustom";
 import FormNewUser from "./Page.Custom/FormNewUser";
 import TechnicalDataCustomer from "./user/TechnicalDataCustomer";
 import FormBike from "./admin/forms/FormBike";
-import FormTechnicalDataCustomer from "./admin/forms/FormTechnicalDataCustomer";
+
 import Cliente from "./user/Cliente";
 import ListBike from "./Page.Bike/ListBike";
 import ListBikeadmin from "./Page.Bike/ListBikeadmin";
@@ -357,15 +357,6 @@ function App() {
             <FormBike
               handleChangeMotos={handleChangeMotos}
               motoData={motoData}
-            />
-          }
-        />
-        <Route
-          path="/FormtechnicalDataCustomer/:motoId?"
-          element={
-            <FormTechnicalDataWithClientData
-              handleChange={handleChange}
-              formData={formData}
             />
           }
         />

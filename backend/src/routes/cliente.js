@@ -115,51 +115,130 @@ router.post("/", async (req, res) => {
   }
 });
 
-// PUT - Actualizar cliente (CON CAMPOS DEL CUESTIONARIO CORREGIDOS)
+// PUT - Actualizar cliente (SOLO DATOS BÁSICOS - SIN PESO NI NIVEL PILOTAJE)
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
+
+    console.log("📝 Datos recibidos para actualizar cliente:", req.body);
+    console.log("🆔 ID del cliente:", id);
+
     const {
       nombre,
       apellidos,
       telefono,
       direccion,
       codigo_postal,
-      poblacion,
+      poblacion, // ✅ Frontend envía "poblacion"
       provincia,
       cif,
-      peso,
-      nivelPilotaje, // Frontend envía en camelCase
     } = req.body;
 
+    // ✅ Validaciones básicas
+    if (!nombre || !apellidos) {
+      return res.status(400).json({
+        message: "Nombre y apellidos son obligatorios",
+      });
+    }
+
+    // ✅ SOLO actualizar datos básicos del cliente (NO peso ni nivelPilotaje)
     const query = `
       UPDATE clientes 
-      SET nombre = ?, apellidos = ?, email = ?, telefono = ?, 
-          direccion = ?, codigo_postal = ?, localidad = ?, provincia = ?, cif = ?,
-          peso = ?, nivel_pilotaje = ?, fecha_ultima_confirmacion = NOW()
+      SET nombre = ?, 
+          apellidos = ?, 
+          telefono = ?, 
+          direccion = ?, 
+          codigo_postal = ?, 
+          localidad = ?,           
+          provincia = ?, 
+          cif = ?
       WHERE id = ?
     `;
 
+    // ✅ Parámetros en el MISMO ORDEN que la query SQL
     const [result] = await pool.execute(query, [
       nombre,
       apellidos,
       telefono,
       direccion,
       codigo_postal,
-      poblacion, // Nota: El campo en DB es 'localidad'
+      poblacion, // ✅ Se mapea a "localidad" en DB
       provincia,
       cif,
-      peso,
-      nivelPilotaje, // Se guarda como nivel_pilotaje en DB
-      id,
+      id, // ✅ ID va al final
     ]);
 
-    if (result.affectedRows === 0)
-      return res.status(404).json({ message: "Cliente no encontrado" });
-    res.json({ message: "Cliente actualizado exitosamente" });
+    console.log("✅ Resultado de la actualización:", result);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: "Cliente no encontrado",
+      });
+    }
+
+    res.json({
+      message: "Cliente actualizado exitosamente",
+      affectedRows: result.affectedRows,
+    });
   } catch (error) {
-    console.error("Error al actualizar cliente:", error);
-    res.status(500).json({ message: "Error al actualizar el cliente" });
+    console.error("❌ Error detallado al actualizar cliente:", {
+      message: error.message,
+      code: error.code,
+      errno: error.errno,
+      sql: error.sql,
+      sqlMessage: error.sqlMessage,
+      stack: error.stack,
+    });
+
+    res.status(500).json({
+      message: "Error al actualizar el cliente",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+});
+
+// PUT - Actualizar SOLO datos del cuestionario (peso y nivel de pilotaje)
+router.put("/:id/cuestionario", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { peso, nivelPilotaje } = req.body;
+
+    console.log("📝 Actualizando datos del cuestionario para cliente:", id);
+    console.log("🏋️ Peso:", peso, "🏍️ Nivel pilotaje:", nivelPilotaje);
+
+    // ✅ Validaciones específicas del cuestionario
+    if (!peso || !nivelPilotaje) {
+      return res.status(400).json({
+        message: "Peso y nivel de pilotaje son obligatorios",
+      });
+    }
+
+    const query = `
+      UPDATE clientes 
+      SET peso = ?, 
+          nivel_pilotaje = ?, 
+          fecha_ultima_confirmacion = NOW()
+      WHERE id = ?
+    `;
+
+    const [result] = await pool.execute(query, [peso, nivelPilotaje, id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: "Cliente no encontrado",
+      });
+    }
+
+    res.json({
+      message: "Datos del cuestionario actualizados exitosamente",
+      affectedRows: result.affectedRows,
+    });
+  } catch (error) {
+    console.error("❌ Error actualizando datos del cuestionario:", error);
+    res.status(500).json({
+      message: "Error al actualizar datos del cuestionario",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
   }
 });
 

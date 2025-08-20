@@ -18,10 +18,6 @@ function TechnicalDataAdmin({ listTechnical }) {
         datetechnicalArray={datetechnicalArray}
         motoId={id}
       />
-
-      <NavLink className="Newcustom" to="/FormtechnicalDataCustomer">
-        Crear nuevos datos tecnicos
-      </NavLink>
     </>
   );
 }
