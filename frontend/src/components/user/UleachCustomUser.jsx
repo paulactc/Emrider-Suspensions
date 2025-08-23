@@ -144,7 +144,7 @@ function UleachCustomUser({ Custom }) {
                 `${Custom.nombre || ""} ${Custom.apellidos || ""}`.trim()
               )}
             </h2>
-            <p>Cliente EmRider</p>
+            <p>Cliente Emrider</p>
             <div className="uleach-customer-compact__status">
               <Star className="status-icon" />
               <span>Cliente Premium</span>
@@ -158,7 +158,8 @@ function UleachCustomUser({ Custom }) {
             className="quick-action-btn"
             title="Editar datos"
           >
-            <Edit3 />
+            <span className="span-edit" />
+            Editar
           </NavLink>
         </div>
       </div>
@@ -179,28 +180,52 @@ function UleachCustomUser({ Custom }) {
       {/* Datos del cuestionario de pilotaje */}
       <ClienteDataDisplay cliente={Custom} />
 
-      {/* Motocicletas - versión compacta */}
+      {/* ✅ MOTOCICLETAS - Solo cambios en la lógica, manteniendo clases existentes */}
       <div className="uleach-customer-compact__bikes">
         {Custom.id && (
           <>
             {tieneMotos ? (
-              <NavLink
-                to={`/admin/motos/${Custom.id}`}
-                state={{ motos, cif: Custom.cif }}
-                className="bike-link"
-              >
-                <Bike />
-                <span>Mis motocicletas ({motos.length})</span>
-                <ArrowRight />
-              </NavLink>
+              // ✅ CUANDO TIENE MOTOS: Mostrar ambos botones lado a lado
+              <>
+                <NavLink
+                  to={`/admin/motos/${Custom.id}`}
+                  state={{ motos, cif: Custom.cif }}
+                  className="bike-link"
+                  title="Ver mis motocicletas"
+                >
+                  <Bike />
+                  <span>Mis motocicletas ({motos.length})</span>
+                </NavLink>
+
+                <NavLink
+                  to="/FormBike"
+                  state={{
+                    clienteId: Custom.id,
+                    clienteData: Custom,
+                    isNewMoto: true,
+                    returnPath: "/cliente",
+                  }}
+                  className="bike-link"
+                  title="Agregar nueva motocicleta"
+                >
+                  <Plus />
+                  <span>Nueva moto</span>
+                </NavLink>
+              </>
             ) : (
+              // ✅ CUANDO NO TIENE MOTOS: Mantener el comportamiento original
               <NavLink
                 to="/FormBike"
-                state={{ clienteId: Custom.id, clientData: Custom }}
+                state={{
+                  clienteId: Custom.id,
+                  clienteData: Custom,
+                  isNewMoto: true,
+                  returnPath: "/cliente",
+                }}
                 className="bike-link bike-link--add"
               >
                 <Plus />
-                <span>Registrar motocicleta</span>
+                <span>Registrar primera motocicleta</span>
                 <ArrowRight />
               </NavLink>
             )}

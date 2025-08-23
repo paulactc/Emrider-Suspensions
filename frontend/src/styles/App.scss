@@ -1216,7 +1216,7 @@ footer {
   gap: 1rem;
   margin-bottom: 1rem;
   background: rgb(188, 190, 190);
-  border: solid 3px rgb(224, 255, 46); // Removido el "040" extra
+  border: solid 3px rgb(173, 194, 57); // Removido el "040" extra
   padding: 1rem; // Añadido padding
   border-radius: 8px; // Añadido border-radius
 }
@@ -1354,13 +1354,15 @@ footer {
 
 // Motocicletas compactas estilo Ohlins
 .uleach-customer-compact__bikes {
-  margin-bottom: 2rem;
+  margin-bottom: 4rem;
+  
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
 
   .bike-link {
-    
+   
     align-items: center;
-   
-   
     background: $ohlins-gray-800;
     border-radius: 0.90rem;
     text-decoration: none;
@@ -1368,6 +1370,7 @@ footer {
     transition: all 0.3s ease-in-out;
     border: 1px solid $ohlins-yellow;
     font-weight: 600;
+
     
 
     &:hover {
@@ -1386,7 +1389,7 @@ footer {
       background: transparent;
 
       &:hover {
-        background: $ohlins-white;
+       
         border-color: $ohlins-yellow;
         border-style: solid;
       }
@@ -1400,11 +1403,41 @@ footer {
       @include smooth-transition();
     }
 
-    span {
-      flex: 1;
-      font-size: 1.5em;
-    }
+    
   }
+}
+/* Proporciones específicas */
+.bike-link:first-of-type {
+  flex: 3; // 3/4 del ancho
+  margin-right:2px;
+}
+
+.bike-link:last-of-type {
+  flex: 1; // 1/4 del ancho
+  margin-right:2px;
+}
+
+/* Si quieres que el caso "Registrar primera motocicleta" ocupe todo el ancho */
+.bike-link--add {
+  flex: 1;
+}
+.span-edit{
+  text-decoration:none;
+  align-items: center; 
+  justify-content: center;
+  border-radius: 2px;
+ 
+}
+
+.section-description{
+  color:rgb(185, 183, 183);
+  margin-left: 1px;
+}
+
+.tiene-motos{
+  display:flex;
+  flex-direction: row;
+  gap: 1rem;
 }
 
 // Sección Exclusiva EmRider - Estilo Ohlins
@@ -1963,7 +1996,7 @@ footer {
     gap: 1rem;
     margin-bottom: 1rem;
     background: rgb(56, 59, 59);
-    border: solid 3px rgb(224, 255, 46); // Corregido
+    border: solid 1px rgb(198, 221, 65); // 
     padding: 1rem;
     border-radius: 8px;
   }
@@ -2018,14 +2051,15 @@ footer {
   &__quick-actions {
     .quick-action-btn {
       text-decoration: none;
-      border: solid 2px #e4e2db;
-      background:rgb(224, 255, 46);
+      border: solid 2px #141413;
+      background:rgb(224, 224, 221);
       padding: 0.5rem;
-      border-radius: 4px;
-       color: #3a3a3a; 
-      border: solid 2px #f3f2ed;
-      border-radius: 2px;
+      border-radius: 6px;
+       color: #141313; 
+      justify-content: center;
+      
       align-items: center;
+       font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
      
       
       &:hover {
@@ -2046,14 +2080,14 @@ footer {
     margin-bottom: 1.5rem;
     
     .bike-link {
-      width: 2.75rem;
-      height: 2.75rem;
+      width: 5.75rem;
+      height: 5.75rem;
       background: #3a3a3a;
       border-radius: 0.75rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #ffd700;
+      color: #fde974;
       text-decoration: none;
       transition: all 0.3s ease-in-out;
       border: 1px solid #4a4a4a;

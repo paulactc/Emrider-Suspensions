@@ -104,6 +104,17 @@ function UleachCustom({ eachCustom, listBikes, listTechnical }) {
                 >
                   Ver motocicletas ({motos.length})
                 </NavLink>
+                <NavLink
+                  className="Newcustom create-moto-btn"
+                  to="/FormBike"
+                  state={{
+                    clienteId: eachCustom.id,
+                    clientData: eachCustom,
+                    listTechnical,
+                  }}
+                >
+                  Crear motocicleta
+                </NavLink>
               </div>
             ) : (
               <div className="no-motos">
@@ -112,14 +123,14 @@ function UleachCustom({ eachCustom, listBikes, listTechnical }) {
                 </p>
                 <NavLink
                   className="Newcustom create-moto-btn"
-                  to="/formBike"
+                  to="/FormBike"
                   state={{
                     clienteId: eachCustom.id,
                     clientData: eachCustom,
                     listTechnical,
                   }}
                 >
-                  Registrar motocicleta
+                  crear motocicleta
                 </NavLink>
               </div>
             )}

@@ -15,9 +15,105 @@ import {
   Calendar,
   Save,
   ArrowLeft,
+  Lock,
+  Unlock,
+  Weight,
+  Target,
 } from "lucide-react";
 import api from "../../../../services/Api";
 import CuestionarioParaTecnico from "./CuestionarioParaTecnico";
+
+// Componente para mostrar datos del cliente de forma compacta
+const ClienteDataDisplay = ({ cliente }) => {
+  console.log("🐛 ClienteDataDisplay - Props recibidas:", cliente);
+
+  if (!cliente) {
+    console.log("🐛 ClienteDataDisplay - Sin cliente, no se renderiza");
+    return null;
+  }
+
+  const getSafeValue = (value, fallback = null) => {
+    return value !== null && value !== undefined && value !== ""
+      ? value
+      : fallback;
+  };
+
+  const peso = getSafeValue(cliente.peso);
+  const nivelPilotaje =
+    getSafeValue(cliente.nivelPilotaje) || getSafeValue(cliente.nivel_pilotaje);
+
+  console.log("🐛 ClienteDataDisplay - Valores extraídos:", {
+    peso,
+    nivelPilotaje,
+  });
+
+  const getNivelPilotajeLabel = (nivel) => {
+    const niveles = {
+      principiante: "Principiante",
+      novato: "Novato",
+      intermedio: "Intermedio",
+      experto: "Experto",
+      profesional: "Profesional",
+    };
+    return niveles[nivel] || nivel;
+  };
+
+  const customerDataPilotaje = [];
+
+  if (peso) {
+    customerDataPilotaje.push({
+      icon: Weight,
+      label: "Peso",
+      value: `${peso} kg`,
+    });
+  }
+
+  if (nivelPilotaje) {
+    customerDataPilotaje.push({
+      icon: Target,
+      label: "Nivel",
+      value: getNivelPilotajeLabel(nivelPilotaje),
+    });
+  }
+
+  console.log(
+    "🐛 ClienteDataDisplay - Items a renderizar:",
+    customerDataPilotaje
+  );
+
+  if (customerDataPilotaje.length === 0) {
+    console.log("🐛 ClienteDataDisplay - Sin datos del cuestionario");
+    return (
+      <div className="uleach-customer-compact__info">
+        <div
+          style={{
+            padding: "0.5rem",
+            background: "#646360ff",
+            borderRadius: "4px",
+            fontSize: "0.8em",
+            color: "white",
+          }}
+        >
+          ℹ️ Completa el cuestionario para ver tus datos de pilotaje
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="uleach-customer-compact__info">
+      {customerDataPilotaje.map((item, index) => {
+        const IconComponent = item.icon;
+        return (
+          <div key={index} className="info-item">
+            <IconComponent className="info-icon" />
+            <span className="info-text">{item.value}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 function FormTechnicalDataWithClientData({
   formData = {},
@@ -40,6 +136,10 @@ function FormTechnicalDataWithClientData({
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
   const [needsQuestionnaire, setNeedsQuestionnaire] = useState(false);
+
+  // ✅ NUEVO: Estados para el flujo secuencial
+  const [servicioGuardado, setServicioGuardado] = useState(false);
+  const [guardandoServicio, setGuardandoServicio] = useState(false);
 
   // ✅ Estado ampliado para TODOS los campos técnicos
   const [formDataLocal, setFormDataLocal] = useState({
@@ -329,8 +429,8 @@ function FormTechnicalDataWithClientData({
     }
   };
 
-  // ✅ Función de validación
-  const validateForm = () => {
+  // ✅ NUEVA: Función de validación para la información del servicio
+  const validateServicioInfo = () => {
     const newErrors = {};
 
     if (!formDataLocal.numeroOrden)
@@ -340,6 +440,62 @@ function FormTechnicalDataWithClientData({
     if (!formDataLocal.marca) newErrors.marca = "Marca de suspensión requerida";
     if (!formDataLocal.modelo)
       newErrors.modelo = "Modelo de suspensión requerido";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // ✅ NUEVA: Función para guardar solo la información del servicio
+  const handleGuardarServicio = async () => {
+    if (!validateServicioInfo()) {
+      return;
+    }
+
+    setGuardandoServicio(true);
+    try {
+      const servicioData = {
+        motoId: parseInt(motoId),
+        clienteId: clienteId ? parseInt(clienteId) : null,
+        tipoSuspension: tipoSuspension,
+        numeroOrden: formDataLocal.numeroOrden,
+        fechaServicio: formDataLocal.fechaServicio,
+        kmMoto: formDataLocal.kmMoto,
+        fechaProximoMantenimiento: formDataLocal.fechaProximoMantenimiento,
+        servicioSuspension: formDataLocal.servicioSuspension,
+        marca: formDataLocal.marca,
+        modelo: formDataLocal.modelo,
+        año: formDataLocal.año,
+        referenciasuspension: formDataLocal.referenciasuspension,
+        pesoPiloto: formDataLocal.pesoPiloto,
+        disciplina: formDataLocal.disciplina,
+      };
+
+      console.log("Guardando información del servicio:", servicioData);
+
+      // Simular guardado
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setServicioGuardado(true);
+      alert(
+        "✅ Información del servicio guardada correctamente. Ahora puedes continuar con los datos técnicos."
+      );
+    } catch (error) {
+      console.error("Error guardando información del servicio:", error);
+      setErrors({ general: "Error al guardar la información del servicio" });
+    } finally {
+      setGuardandoServicio(false);
+    }
+  };
+
+  // ✅ Función de validación completa
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!servicioGuardado) {
+      newErrors.general = "Primero debe guardar la información del servicio";
+      setErrors(newErrors);
+      return false;
+    }
 
     if (needsQuestionnaire) {
       if (!questionnaireData.peso) newErrors.peso = "Peso del piloto requerido";
@@ -357,7 +513,7 @@ function FormTechnicalDataWithClientData({
     return Object.keys(newErrors).length === 0;
   };
 
-  // ✅ Función para guardar datos técnicos
+  // ✅ Función para guardar datos técnicos completos
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -529,25 +685,9 @@ function FormTechnicalDataWithClientData({
                 <span className="info-value">{clienteData.cif}</span>
               </div>
               <div className="info-item">
-                <span className="info-label">Peso:</span>
+                <span className="info-label">Datos de Pilotaje:</span>
                 <span className="info-value">
-                  {clienteData.peso ? (
-                    `${clienteData.peso} kg`
-                  ) : (
-                    <span className="missing-data">⚠️ No disponible</span>
-                  )}
-                </span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Nivel de Pilotaje:</span>
-                <span className="info-value">
-                  {clienteData.nivelPilotaje ?? clienteData.nivel_pilotaje ? (
-                    mapearNivelPilotaje(
-                      clienteData.nivelPilotaje ?? clienteData.nivel_pilotaje
-                    )
-                  ) : (
-                    <span className="missing-data">⚠️ No disponible</span>
-                  )}
+                  <ClienteDataDisplay cliente={clienteData} />
                 </span>
               </div>
             </div>
@@ -652,12 +792,13 @@ function FormTechnicalDataWithClientData({
         </div>
       </div>
 
-      {/* ✅ FORMULARIO TÉCNICO COMPLETO */}
+      {/* ✅ FORMULARIO TÉCNICO CON FLUJO SECUENCIAL */}
       <form onSubmit={handleSubmit} className="technical-form">
+        {/* ✅ PASO 1: INFORMACIÓN DEL SERVICIO (Siempre visible si datos completos) */}
         <div
-          className={`formulario-principal ${
+          className={`formulario-seccion ${
             !datosCompletos ? "deshabilitado" : ""
-          }`}
+          } ${servicioGuardado ? "completado" : ""}`}
         >
           {!datosCompletos && (
             <div className="overlay-deshabilitado">
@@ -666,11 +807,38 @@ function FormTechnicalDataWithClientData({
             </div>
           )}
 
+          {servicioGuardado && (
+            <div className="overlay-completado">
+              <CheckCircle className="overlay-icon" />
+              <p>Información del servicio guardada correctamente</p>
+              <button
+                type="button"
+                onClick={() => setServicioGuardado(false)}
+                className="btn-editar-servicio"
+              >
+                Editar información
+              </button>
+            </div>
+          )}
+
           {/* ✅ INFORMACIÓN DEL SERVICIO */}
-          <div className="form-section">
+          <div className="form-section servicio-section">
             <div className="section-header">
               <FileText size={24} />
               <h2>Información del Servicio</h2>
+              <div className="section-status">
+                {servicioGuardado ? (
+                  <span className="status-saved">
+                    <CheckCircle size={16} />
+                    Guardado
+                  </span>
+                ) : (
+                  <span className="status-pending">
+                    <AlertTriangle size={16} />
+                    Pendiente
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="form-grid">
@@ -684,7 +852,7 @@ function FormTechnicalDataWithClientData({
                   }
                   className={`form-input ${errors.numeroOrden ? "error" : ""}`}
                   placeholder="ORD-2025-001"
-                  disabled={!datosCompletos}
+                  disabled={!datosCompletos || servicioGuardado}
                 />
                 {errors.numeroOrden && (
                   <span className="error-text">{errors.numeroOrden}</span>
@@ -700,7 +868,7 @@ function FormTechnicalDataWithClientData({
                     handleInputChange("fechaServicio", e.target.value)
                   }
                   className="form-input"
-                  disabled={!datosCompletos}
+                  disabled={!datosCompletos || servicioGuardado}
                 />
               </div>
 
@@ -712,30 +880,8 @@ function FormTechnicalDataWithClientData({
                   onChange={(e) => handleInputChange("kmMoto", e.target.value)}
                   className="form-input"
                   placeholder="25000"
-                  disabled={!datosCompletos}
+                  disabled={!datosCompletos || servicioGuardado}
                 />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Peso del Piloto (kg)</label>
-                <input
-                  type="number"
-                  value={formDataLocal.pesoPiloto}
-                  onChange={(e) =>
-                    handleInputChange("pesoPiloto", e.target.value)
-                  }
-                  className="form-input"
-                  placeholder="68"
-                  min="40"
-                  max="200"
-                  disabled={!datosCompletos}
-                />
-                {!clienteData?.peso && (
-                  <small className="field-note">
-                    ⚠️ Este dato no está en el cuestionario del cliente.
-                    Ingresado manualmente.
-                  </small>
-                )}
               </div>
 
               <div className="form-group full-width">
@@ -748,7 +894,7 @@ function FormTechnicalDataWithClientData({
                   className={`form-input ${
                     errors.servicioSuspension ? "error" : ""
                   }`}
-                  disabled={!datosCompletos}
+                  disabled={!datosCompletos || servicioGuardado}
                 >
                   <option value="">Seleccionar servicio</option>
                   <option value="mantenimiento-basico">
@@ -770,17 +916,7 @@ function FormTechnicalDataWithClientData({
                   </span>
                 )}
               </div>
-            </div>
-          </div>
 
-          {/* ✅ DATOS DE SUSPENSIÓN */}
-          <div className="form-section">
-            <div className="section-header">
-              <Settings size={24} />
-              <h2>Datos de Suspensión</h2>
-            </div>
-
-            <div className="form-grid">
               <div className="form-group">
                 <label className="form-label">Marca *</label>
                 <input
@@ -789,7 +925,7 @@ function FormTechnicalDataWithClientData({
                   onChange={(e) => handleInputChange("marca", e.target.value)}
                   className={`form-input ${errors.marca ? "error" : ""}`}
                   placeholder="Öhlins"
-                  disabled={!datosCompletos}
+                  disabled={!datosCompletos || servicioGuardado}
                 />
                 {errors.marca && (
                   <span className="error-text">{errors.marca}</span>
@@ -804,7 +940,7 @@ function FormTechnicalDataWithClientData({
                   onChange={(e) => handleInputChange("modelo", e.target.value)}
                   className={`form-input ${errors.modelo ? "error" : ""}`}
                   placeholder={tipoSuspension === "FF" ? "NIX 30" : "TTX GP"}
-                  disabled={!datosCompletos}
+                  disabled={!datosCompletos || servicioGuardado}
                 />
                 {errors.modelo && (
                   <span className="error-text">{errors.modelo}</span>
@@ -821,7 +957,7 @@ function FormTechnicalDataWithClientData({
                   placeholder="2021"
                   min="1990"
                   max={new Date().getFullYear()}
-                  disabled={!datosCompletos}
+                  disabled={!datosCompletos || servicioGuardado}
                 />
               </div>
 
@@ -837,9 +973,55 @@ function FormTechnicalDataWithClientData({
                   placeholder={
                     tipoSuspension === "FF" ? "NIX-30-43" : "TTX-GP-46-400"
                   }
-                  disabled={!datosCompletos}
+                  disabled={!datosCompletos || servicioGuardado}
                 />
               </div>
+            </div>
+
+            {/* ✅ Botón para guardar solo la información del servicio */}
+            {datosCompletos && !servicioGuardado && (
+              <div className="section-actions">
+                <button
+                  type="button"
+                  onClick={handleGuardarServicio}
+                  disabled={guardandoServicio}
+                  className="btn-save-service"
+                >
+                  {guardandoServicio ? (
+                    <>
+                      <div className="spinner"></div>
+                      Guardando...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={20} />
+                      Guardar Información del Servicio
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ✅ RESTO DE SECCIONES (Solo visibles cuando el servicio esté guardado) */}
+        <div
+          className={`formulario-tecnico ${
+            !servicioGuardado ? "deshabilitado" : ""
+          }`}
+        >
+          {!servicioGuardado && (
+            <div className="overlay-deshabilitado">
+              <Lock className="overlay-icon" />
+              <p>Guarda primero la información del servicio para continuar</p>
+            </div>
+          )}
+
+          {/* ✅ DATOS DE SUSPENSIÓN */}
+          <div className="form-section">
+            <div className="section-header">
+              <Settings size={24} />
+              <h2>Datos de Suspensión</h2>
             </div>
           </div>
 
@@ -863,7 +1045,7 @@ function FormTechnicalDataWithClientData({
                       }
                       className="form-input"
                       placeholder="Fork Oil 5W"
-                      disabled={!datosCompletos}
+                      disabled={!servicioGuardado}
                     />
                   </div>
 
@@ -877,7 +1059,7 @@ function FormTechnicalDataWithClientData({
                       }
                       className="form-input"
                       placeholder="120"
-                      disabled={!datosCompletos}
+                      disabled={!servicioGuardado}
                     />
                   </div>
 
@@ -892,7 +1074,7 @@ function FormTechnicalDataWithClientData({
                       }
                       className="form-input"
                       placeholder="7.5"
-                      disabled={!datosCompletos}
+                      disabled={!servicioGuardado}
                     />
                   </div>
 
@@ -906,7 +1088,7 @@ function FormTechnicalDataWithClientData({
                       }
                       className="form-input"
                       placeholder="12"
-                      disabled={!datosCompletos}
+                      disabled={!servicioGuardado}
                     />
                   </div>
 
@@ -920,7 +1102,7 @@ function FormTechnicalDataWithClientData({
                       }
                       className="form-input"
                       placeholder="14"
-                      disabled={!datosCompletos}
+                      disabled={!servicioGuardado}
                     />
                   </div>
 
@@ -934,7 +1116,7 @@ function FormTechnicalDataWithClientData({
                       }
                       className="form-input"
                       placeholder="5"
-                      disabled={!datosCompletos}
+                      disabled={!servicioGuardado}
                     />
                   </div>
 
@@ -946,7 +1128,7 @@ function FormTechnicalDataWithClientData({
                       onChange={(e) => handleInputChange("sag", e.target.value)}
                       className="form-input"
                       placeholder="30"
-                      disabled={!datosCompletos}
+                      disabled={!servicioGuardado}
                     />
                   </div>
 
@@ -962,7 +1144,7 @@ function FormTechnicalDataWithClientData({
                       }
                       className="form-input"
                       placeholder="650"
-                      disabled={!datosCompletos}
+                      disabled={!servicioGuardado}
                     />
                   </div>
 
@@ -976,7 +1158,7 @@ function FormTechnicalDataWithClientData({
                       }
                       className="form-input"
                       placeholder="120"
-                      disabled={!datosCompletos}
+                      disabled={!servicioGuardado}
                     />
                   </div>
 
@@ -990,7 +1172,7 @@ function FormTechnicalDataWithClientData({
                       }
                       className="form-input"
                       placeholder="450"
-                      disabled={!datosCompletos}
+                      disabled={!servicioGuardado}
                     />
                   </div>
                 </div>
@@ -1020,7 +1202,7 @@ function FormTechnicalDataWithClientData({
                         }
                         className="array-input"
                         placeholder="0"
-                        disabled={!datosCompletos}
+                        disabled={!servicioGuardado}
                       />
                     </div>
                   ))}
@@ -1051,371 +1233,10 @@ function FormTechnicalDataWithClientData({
                         }
                         className="array-input"
                         placeholder="0"
-                        disabled={!datosCompletos}
+                        disabled={!servicioGuardado}
                       />
                     </div>
                   ))}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* ✅ CAMPOS TÉCNICOS ESPECÍFICOS RR */}
-          {tipoSuspension === "RR" && (
-            <>
-              {/* Spring Data */}
-              <div className="form-section">
-                <div className="section-header">
-                  <Zap size={24} />
-                  <h2>Spring Data</h2>
-                </div>
-
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label className="form-label">Main Rate (N/mm)</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      value={formDataLocal.mainRate}
-                      onChange={(e) =>
-                        handleInputChange("mainRate", e.target.value)
-                      }
-                      className="form-input"
-                      placeholder="9.5"
-                      disabled={!datosCompletos}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Spring Ref</label>
-                    <input
-                      type="text"
-                      value={formDataLocal.springRef}
-                      onChange={(e) =>
-                        handleInputChange("springRef", e.target.value)
-                      }
-                      className="form-input"
-                      placeholder="SPR-95-300"
-                      disabled={!datosCompletos}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Length (mm)</label>
-                    <input
-                      type="number"
-                      value={formDataLocal.length}
-                      onChange={(e) =>
-                        handleInputChange("length", e.target.value)
-                      }
-                      className="form-input"
-                      placeholder="300"
-                      disabled={!datosCompletos}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Número de espiras</label>
-                    <input
-                      type="number"
-                      value={formDataLocal.numeroSpiras}
-                      onChange={(e) =>
-                        handleInputChange("numeroSpiras", e.target.value)
-                      }
-                      className="form-input"
-                      placeholder="12"
-                      disabled={!datosCompletos}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Outer Diameter (mm)</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      value={formDataLocal.outerDiameter}
-                      onChange={(e) =>
-                        handleInputChange("outerDiameter", e.target.value)
-                      }
-                      className="form-input"
-                      placeholder="46"
-                      disabled={!datosCompletos}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Inner Diameter (mm)</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      value={formDataLocal.innerDiameter}
-                      onChange={(e) =>
-                        handleInputChange("innerDiameter", e.target.value)
-                      }
-                      className="form-input"
-                      placeholder="40"
-                      disabled={!datosCompletos}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Stroke (mm)</label>
-                    <input
-                      type="number"
-                      value={formDataLocal.stroke}
-                      onChange={(e) =>
-                        handleInputChange("stroke", e.target.value)
-                      }
-                      className="form-input"
-                      placeholder="120"
-                      disabled={!datosCompletos}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Shaft (mm)</label>
-                    <input
-                      type="number"
-                      value={formDataLocal.shaft}
-                      onChange={(e) =>
-                        handleInputChange("shaft", e.target.value)
-                      }
-                      className="form-input"
-                      placeholder="22"
-                      disabled={!datosCompletos}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Piston (mm)</label>
-                    <input
-                      type="number"
-                      value={formDataLocal.piston}
-                      onChange={(e) =>
-                        handleInputChange("piston", e.target.value)
-                      }
-                      className="form-input"
-                      placeholder="46"
-                      disabled={!datosCompletos}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Height (mm)</label>
-                    <input
-                      type="number"
-                      value={formDataLocal.height}
-                      onChange={(e) =>
-                        handleInputChange("height", e.target.value)
-                      }
-                      className="form-input"
-                      placeholder="580"
-                      disabled={!datosCompletos}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Oil & Gas */}
-              <div className="form-section">
-                <div className="section-header">
-                  <Gauge size={24} />
-                  <h2>Oil & Gas</h2>
-                </div>
-
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label className="form-label">Oil</label>
-                    <input
-                      type="text"
-                      value={formDataLocal.oil}
-                      onChange={(e) => handleInputChange("oil", e.target.value)}
-                      className="form-input"
-                      placeholder="Fork Oil 7.5W"
-                      disabled={!datosCompletos}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Gas</label>
-                    <input
-                      type="text"
-                      value={formDataLocal.gas}
-                      onChange={(e) => handleInputChange("gas", e.target.value)}
-                      className="form-input"
-                      placeholder="Nitrógeno 10 bar"
-                      disabled={!datosCompletos}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Compresión */}
-              <div className="form-section">
-                <div className="section-header">
-                  <Wrench size={24} />
-                  <h2>Compresión</h2>
-                </div>
-
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label className="form-label">Compresión Original</label>
-                    <input
-                      type="number"
-                      value={formDataLocal.compressionOriginal}
-                      onChange={(e) =>
-                        handleInputChange("compressionOriginal", e.target.value)
-                      }
-                      className="form-input"
-                      placeholder="15"
-                      disabled={!datosCompletos}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Compresión Modificada</label>
-                    <input
-                      type="number"
-                      value={formDataLocal.compressionModification}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "compressionModification",
-                          e.target.value
-                        )
-                      }
-                      className="form-input"
-                      placeholder="12"
-                      disabled={!datosCompletos}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Ritorno Original */}
-              <div className="form-section">
-                <div className="section-header">
-                  <Settings size={24} />
-                  <h2>Ritorno (Return) - Original</h2>
-                  <p>Valores de 1 a 25 posiciones</p>
-                </div>
-
-                <div className="array-grid">
-                  {formDataLocal.reboundOriginal.map((value, index) => (
-                    <div key={index} className="array-item">
-                      <label className="array-label">{index + 1}</label>
-                      <input
-                        type="number"
-                        value={value}
-                        onChange={(e) =>
-                          handleArrayChange(
-                            "reboundOriginal",
-                            index,
-                            e.target.value
-                          )
-                        }
-                        className="array-input"
-                        placeholder="0"
-                        disabled={!datosCompletos}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Ritorno Modificado */}
-              <div className="form-section">
-                <div className="section-header">
-                  <Settings size={24} />
-                  <h2>Ritorno (Return) - Modificado</h2>
-                  <p>Valores de 1 a 25 posiciones</p>
-                </div>
-
-                <div className="array-grid">
-                  {formDataLocal.reboundModification.map((value, index) => (
-                    <div key={index} className="array-item">
-                      <label className="array-label">{index + 1}</label>
-                      <input
-                        type="number"
-                        value={value}
-                        onChange={(e) =>
-                          handleArrayChange(
-                            "reboundModification",
-                            index,
-                            e.target.value
-                          )
-                        }
-                        className="array-input"
-                        placeholder="0"
-                        disabled={!datosCompletos}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Ajustadores de Compresión Originales */}
-              <div className="form-section">
-                <div className="section-header">
-                  <Gauge size={24} />
-                  <h2>Ajustadores de Compresión - Originales</h2>
-                  <p>Valores de 1 a 30 posiciones</p>
-                </div>
-
-                <div className="array-grid">
-                  {formDataLocal.originalCompressionAdjuster.map(
-                    (value, index) => (
-                      <div key={index} className="array-item">
-                        <label className="array-label">{index + 1}</label>
-                        <input
-                          type="number"
-                          value={value}
-                          onChange={(e) =>
-                            handleArrayChange(
-                              "originalCompressionAdjuster",
-                              index,
-                              e.target.value
-                            )
-                          }
-                          className="array-input"
-                          placeholder="0"
-                          disabled={!datosCompletos}
-                        />
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-
-              {/* Ajustadores de Compresión Modificados */}
-              <div className="form-section">
-                <div className="section-header">
-                  <Gauge size={24} />
-                  <h2>Ajustadores de Compresión - Modificados</h2>
-                  <p>Valores de 1 a 30 posiciones</p>
-                </div>
-
-                <div className="array-grid">
-                  {formDataLocal.modifiedCompressionAdjuster.map(
-                    (value, index) => (
-                      <div key={index} className="array-item">
-                        <label className="array-label">{index + 1}</label>
-                        <input
-                          type="number"
-                          value={value}
-                          onChange={(e) =>
-                            handleArrayChange(
-                              "modifiedCompressionAdjuster",
-                              index,
-                              e.target.value
-                            )
-                          }
-                          className="array-input"
-                          placeholder="0"
-                          disabled={!datosCompletos}
-                        />
-                      </div>
-                    )
-                  )}
                 </div>
               </div>
             </>
@@ -1438,12 +1259,12 @@ function FormTechnicalDataWithClientData({
                 className="form-textarea"
                 rows="6"
                 placeholder="Describa cualquier observación importante sobre el servicio realizado..."
-                disabled={!datosCompletos}
+                disabled={!servicioGuardado}
               />
             </div>
           </div>
 
-          {/* ✅ BOTONES DE ACCIÓN */}
+          {/* ✅ BOTONES DE ACCIÓN FINALES */}
           <div className="form-actions">
             <button
               type="button"
@@ -1454,7 +1275,7 @@ function FormTechnicalDataWithClientData({
             </button>
             <button
               type="submit"
-              disabled={saving || !datosCompletos}
+              disabled={saving || !servicioGuardado}
               className="btn-save"
             >
               {saving ? (
@@ -1465,7 +1286,7 @@ function FormTechnicalDataWithClientData({
               ) : (
                 <>
                   <Save size={20} />
-                  Guardar Datos Técnicos {tipoSuspension}
+                  Finalizar y Guardar Datos Técnicos {tipoSuspension}
                 </>
               )}
             </button>
@@ -1473,7 +1294,7 @@ function FormTechnicalDataWithClientData({
         </div>
       </form>
 
-      {/* ✅ ESTILOS CSS COMPLETOS */}
+      {/* ✅ ESTILOS CSS COMPLETOS CON FLUJO SECUENCIAL */}
       <style>{`
         .app-containerform {
           min-height: 100vh;
@@ -1649,19 +1470,34 @@ function FormTechnicalDataWithClientData({
           display: block;
           color: #f59e0b;
           font-size: 0.8rem;
-          margin-top: 0.25rem;background: rgba(42, 48, 56, 0.5);
+          margin-top: 0.25rem;
           font-style: italic;
         }
 
-        .formulario-principal {
+        /* ✅ ESTILOS PARA FLUJO SECUENCIAL */
+        .formulario-seccion {
           position: relative;
           transition: all 0.3s ease;
-          padding: 2rem;
-          background: rgba(11, 11, 12, 0.5);
+          margin-bottom: 2rem;
         }
 
-        .formulario-principal.deshabilitado {
+        .formulario-seccion.deshabilitado {
           opacity: 0.5;
+          pointer-events: none;
+        }
+
+        .formulario-seccion.completado .servicio-section {
+          background: linear-gradient(135deg, #9fa3a7ff 0%, #e0f2fe 100%);
+          border: 2px solid #121414ff;
+        }
+
+        .formulario-tecnico {
+          position: relative;
+          transition: all 0.3s ease;
+        }
+
+        .formulario-tecnico.deshabilitado {
+          opacity: 0.3;
           pointer-events: none;
         }
 
@@ -1683,22 +1519,151 @@ function FormTechnicalDataWithClientData({
           gap: 1rem;
         }
 
+        .overlay-completado {
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+          background: rgba(16, 185, 129, 0.95);
+          color: white;
+          padding: 1rem;
+          border-radius: 8px;
+          z-index: 5;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+          text-align: center;
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
         .overlay-icon {
           width: 3rem;
           height: 3rem;
           color: #f59e0b;
         }
 
-        .overlay-deshabilitado p {
+        .overlay-completado .overlay-icon {
+          width: 1.5rem;
+          height: 1.5rem;
+          color: white;
+        }
+
+        .overlay-deshabilitado p,
+        .overlay-completado p {
           font-size: 1.25rem;
           font-weight: 600;
           margin: 0;
         }
 
-
+        .overlay-completado p {
+          font-size: 0.875rem;
         }
 
-        
+        .btn-editar-servicio {
+          background: rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          color: white;
+          padding: 0.5rem 1rem;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .btn-editar-servicio:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-section {
+          background: #f9fafb;
+          border-radius: 12px;
+          padding: 2rem;
+          margin-bottom: 2rem;
+          border: 1px solid #e5e7eb;
+          position: relative;
+        }
+
+        .servicio-section {
+          background: linear-gradient(135deg, #c2bfbcff 0%, #6e6c68ff 20%, #fff7ed 100%);
+          border-left: 4px solid #213947ff;
+        }
+
+        .section-header {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          margin-bottom: 1.5rem;
+          padding-bottom: 1rem;
+          border-bottom: 2px solid #e5e7eb;
+        }
+
+        .section-header svg {
+          color: #3b82f6;
+          flex-shrink: 0;
+        }
+
+        .section-header h2 {
+          margin: 0;
+          color: #1f2937;
+          font-size: 1.5rem;
+          font-weight: 600;
+          flex: 1;
+        }
+
+        .section-header p {
+          margin: 0;
+          color: #6b7280;
+          font-size: 0.875rem;
+        }
+
+        .section-status {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+        }
+
+        .status-saved {
+          color: #10b981;
+        }
+
+        .status-pending {
+          color: #f59e0b;
+        }
+
+        .section-actions {
+          display: flex;
+          justify-content: center;
+          padding-top: 2rem;
+          border-top: 2px solid #e5e7eb;
+          margin-top: 2rem;
+        }
+
+        .btn-save-service {
+          background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+          color: white;
+          border: none;
+          padding: 1rem 2rem;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 1rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          transition: all 0.2s;
+        }
+
+        .btn-save-service:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(249, 115, 22, 0.3);
+        }
+
+        .btn-save-service:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
 
         .form-grid {
           display: grid;
@@ -1716,7 +1681,22 @@ function FormTechnicalDataWithClientData({
           grid-column: 1 / -1;
         }
 
-        
+        .form-label {
+          font-weight: 600;
+          color: #374151;
+          font-size: 0.875rem;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .form-input {
+          padding: 0.75rem 1rem;
+          border: 2px solid #d1d5db;
+          border-radius: 8px;
+          font-size: 1rem;
+          transition: all 0.2s;
+          background: white;
+        }
 
         .form-input:focus {
           outline: none;
@@ -1816,9 +1796,10 @@ function FormTechnicalDataWithClientData({
           display: flex;
           justify-content: flex-end;
           gap: 1rem;
-          padding-top: 2rem;
+          padding: 2rem;
           border-top: 2px solid #e5e7eb;
           margin-top: 2rem;
+          background: #f9fafb;
         }
 
         .btn-cancel {
@@ -1948,16 +1929,42 @@ function FormTechnicalDataWithClientData({
           box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
+        /* ✅ ESTILOS PARA ClienteDataDisplay */
+        .uleach-customer-compact__info {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
+          align-items: center;
+        }
+
+        .uleach-customer-compact__info .info-item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: rgba(16, 185, 129, 0.1);
+          padding: 0.5rem 0.75rem;
+          border-radius: 6px;
+          border: 1px solid #10b981;
+        }
+
+        .uleach-customer-compact__info .info-icon {
+          color: #10b981;
+          width: 1rem;
+          height: 1rem;
+        }
+
+        .uleach-customer-compact__info .info-text {
+          color: #f9fafb;
+          font-size: 0.875rem;
+          font-weight: 500;
+        }
+
         @media (max-width: 768px) {
           .app-containerform {
             padding: 1rem;
           }
 
           .form-header {
-            padding: 1.5rem;
-          }
-
-          .formulario-principal {
             padding: 1.5rem;
           }
 
@@ -1982,6 +1989,13 @@ function FormTechnicalDataWithClientData({
             margin-left: 0;
             margin-top: 0.5rem;
             text-align: center;
+          }
+
+          .overlay-completado {
+            position: relative;
+            top: auto;
+            right: auto;
+            margin-bottom: 1rem;
           }
         }
       `}</style>

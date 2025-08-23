@@ -1,7 +1,7 @@
 // UleachBike.js
 import MotoDataDisplay from "../user/MotoDataDisplay";
 import { useState } from "react";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import {
   Tag,
   Bike,
@@ -10,15 +10,31 @@ import {
   Settings,
   AlertTriangle,
   BookAlert,
+  ArrowLeft,
 } from "lucide-react";
 import Caducidad from "../user/Caducidad";
 
-function UleachBike({ listBikes, clientId, listTechnical }) {
+function UleachBike({ listBikes, listTechnical }) {
+  const navigate = useNavigate();
+  const [mantenimientoCaducado, setMantenimientoCaducado] = useState({});
+
+  const handleFichaCaducada = (bikeId, caducado) => {
+    setMantenimientoCaducado((prev) => ({ ...prev, [bikeId]: caducado }));
+  };
+
+  const handleCancelar = () => {
+    navigate(-1);
+  };
+
   if (!Array.isArray(listBikes) || listBikes.length === 0) {
     return (
       <div className="uleach-bikes-container">
         <div className="uleach-bikes-container__header">
           <h2>Mis Motocicletas</h2>
+          <button onClick={handleCancelar} className="Newcustom">
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <span>Volver</span>
+          </button>
         </div>
         <div className="uleach-bikes-container__empty">
           <p>No hay motocicletas disponibles</p>
@@ -28,16 +44,16 @@ function UleachBike({ listBikes, clientId, listTechnical }) {
   }
 
   const clientBikes = listBikes;
-  const [mantenimientoCaducado, setMantenimientoCaducado] = useState({});
-
-  const handleFichaCaducada = (bikeId, caducado) => {
-    setMantenimientoCaducado((prev) => ({ ...prev, [bikeId]: caducado }));
-  };
 
   return (
     <div className="uleach-bikes-container">
       <div className="uleach-bikes-container__header">
         <h2>Mis Motocicletas</h2>
+        <button onClick={handleCancelar} className="Newcustom">
+          <ArrowLeft className="w-5 h-5 text-gray-600" />
+          <span>Volver</span>
+        </button>
+
         <p className="uleach-bikes-container__subheader">
           Consulta tus {clientBikes.length} motocicleta
           {clientBikes.length !== 1 ? "s" : ""} registrada
