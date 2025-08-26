@@ -20,15 +20,19 @@ app.get("/", (req, res) => {
   res.json({ message: "Servidor funcionando correctamente" });
 });
 
-// Rutas API
+// Rutas API existentes (NO TOCAR - funcionan perfectamente)
 app.use("/api/clientes", require("./src/routes/cliente"));
 app.use("/api/motos", require("./src/routes/motos"));
-//app.use("/api/datos-tecnicos", require("./src/routes/datosTecnicos"));
 app.use("/api/questionnaire", require("./src/routes/questionnaire"));
+
+// 🆕 NUEVA RUTA: Información de servicios (para tu flujo secuencial)
+app.use("/api/servicios-info", require("./src/routes/serviciosInfo"));
+
 console.log("✅ Rutas registradas:");
 console.log("  - /api/clientes");
 console.log("  - /api/motos");
 console.log("  - /api/questionnaire");
+console.log("  - 🆕 /api/servicios-info (NUEVA)");
 
 // Manejo de errores
 app.use((err, req, res, next) => {

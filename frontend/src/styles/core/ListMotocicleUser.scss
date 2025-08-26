@@ -1,95 +1,75 @@
+// ✅ CONTAINER PRINCIPAL CON DISEÑO MODERNO
 .uleach-bikes-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0c0c0c 0%, #686067 100%);
   padding: 2rem;
-  background-color: #121212;
 
   &__header {
-    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 16px 16px 0 0;
+    margin-bottom: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 
     h2 {
-      color: $ohlins-yellow-light;
-      font-size: 1.6rem;
-      margin-bottom: 0.25rem;
+      color: #f9fafb;
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem 0;
     }
 
     .uleach-bikes-container__subheader {
-      color: #aaa;
-      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1rem;
+      margin: 0;
     }
   }
+
+  &__empty {
+    background: rgba(31, 41, 55, 0.9);
+    border-radius: 12px;
+    padding: 3rem;
+    text-align: center;
+    color: #f9fafb;
+    border: 1px solid #374151;
+  }
+}
+
+// ✅ LISTA DE MOTOCICLETAS CON DISEÑO PROFESIONAL
+.uleach-bikes-list {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border-radius: 0 0 16px 16px;
+  padding: 2rem;
+  margin: 0;
+  list-style: none;
+  border: 1px solid #374151;
+  border-top: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .listMotocicle {
-  
-   background: linear-gradient(to bottom right, #12151a, #474d55, #000000); 
-  border-left: 4px solid $ohlins-yellow-light;
-  border-radius: 8px;
-  padding: 1.25rem;
-  margin-bottom: 1.25rem;
-  box-shadow: 0 0 8px rgba(255, 193, 7, 0.15);
-  transition: transform 0.2s ease;
-  position:relative;
-
-  &:hover {
-    transform: scale(1.01);
-    box-shadow: 0 0 14px rgba(255, 193, 7, 0.3);
-  }
-}
-
-.listMotocicle__bike-visual {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 70px;
-  padding: 0.5em;
-
-}
-
-.listMotocicle__bike-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: $ohlins-yellow-light;
-  font-size: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-   padding:0.3em;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-   
-  &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 12px 20px rgba($ohlins-yellow, 0.2);
-  }
-}
-
-.listMotocicle__badge {
-  background-color: #ffc107;
-  color: #000;
-  font-weight: bold;
-  font-size: 1rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  text-transform: uppercase;
-  margin-left:1.5em;
-}
-
-
-
-// ======= ESTILOS PARA DATOS DE MOTOCICLETA =======
-
-.listMotocicle__content {
-  background: linear-gradient(135deg, $ohlins-gray-900 0%, $ohlins-gray-800 100%);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba($ohlins-yellow, 0.1);
-  border: 1px solid rgba($ohlins-yellow, 0.2);
+  background: rgba(55, 65, 81, 0.5);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid #4b5563;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 
-  // Efecto de brillo sutil
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    background: rgba(55, 65, 81, 0.7);
+    border-color: #6b7280;
+  }
+
+  // Efecto de brillo superior
   &::before {
     content: '';
     position: absolute;
@@ -97,255 +77,378 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, 
-      transparent 0%, 
-      $ohlins-yellow 50%, 
-      transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, #fbbf24 50%, transparent 100%);
     opacity: 0.6;
   }
 }
 
-.listMotocicle__specs {
+.listMotocicle__bike-visual {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #4b5563;
+}
+
+.listMotocicle__bike-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.listMotocicle__badge {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+
+
+// ✅ ESTILOS PROFESIONALES PARA DATOS DE MOTOCICLETA (SIMILAR A FF/RR)
+.listMotocicle__content {
+  margin-top: 0;
+}
+
+.listMotocicle__specs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .listMotocicle__spec-item {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
-  background: rgba($ohlins-gray-800, 0.6);
-  border-radius: 12px;
-  border: 1px solid rgba($ohlins-yellow, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  backdrop-filter: blur(10px);
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  background: rgba(17, 24, 39, 0.8);
+  border-radius: 8px;
+  border: 1px solid #4b5563;
+  transition: all 0.3s ease;
 
   &:hover {
-    background: rgba($ohlins-gray-700, 0.8);
-    border-color: rgba($ohlins-yellow, 0.3);
-    transform: translateX(4px);
-    box-shadow: 
-      0 4px 20px rgba($ohlins-yellow, 0.1),
-      -4px 0 0 0 $ohlins-yellow;
-
-    .listMotocicle__spec-item-icon {
-      color: $ohlins-yellow;
-      transform: scale(1.1);
-    }
-
-    .listMotocicle__spec-item-value {
-      color: $ohlins-yellow-light;
-      
-    }
-  }
-
-  // Línea indicadora izquierda
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 3px;
-    height: 0;
-    background: $ohlins-yellow;
-    transition: height 0.3s ease;
-    border-radius: 0 2px 2px 0;
-  }
-
-  &:hover::before {
-    height: 60%;
+    background: rgba(17, 24, 39, 0.95);
+    border-color: #6b7280;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 }
 
 .listMotocicle__spec-item-icon {
-  color: $ohlins-gray-400;
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  transition: all 0.3s ease;
-  filter: drop-shadow(0 0 4px rgba($ohlins-yellow, 0.2));
+  color: #fbbf24;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-bottom: 0.5rem;
 }
 
 .listMotocicle__spec-item-label {
-  font-weight: 600;
-  font-size: 14px;
-  color: $ohlins-gray-300;
-  min-width: 80px;
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: color 0.3s ease;
-
+  letter-spacing: 0.05em;
 }
 
 .listMotocicle__spec-item-value {
-  font-weight: 700;
-  font-size: 15px;
-  color: $ohlins-white;
-  font-family: Roboto, sans-serif ;
-  background: rgba($ohlins-yellow, 0.05);
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid rgba($ohlins-yellow, 0.15);
-  transition: all 0.3s ease;
-  flex: 1;
-  text-align: right;
-  backdrop-filter: blur(5px);
-}
-
-// ======= VARIANTE COMPACTA =======
-.listMotocicle__content--compact {
-  .listMotocicle__specs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 12px;
-  }
-
-  .listMotocicle__spec-item {
-    padding: 12px 16px;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 
-        0 8px 25px rgba($ohlins-yellow, 0.15),
-        0 0 0 2px rgba($ohlins-yellow, 0.2);
-    }
-  }
-}
-
-// ======= VARIANTE CON TARJETAS SEPARADAS =======
-.listMotocicle__content--cards {
-  background: transparent;
+  color: #f9fafb;
+  font-size: 1rem;
+  font-weight: 600;
   padding: 0;
-  box-shadow: none;
+  background: none;
   border: none;
+  text-align: left;
+}
+
+// ✅ BOTONES Y ACCIONES CON ESTILO PROFESIONAL
+.Newcustombike {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  margin-right: 1rem;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    text-decoration: none;
+    color: white;
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.create-technical-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+
+  &:hover {
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4) !important;
+  }
+}
+
+.admin-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #4b5563;
+}
+
+// ✅ BOTÓN VOLVER CON ESTILO MODERNO
+.Newcustom {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+  }
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+// ✅ ESTADOS ESPECIALES PARA MANTENIMIENTO
+.mantenimiento-caducado {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3) !important;
+
+  .listMotocicle__bike-visual::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 15px;
+    height: 15px;
+    background: #ef4444;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+}
+
+.mantenimiento-alerta {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #ef4444;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+// ✅ MODAL PARA SELECCIÓN DE SUSPENSIÓN
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  border: 1px solid #374151;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  h3 {
+    color: #f9fafb;
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+}
+
+.modal-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.modal-body p {
+  color: #d1d5db;
+  margin-bottom: 1rem;
+}
+
+.moto-info {
+  color: #fbbf24 !important;
+  font-weight: 600 !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.suspension-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.suspension-option {
+  background: rgba(55, 65, 81, 0.5);
+  border: 1px solid #4b5563;
+  border-radius: 12px;
+  padding: 1.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+
+  &:hover {
+    background: rgba(55, 65, 81, 0.8);
+    border-color: #6b7280;
+    transform: translateY(-2px);
+  }
+
+  .option-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f9fafb;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #9ca3af;
+  }
+}
+
+.suspension-option--ff:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+}
+
+.suspension-option--rr:hover {
+  border-color: #10b981;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+}
+
+// ✅ RESPONSIVE DESIGN
+@media (max-width: 768px) {
+  .uleach-bikes-container {
+    padding: 1rem;
+  }
+
+  .uleach-bikes-container__header {
+    padding: 1.5rem;
+  }
+
+  .uleach-bikes-list {
+    padding: 1.5rem;
+  }
+
+  .listMotocicle {
+    padding: 1.5rem;
+  }
 
   .listMotocicle__specs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-  }
-
-  .listMotocicle__spec-item {
-    background: linear-gradient(135deg, $ohlins-gray-900 0%, $ohlins-gray-800 100%);
-    border: 1px solid rgba($ohlins-yellow, 0.2);
-    box-shadow: 
-      0 4px 16px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba($ohlins-yellow, 0.1);
-    
-    &:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 
-        0 12px 32px rgba($ohlins-yellow, 0.2),
-        inset 0 1px 0 rgba($ohlins-yellow, 0.3);
-    }
-  }
-}
-
-// ======= VARIANTE MINIMALISTA =======
-.listMotocicle__content--minimal {
-  background: rgba($ohlins-gray-900, 0.95);
-  border: 1px solid $ohlins-gray-700;
-
-  .listMotocicle__spec-item {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid rgba($ohlins-gray-600, 0.3);
-    border-radius: 0;
-    padding: 16px 0;
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    &:hover {
-      background: rgba($ohlins-yellow, 0.03);
-      transform: none;
-      box-shadow: none;
-      
-      &::before {
-        width: 100%;
-        height: 1px;
-        top: auto;
-        bottom: 0;
-        transform: none;
-      }
-    }
-  }
-}
-
-// ======= RESPONSIVE =======
-@media (max-width: 768px) {
-  .listMotocicle__content {
-    padding: 16px;
-    border-radius: 12px;
-  }
-
-  .listMotocicle__spec-item {
-    padding: 12px 16px;
-    gap: 10px;
-  }
-
-  .listMotocicle__spec-item-label {
-    min-width: 70px;
-    font-size: 13px;
-  }
-
-  .listMotocicle__spec-item-value {
-    font-size: 14px;
-    padding: 4px 8px;
-  }
-
-  .listMotocicle__content--cards .listMotocicle__specs {
     grid-template-columns: 1fr;
   }
-}
 
-// ======= ANIMACIONES DE ENTRADA =======
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+  .admin-actions {
+    flex-direction: column;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-.listMotocicle__spec-item {
-  animation: fadeInUp 0.6s ease forwards;
-  
-  @for $i from 1 through 10 {
-    &:nth-child(#{$i}) {
-      animation-delay: #{$i * 0.1}s;
-    }
+  .suspension-options {
+    grid-template-columns: 1fr;
   }
-}
 
-// ======= ESTADOS ESPECIALES =======
-.listMotocicle__spec-item--highlight {
-  border-color: $ohlins-yellow;
-  background: rgba($ohlins-yellow, 0.1);
-  
-  .listMotocicle__spec-item-icon {
-    color: $ohlins-yellow;
-  }
-  
-  .listMotocicle__spec-item-value {
-    background: rgba($ohlins-yellow, 0.15);
-    color: $ohlins-yellow-light;
-    border-color: rgba($ohlins-yellow, 0.3);
-  }
-}
-
-.listMotocicle__spec-item--warning {
-  border-color: #f59e0b;
-  
-  .listMotocicle__spec-item-icon {
-    color: #f59e0b;
+  .modal-content {
+    margin: 1rem;
+    padding: 1.5rem;
   }
 }

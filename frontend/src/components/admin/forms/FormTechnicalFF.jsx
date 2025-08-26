@@ -160,8 +160,6 @@ const FormTechnicalFF = () => {
       newErrors.numeroOrden = "Número de orden requerido";
     if (!formData.servicioSuspension)
       newErrors.servicioSuspension = "Tipo de servicio requerido";
-    if (!formData.marca) newErrors.marca = "Marca de suspensión requerida";
-    if (!formData.modelo) newErrors.modelo = "Modelo de suspensión requerido";
 
     if (needsQuestionnaire) {
       if (!questionnaireData.peso) newErrors.peso = "Peso del piloto requerido";
@@ -504,7 +502,7 @@ const FormTechnicalFF = () => {
                   value={formData.modelo}
                   onChange={(e) => handleInputChange("modelo", e.target.value)}
                   className={`form-input ${errors.modelo ? "error" : ""}`}
-                  placeholder="NIX 30"
+                  placeholder="SHOWA"
                 />
                 {errors.modelo && (
                   <span className="error-text">{errors.modelo}</span>

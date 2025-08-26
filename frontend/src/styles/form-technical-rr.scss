@@ -36,10 +36,10 @@
   margin-bottom: 2rem;
   padding: 1.5rem 2rem;
   background: linear-gradient(135deg, $ohlins-gray-800 0%, $ohlins-gray-700 100%);
-  border-radius: 12px;
   border: 1px solid $ohlins-gray-600;
   border-left: 4px solid $ohlins-yellow;
   @include ohlins-shadow($ohlins-gray-600);
+
 
   .btn-back {
     display: flex;

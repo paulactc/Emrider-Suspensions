@@ -191,7 +191,7 @@ class ApiService {
     });
   }
 
-  // ===== 🆕 CUESTIONARIO =====
+  // ===== CUESTIONARIO =====
 
   // Guardar respuestas del cuestionario
   async saveQuestionnaire(questionnaireData) {
@@ -224,7 +224,7 @@ class ApiService {
     return this.getMotosByCif(cif);
   }
 
-  // ===== 🆕 MÉTODOS AUXILIARES PARA EL CUESTIONARIO =====
+  // ===== MÉTODOS AUXILIARES PARA EL CUESTIONARIO =====
 
   // Verificar si un cliente necesita completar el cuestionario
   async clienteNecesitaCuestionario(clienteId) {
@@ -245,6 +245,78 @@ class ApiService {
     } catch (error) {
       console.error("Error obteniendo tipo de cuestionario:", error);
       return "first-time";
+    }
+  }
+
+  // ===== INFORMACIÓN DE SERVICIOS =====
+
+  // Obtener información de servicio por ID
+  async getServicioInfo(id) {
+    console.log("📋 Obteniendo información de servicio:", id);
+    return this.makeRequest(`/servicios-info/${id}`);
+  }
+
+  // Obtener servicios por moto ID
+  async getServiciosByMoto(motoId) {
+    console.log("🏍️ Obteniendo servicios para moto:", motoId);
+    return this.makeRequest(`/servicios-info/by-moto/${motoId}`);
+  }
+
+  // Crear nueva información de servicio
+  async createServicioInfo(servicioData) {
+    console.log("📝 Creando información de servicio:", servicioData);
+    return this.makeRequest("/servicios-info", {
+      method: "POST",
+      body: JSON.stringify(servicioData),
+    });
+  }
+
+  // Actualizar información de servicio
+  async updateServicioInfo(id, servicioData) {
+    console.log("✏️ Actualizando información de servicio:", id, servicioData);
+    return this.makeRequest(`/servicios-info/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(servicioData),
+    });
+  }
+
+  // Eliminar información de servicio
+  async deleteServicioInfo(id) {
+    console.log("🗑️ Eliminando información de servicio:", id);
+    return this.makeRequest(`/servicios-info/${id}`, {
+      method: "DELETE",
+    });
+  }
+
+  // Obtener estadísticas de servicios
+  async getServiciosStats() {
+    console.log("📊 Obteniendo estadísticas de servicios");
+    return this.makeRequest("/servicios-info/stats/dashboard");
+  }
+
+  // Verificar si existe información de servicio para una moto
+  async checkServicioExists(motoId) {
+    try {
+      const servicios = await this.getServiciosByMoto(motoId);
+      const serviciosCompletos =
+        servicios.data?.filter((s) => s.status === "completed") || [];
+      const serviciosPendientes =
+        servicios.data?.filter((s) => s.status === "pending") || [];
+
+      return {
+        hasCompletedServices: serviciosCompletos.length > 0,
+        hasPendingServices: serviciosPendientes.length > 0,
+        latestService: servicios.data?.[0] || null,
+        totalServices: servicios.data?.length || 0,
+      };
+    } catch (error) {
+      console.error("Error verificando servicios:", error);
+      return {
+        hasCompletedServices: false,
+        hasPendingServices: false,
+        latestService: null,
+        totalServices: 0,
+      };
     }
   }
 }
