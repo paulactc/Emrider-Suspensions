@@ -1,6 +1,9 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const { executeQuery, executeTransaction } = require("../config/database");
+const { sendPasswordResetEmail } = require("../services/emailService");
+const gdtallerService = require("../services/gdtallerService");
 
 class AuthController {
   // Registro de usuario
@@ -48,15 +51,6 @@ class AuthController {
           params: [nombre, email, hashedPassword, dni, telefono, rol],
         },
       ];
-
-      // Si es cliente, también crear registro en tabla clientes
-      if (rol === "cliente") {
-        queries.push({
-          query: `INSERT INTO clientes (usuario_id, dni, nombre, email, telefono) 
-                  VALUES (LAST_INSERT_ID(), ?, ?, ?, ?)`,
-          params: [dni, nombre, email, telefono],
-        });
-      }
 
       const result = await executeTransaction(queries);
 
@@ -126,9 +120,8 @@ class AuthController {
       const searchValue = email || dni;
 
       const userResult = await executeQuery(
-        `SELECT u.*, c.id as cliente_id 
-         FROM usuarios u 
-         LEFT JOIN clientes c ON u.id = c.usuario_id 
+        `SELECT u.*
+         FROM usuarios u
          WHERE u.${whereClause} AND u.activo = TRUE`,
         [searchValue]
       );
@@ -156,26 +149,13 @@ class AuthController {
       const token = jwt.sign(
         {
           id: user.id,
-          clienteId: user.cliente_id,
           email: user.email,
           dni: user.dni,
           rol: user.rol,
           nombre: user.nombre,
         },
         process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRES_IN }
-      );
-
-      // Registrar sesión (opcional)
-      await executeQuery(
-        `INSERT INTO sesiones (usuario_id, token_hash, ip_address, user_agent, fecha_expiracion) 
-         VALUES (?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 24 HOUR))`,
-        [
-          user.id,
-          jwt.sign({ tokenId: user.id }, process.env.JWT_SECRET),
-          req.ip,
-          req.get("User-Agent"),
-        ]
+        { expiresIn: process.env.JWT_EXPIRES_IN || "24h" }
       );
 
       res.json({
@@ -184,7 +164,6 @@ class AuthController {
         data: {
           user: {
             id: user.id,
-            clienteId: user.cliente_id,
             nombre: user.nombre,
             email: user.email,
             dni: user.dni,
@@ -236,9 +215,8 @@ class AuthController {
 
       // Obtener datos actualizados del usuario
       const userResult = await executeQuery(
-        `SELECT u.*, c.id as cliente_id 
-         FROM usuarios u 
-         LEFT JOIN clientes c ON u.id = c.usuario_id 
+        `SELECT u.*
+         FROM usuarios u
          WHERE u.id = ? AND u.activo = TRUE`,
         [user.id]
       );
@@ -272,6 +250,183 @@ class AuthController {
         success: false,
         message: "Error interno del servidor",
         error: error.message,
+      });
+    }
+  }
+
+  // Solicitar recuperacion de contraseña
+  static async requestPasswordReset(req, res) {
+    try {
+      const { email, dni } = req.body;
+
+      if (!email && !dni) {
+        return res.status(400).json({
+          success: false,
+          message: "Email o DNI es requerido",
+        });
+      }
+
+      // Siempre responder lo mismo para no revelar si el email/DNI existe
+      const genericResponse = {
+        success: true,
+        message: "Si el email/DNI existe en nuestro sistema, se ha enviado un enlace de recuperacion",
+      };
+
+      // 1. Buscar en tabla usuarios local
+      const whereClause = email ? "email = ?" : "dni = ?";
+      const searchValue = email || dni;
+
+      const userResult = await executeQuery(
+        `SELECT id, email FROM usuarios WHERE ${whereClause} AND activo = TRUE`,
+        [searchValue]
+      );
+
+      // Email del usuario en tabla usuarios (para actualizar la contraseña)
+      let usuarioEmail = null;
+      // Email donde enviar el correo de recuperacion (puede ser distinto)
+      let sendToEmail = null;
+
+      if (userResult.success && userResult.data.length > 0) {
+        usuarioEmail = userResult.data[0].email;
+        sendToEmail = userResult.data[0].email;
+      } else {
+        // 2. Buscar en clientes de GDTaller
+        try {
+          const rawClients = await gdtallerService.getClients();
+          const clients = rawClients.map(gdtallerService.mapClientFromGDTaller);
+
+          const gdClient = email
+            ? clients.find((c) => c.email && c.email.toLowerCase() === email.toLowerCase())
+            : clients.find((c) => c.cif && c.cif.toLowerCase() === dni.toLowerCase());
+
+          if (gdClient) {
+            // Buscar usuario en tabla usuarios por CIF/DNI del cliente GDTaller
+            const cifDni = gdClient.cif;
+            if (cifDni) {
+              const localUser = await executeQuery(
+                "SELECT id, email FROM usuarios WHERE dni = ? AND activo = TRUE",
+                [cifDni]
+              );
+              if (localUser.success && localUser.data.length > 0) {
+                usuarioEmail = localUser.data[0].email;
+                sendToEmail = gdClient.email || localUser.data[0].email;
+              }
+            }
+          }
+        } catch (gdError) {
+          console.error("Error buscando en GDTaller:", gdError.message);
+        }
+      }
+
+      if (!usuarioEmail) {
+        return res.json(genericResponse);
+      }
+
+      // Generar token random y guardar hash en BD
+      const resetToken = crypto.randomBytes(32).toString("hex");
+      const tokenHash = crypto.createHash("sha256").update(resetToken).digest("hex");
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hora
+
+      // Invalidar tokens anteriores del mismo usuario
+      await executeQuery(
+        "UPDATE password_resets SET used = TRUE WHERE email = ? AND used = FALSE",
+        [usuarioEmail]
+      );
+
+      // Guardar token con el email de usuarios (para el UPDATE de contraseña)
+      await executeQuery(
+        "INSERT INTO password_resets (email, token, expires_at) VALUES (?, ?, ?)",
+        [usuarioEmail, tokenHash, expiresAt]
+      );
+
+      // Enviar email
+      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5174";
+      const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
+
+      try {
+        await sendPasswordResetEmail(sendToEmail, resetUrl);
+      } catch (emailError) {
+        console.error("Error enviando email de recuperacion:", emailError.message);
+      }
+
+      res.json(genericResponse);
+    } catch (error) {
+      console.error("Error en requestPasswordReset:", error);
+      res.status(500).json({
+        success: false,
+        message: "Error interno del servidor",
+      });
+    }
+  }
+
+  // Restablecer contraseña con token
+  static async resetPassword(req, res) {
+    try {
+      const { token, newPassword } = req.body;
+
+      if (!token || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          message: "Token y nueva contraseña son requeridos",
+        });
+      }
+
+      if (newPassword.length < 4) {
+        return res.status(400).json({
+          success: false,
+          message: "La contraseña debe tener al menos 4 caracteres",
+        });
+      }
+
+      // Hashear el token recibido para comparar con BD
+      const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+      // Buscar token valido (no expirado, no usado)
+      const tokenResult = await executeQuery(
+        "SELECT * FROM password_resets WHERE token = ? AND used = FALSE AND expires_at > NOW()",
+        [tokenHash]
+      );
+
+      if (!tokenResult.success || tokenResult.data.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "El enlace no es valido o ha expirado. Solicita uno nuevo.",
+        });
+      }
+
+      const resetRecord = tokenResult.data[0];
+
+      // Hashear nueva contraseña
+      const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+      // Actualizar contraseña del usuario
+      const updateResult = await executeQuery(
+        "UPDATE usuarios SET password = ? WHERE email = ?",
+        [hashedPassword, resetRecord.email]
+      );
+
+      if (!updateResult.success) {
+        return res.status(500).json({
+          success: false,
+          message: "Error al actualizar la contraseña",
+        });
+      }
+
+      // Marcar token como usado
+      await executeQuery(
+        "UPDATE password_resets SET used = TRUE WHERE id = ?",
+        [resetRecord.id]
+      );
+
+      res.json({
+        success: true,
+        message: "Contraseña actualizada correctamente",
+      });
+    } catch (error) {
+      console.error("Error en resetPassword:", error);
+      res.status(500).json({
+        success: false,
+        message: "Error interno del servidor",
       });
     }
   }

@@ -2,20 +2,76 @@
 const express = require("express");
 const router = express.Router();
 const { pool } = require("../config/database");
+const gdtallerService = require("../services/gdtallerService");
+
+// Helper: resolver GDTaller IDs a CIF/matricula
+async function resolveIdentifiers({ motoId, clienteId, cif, matricula }) {
+  let resolvedCif = cif || null;
+  let resolvedMatricula = matricula || null;
+
+  // Si recibimos motoId (GDTaller ID), resolver a matricula
+  if (!resolvedMatricula && motoId) {
+    const rawVehicles = await gdtallerService.getVehicles();
+    const vehicles = rawVehicles.map(gdtallerService.mapVehicleFromGDTaller);
+    const vehicle = vehicles.find((v) => String(v.id) === String(motoId));
+    if (vehicle) {
+      resolvedMatricula = vehicle.matricula;
+      if (!resolvedCif) resolvedCif = vehicle.cifPropietario;
+    }
+  }
+
+  // Si recibimos clienteId (GDTaller ID), resolver a CIF
+  if (!resolvedCif && clienteId) {
+    const rawClients = await gdtallerService.getClients();
+    const clients = rawClients.map(gdtallerService.mapClientFromGDTaller);
+    const client = clients.find((c) => String(c.id) === String(clienteId));
+    if (client) resolvedCif = client.cif;
+  }
+
+  return { cif: resolvedCif, matricula: resolvedMatricula };
+}
+
+// GET - Obtener estadísticas de servicios (debe ir antes de /:id)
+router.get("/stats/dashboard", async (req, res) => {
+  try {
+    const [stats] = await pool.execute(`
+      SELECT
+        COUNT(*) as total_servicios,
+        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completados,
+        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pendientes,
+        SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) as borradores,
+        SUM(CASE WHEN tipo_suspension = 'FF' THEN 1 ELSE 0 END) as horquillas,
+        SUM(CASE WHEN tipo_suspension = 'RR' THEN 1 ELSE 0 END) as amortiguadores
+      FROM servicios_info
+    `);
+
+    res.json({
+      success: true,
+      data: stats[0],
+    });
+  } catch (error) {
+    console.error("Error obteniendo estadisticas:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener estadisticas",
+      error: error.message,
+    });
+  }
+});
 
 // GET - Obtener información de servicio por ID
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("🔍 Obteniendo servicio ID:", id);
 
     const [rows] = await pool.execute(
-      `SELECT 
-        id, moto_id, cliente_id, numero_orden, fecha_servicio, km_moto,
+      `SELECT
+        id, moto_id, cliente_id, cif_cliente, matricula_moto,
+        numero_orden, fecha_servicio, km_moto,
         fecha_proximo_mantenimiento, servicio_suspension, observaciones,
         peso_piloto, disciplina, marca, modelo, año, referencia,
         status, tipo_suspension, created_at, updated_at
-       FROM servicios_info 
+       FROM servicios_info
        WHERE id = ?`,
       [id]
     );
@@ -27,13 +83,12 @@ router.get("/:id", async (req, res) => {
       });
     }
 
-    console.log("✅ Servicio encontrado:", rows[0]);
     res.json({
       success: true,
       data: rows[0],
     });
   } catch (error) {
-    console.error("❌ Error obteniendo servicio:", error);
+    console.error("Error obteniendo servicio:", error);
     res.status(500).json({
       success: false,
       message: "Error al obtener el servicio",
@@ -42,31 +97,31 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// GET - Obtener información de servicio por moto_id
-router.get("/by-moto/:motoId", async (req, res) => {
+// GET - Obtener información de servicio por moto (moto_id O matricula_moto)
+router.get("/by-moto/:identifier", async (req, res) => {
   try {
-    const { motoId } = req.params;
-    console.log("🔍 Obteniendo servicios para moto ID:", motoId);
+    const { identifier } = req.params;
 
+    // Buscar por moto_id (legacy) O matricula_moto (nuevo)
     const [rows] = await pool.execute(
-      `SELECT 
-        id, moto_id, cliente_id, numero_orden, fecha_servicio, km_moto,
+      `SELECT
+        id, moto_id, cliente_id, cif_cliente, matricula_moto,
+        numero_orden, fecha_servicio, km_moto,
         fecha_proximo_mantenimiento, servicio_suspension, observaciones,
         peso_piloto, disciplina, marca, modelo, año, referencia,
         status, tipo_suspension, created_at, updated_at
-       FROM servicios_info 
-       WHERE moto_id = ? 
+       FROM servicios_info
+       WHERE moto_id = ? OR matricula_moto = ?
        ORDER BY created_at DESC`,
-      [motoId]
+      [identifier, identifier]
     );
 
-    console.log(`✅ Encontrados ${rows.length} servicios para moto ${motoId}`);
     res.json({
       success: true,
       data: rows,
     });
   } catch (error) {
-    console.error("❌ Error obteniendo servicios por moto:", error);
+    console.error("Error obteniendo servicios por moto:", error);
     res.status(500).json({
       success: false,
       message: "Error al obtener los servicios",
@@ -81,6 +136,8 @@ router.post("/", async (req, res) => {
     const {
       motoId,
       clienteId,
+      cif,
+      matricula,
       numeroOrden,
       fechaServicio,
       kmMoto,
@@ -96,22 +153,15 @@ router.post("/", async (req, res) => {
       tipoSuspension = "FF",
     } = req.body;
 
-    console.log("📝 Creando nuevo servicio:", req.body);
-
-    // Validaciones obligatorias
-    if (!motoId) {
-      return res.status(400).json({
-        success: false,
-        message: "El ID de la moto es obligatorio",
-      });
-    }
-
     if (!numeroOrden || !servicioSuspension) {
       return res.status(400).json({
         success: false,
-        message: "Número de orden y tipo de servicio son obligatorios",
+        message: "Numero de orden y tipo de servicio son obligatorios",
       });
     }
+
+    // Resolver identificadores a CIF/matricula
+    const resolved = await resolveIdentifiers({ motoId, clienteId, cif, matricula });
 
     // Verificar que el número de orden no exista
     const [existing] = await pool.execute(
@@ -122,26 +172,28 @@ router.post("/", async (req, res) => {
     if (existing.length > 0) {
       return res.status(409).json({
         success: false,
-        message: "El número de orden ya existe",
+        message: "El numero de orden ya existe",
       });
     }
 
-    const query = `
-      INSERT INTO servicios_info 
-      (moto_id, cliente_id, numero_orden, fecha_servicio, km_moto, 
-       fecha_proximo_mantenimiento, servicio_suspension, observaciones,
-       peso_piloto, disciplina, marca, modelo, año, referencia, 
-       tipo_suspension, status) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    // Determinar status basado en si los campos opcionales están completos
     const hasOptionalFields = marca && modelo && año && referencia;
     const status = hasOptionalFields ? "completed" : "pending";
 
+    const query = `
+      INSERT INTO servicios_info
+      (moto_id, cliente_id, cif_cliente, matricula_moto,
+       numero_orden, fecha_servicio, km_moto,
+       fecha_proximo_mantenimiento, servicio_suspension, observaciones,
+       peso_piloto, disciplina, marca, modelo, año, referencia,
+       tipo_suspension, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
     const [result] = await pool.execute(query, [
-      motoId,
+      motoId || null,
       clienteId || null,
+      resolved.cif,
+      resolved.matricula,
       numeroOrden,
       fechaServicio || null,
       kmMoto || null,
@@ -158,11 +210,9 @@ router.post("/", async (req, res) => {
       status,
     ]);
 
-    console.log("✅ Servicio creado con ID:", result.insertId);
-
     res.status(201).json({
       success: true,
-      message: "Información del servicio creada exitosamente",
+      message: "Informacion del servicio creada exitosamente",
       data: {
         id: result.insertId,
         status: status,
@@ -170,12 +220,12 @@ router.post("/", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("❌ Error creando servicio:", error);
+    console.error("Error creando servicio:", error);
 
     if (error.code === "ER_DUP_ENTRY") {
       return res.status(409).json({
         success: false,
-        message: "El número de orden ya existe",
+        message: "El numero de orden ya existe",
       });
     }
 
@@ -206,9 +256,6 @@ router.put("/:id", async (req, res) => {
       referencia,
     } = req.body;
 
-    console.log("📝 Actualizando servicio ID:", id, "con datos:", req.body);
-
-    // Verificar que el servicio existe
     const [existing] = await pool.execute(
       "SELECT id FROM servicios_info WHERE id = ?",
       [id]
@@ -221,8 +268,11 @@ router.put("/:id", async (req, res) => {
       });
     }
 
+    const hasOptionalFields = marca && modelo && año && referencia;
+    const status = hasOptionalFields ? "completed" : "pending";
+
     const query = `
-      UPDATE servicios_info 
+      UPDATE servicios_info
       SET numero_orden = ?, fecha_servicio = ?, km_moto = ?,
           fecha_proximo_mantenimiento = ?, servicio_suspension = ?,
           observaciones = ?, peso_piloto = ?, disciplina = ?,
@@ -230,10 +280,6 @@ router.put("/:id", async (req, res) => {
           status = ?, updated_at = NOW()
       WHERE id = ?
     `;
-
-    // Determinar status basado en completitud
-    const hasOptionalFields = marca && modelo && año && referencia;
-    const status = hasOptionalFields ? "completed" : "pending";
 
     const [result] = await pool.execute(query, [
       numeroOrden,
@@ -252,8 +298,6 @@ router.put("/:id", async (req, res) => {
       id,
     ]);
 
-    console.log("✅ Servicio actualizado, rows affected:", result.affectedRows);
-
     res.json({
       success: true,
       message: "Servicio actualizado exitosamente",
@@ -264,7 +308,7 @@ router.put("/:id", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("❌ Error actualizando servicio:", error);
+    console.error("Error actualizando servicio:", error);
     res.status(500).json({
       success: false,
       message: "Error al actualizar el servicio",
@@ -277,7 +321,6 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("🗑️ Eliminando servicio ID:", id);
 
     const [result] = await pool.execute(
       "DELETE FROM servicios_info WHERE id = ?",
@@ -291,47 +334,15 @@ router.delete("/:id", async (req, res) => {
       });
     }
 
-    console.log("✅ Servicio eliminado");
     res.json({
       success: true,
       message: "Servicio eliminado exitosamente",
     });
   } catch (error) {
-    console.error("❌ Error eliminando servicio:", error);
+    console.error("Error eliminando servicio:", error);
     res.status(500).json({
       success: false,
       message: "Error al eliminar el servicio",
-      error: error.message,
-    });
-  }
-});
-
-// GET - Obtener estadísticas de servicios
-router.get("/stats/dashboard", async (req, res) => {
-  try {
-    console.log("📊 Obteniendo estadísticas de servicios");
-
-    const [stats] = await pool.execute(`
-      SELECT 
-        COUNT(*) as total_servicios,
-        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completados,
-        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pendientes,
-        SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) as borradores,
-        SUM(CASE WHEN tipo_suspension = 'FF' THEN 1 ELSE 0 END) as horquillas,
-        SUM(CASE WHEN tipo_suspension = 'RR' THEN 1 ELSE 0 END) as amortiguadores
-      FROM servicios_info
-    `);
-
-    console.log("✅ Estadísticas obtenidas:", stats[0]);
-    res.json({
-      success: true,
-      data: stats[0],
-    });
-  } catch (error) {
-    console.error("❌ Error obteniendo estadísticas:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error al obtener estadísticas",
       error: error.message,
     });
   }

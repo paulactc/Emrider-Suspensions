@@ -15,7 +15,7 @@ import {
 
 function UlEachDatesTechnical({ datetechnicalArray, motoId, onFichaCaducada }) {
   const bikeDatesTechnical = datetechnicalArray.filter(
-    (datetechnical) => datetechnical.clienteId === parseInt(motoId)
+    (datetechnical) => String(datetechnical.clienteId) === String(motoId)
   );
 
   if (bikeDatesTechnical.length === 0) {

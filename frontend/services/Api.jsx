@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:3000/api";
+const API_BASE_URL = "/api";
 
 class ApiService {
   // Método genérico para hacer peticiones
@@ -18,56 +18,87 @@ class ApiService {
 
       return await response.json();
     } catch (error) {
-      console.error("Error en la petición:", error);
+      console.error("Error en la peticion:", error);
       throw error;
     }
   }
 
-  // ===== CLIENTES =====
+  // ===== AUTH =====
+
+  async login(email, password) {
+    return this.makeRequest("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
+  }
+
+  async loginWithDni(dni, password) {
+    return this.makeRequest("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ dni, password }),
+    });
+  }
+
+  async register(userData) {
+    return this.makeRequest("/auth/register", {
+      method: "POST",
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async forgotPassword(emailOrDni) {
+    const isEmail = emailOrDni.includes("@");
+    return this.makeRequest("/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify(isEmail ? { email: emailOrDni } : { dni: emailOrDni }),
+    });
+  }
+
+  async resetPassword(token, newPassword) {
+    return this.makeRequest("/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify({ token, newPassword }),
+    });
+  }
+
+  async verifyToken() {
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+    return this.makeRequest("/auth/verify", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  }
+
+  // ===== CLIENTES (solo lectura desde GDTaller) =====
 
   // Obtener todos los clientes
   async getClientes() {
     return this.makeRequest("/clientes");
   }
 
-  // Obtener un cliente por ID
+  // Obtener un cliente por ID (GDTaller ID o CIF)
   async getCliente(id) {
-    return this.makeRequest(`/clientes/${id}`);
+    return this.makeRequest(`/clientes/${encodeURIComponent(id)}`);
   }
 
-  // Crear nuevo cliente
-  async createCliente(clienteData) {
-    return this.makeRequest("/clientes", {
-      method: "POST",
-      body: JSON.stringify(clienteData),
-    });
-  }
-
-  // Actualizar cliente
-  async updateCliente(id, clienteData) {
-    return this.makeRequest(`/clientes/${id}`, {
+  // Actualizar cuestionario del cliente (peso, nivel pilotaje)
+  async updateClienteCuestionario(id, cuestionarioData) {
+    return this.makeRequest(`/clientes/${encodeURIComponent(id)}/cuestionario`, {
       method: "PUT",
-      body: JSON.stringify(clienteData),
+      body: JSON.stringify(cuestionarioData),
     });
   }
 
-  // Eliminar cliente
-  async deleteCliente(id) {
-    return this.makeRequest(`/clientes/${id}`, {
-      method: "DELETE",
-    });
-  }
-
-  // ===== MOTOS =====
+  // ===== MOTOS (solo lectura desde GDTaller) =====
 
   // Obtener motos por CIF
   getMotosByCif(cif) {
     return this.makeRequest(`/motos/by-cif/${encodeURIComponent(cif)}`);
   }
 
-  // Obtener una moto por ID
+  // Obtener una moto por ID (GDTaller ID o matrícula)
   async getMoto(id) {
-    return this.makeRequest(`/motos/${id}`);
+    return this.makeRequest(`/motos/${encodeURIComponent(id)}`);
   }
 
   // Obtener todas las motos
@@ -75,52 +106,21 @@ class ApiService {
     return this.makeRequest("/motos");
   }
 
-  // Obtener motos de un cliente
-  async getMotosByCliente(clienteId) {
-    return this.makeRequest(`/motos/cliente/${clienteId}`);
-  }
-
-  // Crear nueva moto
-  async createMoto(motoData) {
-    return this.makeRequest("/motos", {
-      method: "POST",
-      body: JSON.stringify(motoData),
-    });
-  }
-
-  // Actualizar moto
-  async updateMoto(id, motoData) {
-    return this.makeRequest(`/motos/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(motoData),
-    });
-  }
-
-  // Eliminar moto
-  async deleteMoto(id) {
-    return this.makeRequest(`/motos/${id}`, {
-      method: "DELETE",
-    });
-  }
-
   // Obtener datos completos de cliente y moto para servicios técnicos
   async getClienteYMotoParaServicio(motoId) {
     try {
-      console.log(
-        "🔍 Obteniendo datos completos para servicio técnico, moto ID:",
-        motoId
-      );
+      console.log("Obteniendo datos completos para servicio tecnico, moto ID:", motoId);
 
       // 1. Obtener datos de la moto
       const moto = await this.getMoto(motoId);
-      console.log("🏍️ Moto obtenida:", moto);
+      console.log("Moto obtenida:", moto);
 
       // 2. Obtener datos del cliente por CIF
       let cliente = null;
       if (moto.cifPropietario) {
         const clientes = await this.getClientes();
         cliente = clientes.find((c) => c.cif === moto.cifPropietario);
-        console.log("👤 Cliente encontrado:", cliente);
+        console.log("Cliente encontrado:", cliente);
       }
 
       return {
@@ -136,7 +136,7 @@ class ApiService {
         },
       };
     } catch (error) {
-      console.error("❌ Error obteniendo datos para servicio:", error);
+      console.error("Error obteniendo datos para servicio:", error);
       throw error;
     }
   }
@@ -155,7 +155,7 @@ class ApiService {
         moto: datos.moto,
       };
     } catch (error) {
-      console.error("❌ Error verificando estado del cuestionario:", error);
+      console.error("Error verificando estado del cuestionario:", error);
       return {
         necesitaCuestionario: true,
         clienteCompleto: false,
@@ -164,6 +164,12 @@ class ApiService {
         moto: null,
       };
     }
+  }
+
+  // ===== ORDENES DE TRABAJO (GDTaller) =====
+
+  async getOrderLinesByClient(clientId) {
+    return this.makeRequest(`/gdtaller/order-lines/${encodeURIComponent(clientId)}`);
   }
 
   // ===== DATOS TÉCNICOS =====
@@ -195,7 +201,7 @@ class ApiService {
 
   // Guardar respuestas del cuestionario
   async saveQuestionnaire(questionnaireData) {
-    console.log("📤 Enviando cuestionario:", questionnaireData);
+    console.log("Enviando cuestionario:", questionnaireData);
     return this.makeRequest("/questionnaire", {
       method: "POST",
       body: JSON.stringify(questionnaireData),
@@ -204,23 +210,17 @@ class ApiService {
 
   // Verificar estado del cuestionario para un cliente
   async getQuestionnaireStatus(clienteId) {
-    console.log(
-      "🔍 Verificando estado del cuestionario para cliente:",
-      clienteId
-    );
-    return this.makeRequest(`/questionnaire/status/${clienteId}`);
+    console.log("Verificando estado del cuestionario para cliente:", clienteId);
+    return this.makeRequest(`/questionnaire/status/${encodeURIComponent(clienteId)}`);
   }
 
   // Obtener cliente con datos del cuestionario incluidos
   async getClienteCompleto(clienteId) {
-    console.log("👤 Obteniendo cliente completo:", clienteId);
-    return this.makeRequest(`/clientes/${clienteId}`);
+    return this.makeRequest(`/clientes/${encodeURIComponent(clienteId)}`);
   }
 
   // Obtener motos con datos del cuestionario incluidos
   async getMotosByCifCompleto(cif) {
-    console.log("🏍️ Obteniendo motos completas por CIF:", cif);
-    // Reutilizamos el método existente ya que las motos incluirán los nuevos campos
     return this.getMotosByCif(cif);
   }
 
@@ -233,7 +233,7 @@ class ApiService {
       return status.necesitaCuestionario;
     } catch (error) {
       console.error("Error verificando necesidad de cuestionario:", error);
-      return true; // Por seguridad, asumir que sí necesita
+      return true;
     }
   }
 
@@ -252,19 +252,16 @@ class ApiService {
 
   // Obtener información de servicio por ID
   async getServicioInfo(id) {
-    console.log("📋 Obteniendo información de servicio:", id);
     return this.makeRequest(`/servicios-info/${id}`);
   }
 
-  // Obtener servicios por moto ID
+  // Obtener servicios por moto ID (GDTaller ID o matrícula)
   async getServiciosByMoto(motoId) {
-    console.log("🏍️ Obteniendo servicios para moto:", motoId);
-    return this.makeRequest(`/servicios-info/by-moto/${motoId}`);
+    return this.makeRequest(`/servicios-info/by-moto/${encodeURIComponent(motoId)}`);
   }
 
   // Crear nueva información de servicio
   async createServicioInfo(servicioData) {
-    console.log("📝 Creando información de servicio:", servicioData);
     return this.makeRequest("/servicios-info", {
       method: "POST",
       body: JSON.stringify(servicioData),
@@ -273,7 +270,6 @@ class ApiService {
 
   // Actualizar información de servicio
   async updateServicioInfo(id, servicioData) {
-    console.log("✏️ Actualizando información de servicio:", id, servicioData);
     return this.makeRequest(`/servicios-info/${id}`, {
       method: "PUT",
       body: JSON.stringify(servicioData),
@@ -282,7 +278,6 @@ class ApiService {
 
   // Eliminar información de servicio
   async deleteServicioInfo(id) {
-    console.log("🗑️ Eliminando información de servicio:", id);
     return this.makeRequest(`/servicios-info/${id}`, {
       method: "DELETE",
     });
@@ -290,7 +285,6 @@ class ApiService {
 
   // Obtener estadísticas de servicios
   async getServiciosStats() {
-    console.log("📊 Obteniendo estadísticas de servicios");
     return this.makeRequest("/servicios-info/stats/dashboard");
   }
 

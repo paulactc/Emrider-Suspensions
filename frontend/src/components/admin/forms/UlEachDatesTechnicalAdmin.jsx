@@ -1,7 +1,7 @@
 function UlEachDatesTechnicalAdmin({ datetechnicalArray, motoId }) {
   // Filtrar los datos técnicos por el motoId proporcionado
   const bikeDatesTechnical = datetechnicalArray.filter(
-    (datetechnical) => datetechnical.clienteId === parseInt(motoId)
+    (datetechnical) => String(datetechnical.clienteId) === String(motoId)
   );
 
   if (bikeDatesTechnical.length === 0) {

@@ -1,17 +1,11 @@
 import { NavLink } from "react-router";
-import { Edit3 } from "lucide-react";
-import { useNavigate } from "react-router";
 import React, { useEffect, useState } from "react";
-import api from "../../../services/Api"; // Asegúrate de que la ruta sea correcta
+import api from "../../../services/Api";
 
 function UleachCustom({ eachCustom, listBikes, listTechnical }) {
-  console.log("5. eachCustom en UleachCustom (al inicio):", eachCustom);
-
-  const navigate = useNavigate();
   const [motos, setMotos] = useState([]);
   const [loadingMotos, setLoadingMotos] = useState(false);
 
-  // Efecto para cargar las motos por CIF (igual que en UleachCustomUser)
   useEffect(() => {
     if (!eachCustom?.cif) return;
 
@@ -31,41 +25,25 @@ function UleachCustom({ eachCustom, listBikes, listTechnical }) {
     cargarMotos();
   }, [eachCustom?.cif]);
 
-  const handleEditarCliente = (cliente) => {
-    navigate(`/editar-cliente/${cliente.id}`, {
-      state: { clientData: cliente },
-    });
-  };
-
   if (!eachCustom) {
-    console.warn("UleachCustom recibió un 'eachCustom' indefinido o nulo.");
     return null;
   }
 
-  if (!eachCustom.nombre && !eachCustom.apellidos) {
-    console.warn("UleachCustom sin nombre ni apellidos:", eachCustom);
+  if (!eachCustom.nombre && !eachCustom.apellidos && !eachCustom.nombre_completo) {
     return null;
   }
 
   const safeDisplay = (value) => value || "No disponible";
-
-  // Usar las motos cargadas por CIF
   const tieneMotos = motos.length > 0;
 
   return (
     <>
       <li className="listclient">
-        <button
-          onClick={() => handleEditarCliente(eachCustom)}
-          className="Newcustom"
-        >
-          <Edit3 />
-          Editar
-        </button>
         <p className="datos-cliente">
           Cliente:{" "}
           {safeDisplay(
-            `${eachCustom.nombre || ""} ${eachCustom.apellidos || ""}`.trim()
+            eachCustom.nombre_completo
+            || `${eachCustom.nombre || ""} ${eachCustom.apellidos || ""}`.trim()
           )}
         </p>
 
@@ -86,53 +64,26 @@ function UleachCustom({ eachCustom, listBikes, listTechnical }) {
           Provincia: {safeDisplay(eachCustom.provincia)}
         </p>
 
-        {/* Mostrar datos de moto o botón de crear */}
         {eachCustom.id && (
           <div className="moto-actions">
             {loadingMotos ? (
               <p className="loading-message">Cargando motocicletas...</p>
             ) : tieneMotos ? (
-              <div className="tiene-motos">
-                <NavLink
-                  className="Newcustom"
-                  to={`/admin/motosadmin/${eachCustom.id}`}
-                  state={{
-                    motos: motos, // Pasar las motos cargadas
-                    cif: eachCustom.cif, // Pasar el CIF
-                    listTechnical,
-                  }}
-                >
-                  Ver motocicletas ({motos.length})
-                </NavLink>
-                <NavLink
-                  className="Newcustom create-moto-btn"
-                  to="/FormBike"
-                  state={{
-                    clienteId: eachCustom.id,
-                    clientData: eachCustom,
-                    listTechnical,
-                  }}
-                >
-                  Crear motocicleta
-                </NavLink>
-              </div>
+              <NavLink
+                className="Newcustom"
+                to={`/admin/motosadmin/${eachCustom.id}`}
+                state={{
+                  motos: motos,
+                  cif: eachCustom.cif,
+                  listTechnical,
+                }}
+              >
+                Ver motocicletas ({motos.length})
+              </NavLink>
             ) : (
-              <div className="no-motos">
-                <p className="no-results-message">
-                  No tiene motocicletas registradas
-                </p>
-                <NavLink
-                  className="Newcustom create-moto-btn"
-                  to="/FormBike"
-                  state={{
-                    clienteId: eachCustom.id,
-                    clientData: eachCustom,
-                    listTechnical,
-                  }}
-                >
-                  crear motocicleta
-                </NavLink>
-              </div>
+              <p className="no-results-message">
+                No tiene motocicletas registradas
+              </p>
             )}
           </div>
         )}

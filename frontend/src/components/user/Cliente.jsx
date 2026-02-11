@@ -12,8 +12,9 @@ function Cliente({ listCustom, listBikes }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 🔧 CONFIGURACIÓN: Cambia este índice para el cliente que quieres mostrar
-  const CLIENTE_INDEX = 3; // 0=primer cliente, 1=segundo cliente, etc.
+  // Obtener DNI/CIF del usuario autenticado
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userCif = user.dni || "";
 
   // ⚙️ Array de motos con referencia estable (añadido)
   const motosNormalizadas = useMemo(() => {
@@ -38,42 +39,41 @@ function Cliente({ listCustom, listBikes }) {
 
         let cliente = null;
 
-        // ✅ OPCIÓN 1: Usar listCustom si está disponible y no está vacío
-        if (listCustom && Array.isArray(listCustom) && listCustom.length > 0) {
-          console.log("✅ Usando datos de listCustom");
-          console.log("📋 Total clientes en listCustom:", listCustom.length);
+        // Buscar cliente por CIF/DNI del usuario autenticado
+        const buscarClientePorCif = (clientes) => {
+          if (!userCif || !Array.isArray(clientes)) return null;
+          return clientes.find(
+            (c) => c.cif && c.cif.toLowerCase() === userCif.toLowerCase()
+          );
+        };
 
-          if (listCustom.length > CLIENTE_INDEX) {
-            cliente = listCustom[CLIENTE_INDEX];
-            console.log("👤 Cliente seleccionado desde listCustom:", cliente);
-          } else {
-            console.log("⚠️ Índice fuera de rango, tomando el primer cliente");
-            cliente = listCustom[0];
+        // OPCION 1: Buscar en listCustom para obtener el ID/CIF rápido
+        if (listCustom && Array.isArray(listCustom) && listCustom.length > 0) {
+          cliente = buscarClientePorCif(listCustom);
+          console.log("Cliente encontrado en listCustom:", cliente);
+        }
+
+        // OPCION 2: Si no se encontro, buscar desde API
+        if (!cliente) {
+          try {
+            const clientesFromAPI = await api.getClientes();
+            cliente = buscarClientePorCif(clientesFromAPI);
+            console.log("Cliente encontrado desde API:", cliente);
+          } catch (apiError) {
+            console.error("Error cargando desde API:", apiError);
           }
         }
 
-        // ✅ OPCIÓN 2: Si no hay listCustom, intentar cargar desde API
-        if (!cliente) {
-          console.log("🌐 Cargando clientes desde API...");
+        // Siempre obtener datos frescos del cliente individual (incluye cuestionario actualizado de BD)
+        if (cliente && cliente.id) {
           try {
-            const clientesFromAPI = await api.getClientes();
-            console.log("📦 Clientes desde API:", clientesFromAPI);
-
-            if (
-              clientesFromAPI &&
-              Array.isArray(clientesFromAPI) &&
-              clientesFromAPI.length > 0
-            ) {
-              if (clientesFromAPI.length > CLIENTE_INDEX) {
-                cliente = clientesFromAPI[CLIENTE_INDEX];
-              } else {
-                cliente = clientesFromAPI[0];
-              }
-              console.log("👤 Cliente seleccionado desde API:", cliente);
+            const clienteFresco = await api.getCliente(cliente.id);
+            if (clienteFresco) {
+              cliente = { ...cliente, ...clienteFresco };
+              console.log("Cliente actualizado con datos frescos:", cliente);
             }
           } catch (apiError) {
-            console.error("❌ Error cargando desde API:", apiError);
-            // Continuamos sin cliente, se mostrará el estado de error
+            console.log("No se pudieron obtener datos frescos, usando datos de listCustom");
           }
         }
 
@@ -121,7 +121,7 @@ function Cliente({ listCustom, listBikes }) {
     };
 
     cargarDatosCliente();
-  }, [listCustom, CLIENTE_INDEX]);
+  }, [listCustom, userCif]);
 
   const checkClienteStatus = async (cliente) => {
     try {

@@ -222,21 +222,9 @@ const FormBike = () => {
 
       console.log("📤 Datos normalizados a enviar:", motoNormalizada);
 
-      if (isEditMode) {
-        // Modo edición
-        const motoId = parseInt(motoData.id);
-        if (isNaN(motoId)) {
-          throw new Error("ID de la motocicleta no válido");
-        }
-        await api.updateMoto(motoId, motoNormalizada);
-        console.log("✅ Moto actualizada correctamente");
-        alert("✅ Motocicleta actualizada correctamente");
-      } else {
-        // Modo creación
-        await api.createMoto(motoNormalizada);
-        console.log("✅ Moto creada correctamente");
-        alert("✅ Motocicleta creada correctamente");
-      }
+      // Las motos se gestionan desde GDTaller (solo lectura)
+      alert("Las motocicletas se gestionan desde GDTaller. No se pueden crear/editar desde aqui.");
+
 
       navigate(-1);
     } catch (error) {

@@ -1,61 +1,90 @@
 // questionnaire.js - Rutas para el cuestionario
+// Guarda en cuestionario_clientes / cuestionario_motos (por CIF / matricula)
 const express = require("express");
 const router = express.Router();
 const { pool } = require("../config/database");
+const gdtallerService = require("../services/gdtallerService");
 
-console.log("🔥 QUESTIONNAIRE ROUTE LOADED");
+// Helper: resolver un identificador (GDTaller ID o CIF) a un CIF real
+async function resolveClientCif(identifier) {
+  // Intentar como CIF directamente
+  const rawClients = await gdtallerService.getClients();
+  const clients = rawClients.map(gdtallerService.mapClientFromGDTaller);
 
-// Endpoint para guardar respuestas del cuestionario
+  // Buscar por ID de GDTaller
+  let client = clients.find((c) => String(c.id) === String(identifier));
+  if (client && client.cif) return client.cif;
+
+  // Buscar por CIF
+  client = clients.find((c) => c.cif === identifier);
+  if (client && client.cif) return client.cif;
+
+  return null;
+}
+
+// Helper: resolver un identificador (GDTaller ID o matrícula) a una matrícula real
+async function resolveVehicleMatricula(identifier) {
+  const rawVehicles = await gdtallerService.getVehicles();
+  const vehicles = rawVehicles.map(gdtallerService.mapVehicleFromGDTaller);
+
+  // Buscar por ID de GDTaller
+  let vehicle = vehicles.find((v) => String(v.id) === String(identifier));
+  if (vehicle && vehicle.matricula) return vehicle.matricula;
+
+  // Buscar por matrícula
+  vehicle = vehicles.find((v) => v.matricula === identifier);
+  if (vehicle && vehicle.matricula) return vehicle.matricula;
+
+  return null;
+}
+
+// POST - Guardar respuestas del cuestionario
 router.post("/", async (req, res) => {
-  console.log("🔥 POST /questionnaire CALLED");
   const { cliente, motocicletas } = req.body;
 
   try {
-    console.log("📝 Guardando cuestionario:", { cliente, motocicletas });
+    console.log("Guardando cuestionario:", { cliente, motocicletas });
 
-    // Actualizar datos del cliente (camelCase frontend -> snake_case DB)
-    const updateClienteQuery = `
-      UPDATE clientes 
-      SET peso = ?, 
-          nivel_pilotaje = ?, 
-          fecha_ultima_confirmacion = NOW()
-      WHERE id = ?
-    `;
+    // Resolver CIF del cliente
+    const cif = await resolveClientCif(cliente.id);
+    if (!cif) {
+      return res.status(404).json({
+        success: false,
+        message: "No se pudo resolver el CIF del cliente",
+      });
+    }
 
-    await pool.execute(updateClienteQuery, [
-      cliente.peso,
-      cliente.nivelPilotaje, // Frontend: nivelPilotaje -> DB: nivel_pilotaje
-      cliente.id,
-    ]);
+    // UPSERT datos del cliente en cuestionario_clientes
+    await pool.execute(
+      `INSERT INTO cuestionario_clientes (cif, peso, nivel_pilotaje, fecha_ultima_confirmacion)
+       VALUES (?, ?, ?, NOW())
+       ON DUPLICATE KEY UPDATE peso = VALUES(peso), nivel_pilotaje = VALUES(nivel_pilotaje), fecha_ultima_confirmacion = NOW()`,
+      [cif, cliente.peso, cliente.nivelPilotaje]
+    );
 
-    // Actualizar datos de motocicletas (camelCase frontend -> snake_case DB)
+    console.log(`Cliente CIF ${cif} actualizado: peso=${cliente.peso}, nivel=${cliente.nivelPilotaje}`);
+
+    // UPSERT datos de cada motocicleta en cuestionario_motos
     for (const moto of motocicletas) {
-      const updateMotoQuery = `
-        UPDATE motos 
-        SET especialidad = ?, 
-            tipo_conduccion = ?, 
-            preferencia_rigidez = ?
-        WHERE id = ?
-      `;
+      const matricula = await resolveVehicleMatricula(moto.id);
+      if (!matricula) {
+        console.warn(`No se pudo resolver matricula para moto ID ${moto.id}, saltando...`);
+        continue;
+      }
 
-      await pool.execute(updateMotoQuery, [
-        moto.especialidad,
-        moto.tipoConduccion, // Frontend: tipoConduccion -> DB: tipo_conduccion
-        moto.preferenciaRigidez, // Frontend: preferenciaRigidez -> DB: preferencia_rigidez
-        moto.id,
-      ]);
+      await pool.execute(
+        `INSERT INTO cuestionario_motos (matricula, especialidad, tipo_conduccion, preferencia_rigidez)
+         VALUES (?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE especialidad = VALUES(especialidad), tipo_conduccion = VALUES(tipo_conduccion), preferencia_rigidez = VALUES(preferencia_rigidez)`,
+        [matricula, moto.especialidad, moto.tipoConduccion, moto.preferenciaRigidez]
+      );
 
-      console.log(`✅ Moto ${moto.id} actualizada con:`, {
+      console.log(`Moto matricula ${matricula} actualizada:`, {
         especialidad: moto.especialidad,
         tipoConduccion: moto.tipoConduccion,
         preferenciaRigidez: moto.preferenciaRigidez,
       });
     }
-
-    console.log(`✅ Cliente ${cliente.id} actualizado con:`, {
-      peso: cliente.peso,
-      nivelPilotaje: cliente.nivelPilotaje,
-    });
 
     res.json({
       success: true,
@@ -71,36 +100,31 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Endpoint para verificar estado del cuestionario
+// GET - Verificar estado del cuestionario
 router.get("/status/:id", async (req, res) => {
-  console.log("🔥 GET /questionnaire/status/:id CALLED");
   const { id } = req.params;
 
   try {
-    console.log("🔍 Verificando estado del cuestionario para cliente:", id);
-
-    const query = `
-      SELECT 
-        peso, 
-        nivel_pilotaje AS nivelPilotaje, 
-        fecha_ultima_confirmacion AS fechaUltimaConfirmacion 
-      FROM clientes 
-      WHERE id = ?
-    `;
-
-    const [rows] = await pool.execute(query, [id]);
-
-    if (rows.length === 0) {
+    // Resolver el CIF del cliente
+    const cif = await resolveClientCif(id);
+    if (!cif) {
       return res.status(404).json({ message: "Cliente no encontrado" });
     }
 
-    const cliente = rows[0];
+    let cliente = { peso: null, nivelPilotaje: null, fechaUltimaConfirmacion: null };
+    try {
+      const [rows] = await pool.execute(
+        `SELECT peso, nivel_pilotaje AS nivelPilotaje, fecha_ultima_confirmacion AS fechaUltimaConfirmacion
+         FROM cuestionario_clientes WHERE cif = ?`,
+        [cif]
+      );
+      if (rows.length > 0) cliente = rows[0];
+    } catch (err) {
+      console.warn("MySQL no disponible para status cuestionario:", err.message);
+    }
+
     const ahora = new Date();
-    const unAnoAtras = new Date(
-      ahora.getFullYear() - 1,
-      ahora.getMonth(),
-      ahora.getDate()
-    );
+    const unAnoAtras = new Date(ahora.getFullYear() - 1, ahora.getMonth(), ahora.getDate());
 
     const necesitaCuestionario =
       !cliente.peso ||
@@ -110,13 +134,6 @@ router.get("/status/:id", async (req, res) => {
 
     const tipoRequerido =
       !cliente.peso || !cliente.nivelPilotaje ? "first-time" : "confirmation";
-
-    console.log("📊 Estado del cuestionario:", {
-      clienteId: id,
-      necesitaCuestionario,
-      tipoRequerido,
-      datosCliente: cliente,
-    });
 
     res.json({
       necesitaCuestionario,

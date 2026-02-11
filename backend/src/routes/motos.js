@@ -1,208 +1,128 @@
-// routes/motos.js
+// backend/src/routes/motos.js
+// Motos vienen de GDTaller (fuente de verdad), solo cuestionario se guarda en MySQL
 const express = require("express");
 const router = express.Router();
 const { pool } = require("../config/database");
+const gdtallerService = require("../services/gdtallerService");
 
-// GET - Obtener motos por CIF (CON CAMPOS DEL CUESTIONARIO CORREGIDOS)
+// Helper: obtener cuestionarios de motos de forma segura (si MySQL falla, devuelve mapa vacío)
+async function getCuestionarioMotosMap() {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT matricula, especialidad, tipo_conduccion AS tipoConduccion, preferencia_rigidez AS preferenciaRigidez
+       FROM cuestionario_motos`
+    );
+    const map = {};
+    for (const r of rows) {
+      map[r.matricula] = r;
+    }
+    return map;
+  } catch (err) {
+    console.warn("MySQL no disponible para cuestionarios de motos:", err.message);
+    return {};
+  }
+}
+
+// Helper: obtener cuestionario de una moto por matrícula de forma segura
+async function getCuestionarioByMatricula(matricula) {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT especialidad, tipo_conduccion AS tipoConduccion, preferencia_rigidez AS preferenciaRigidez
+       FROM cuestionario_motos WHERE matricula = ?`,
+      [matricula]
+    );
+    return rows.length > 0 ? rows[0] : null;
+  } catch (err) {
+    console.warn("MySQL no disponible para cuestionario moto:", err.message);
+    return null;
+  }
+}
+
+// Helper: merge vehículo GDTaller con cuestionario local
+function mergeVehicleWithCuestionario(vehicle, cuestionarioMap) {
+  const q = vehicle.matricula ? cuestionarioMap[vehicle.matricula] : null;
+  return {
+    ...vehicle,
+    especialidad: q?.especialidad || null,
+    tipoConduccion: q?.tipoConduccion || null,
+    preferenciaRigidez: q?.preferenciaRigidez || null,
+  };
+}
+
+// GET - Obtener motos por CIF (GDTaller + merge cuestionario local)
 router.get("/by-cif/:cif", async (req, res) => {
   try {
     const { cif } = req.params;
-    console.log("🔍 Buscando motos para CIF:", cif);
 
-    const [rows] = await pool.execute(
-      `SELECT 
-        id, 
-        marca, 
-        modelo, 
-        anio, 
-        matricula, 
-        bastidor, 
-        cif_propietario AS cifPropietario,
-        especialidad, 
-        tipo_conduccion AS tipoConduccion, 
-        preferencia_rigidez AS preferenciaRigidez
-       FROM motos
-       WHERE cif_propietario = ?
-       ORDER BY marca, modelo`,
-      [cif]
-    );
+    const vehicles = await gdtallerService.getVehiclesByCif(cif);
+    const cuestionarioMap = await getCuestionarioMotosMap();
 
-    console.log(`🏍️ Encontradas ${rows.length} motos para CIF ${cif}`);
-    console.log("🔍 Datos de motos obtenidas:", rows); // Para debug
-    res.json(rows);
-  } catch (e) {
-    console.error("Error obteniendo motos por CIF:", e);
+    const merged = vehicles.map((v) => mergeVehicleWithCuestionario(v, cuestionarioMap));
+
+    res.json(merged);
+  } catch (error) {
+    console.error("Error obteniendo motos por CIF:", error);
+    if (error.message.includes("GDTaller")) {
+      return res.status(503).json({ error: "GDTaller no disponible. Intenta de nuevo en unos minutos." });
+    }
     res.status(500).json({ error: "Error obteniendo motos" });
   }
 });
 
-// GET - Obtener todas las motos (CON CAMPOS DEL CUESTIONARIO CORREGIDOS)
+// GET - Obtener todas las motos (GDTaller + merge cuestionario local)
 router.get("/", async (req, res) => {
   try {
-    const [rows] = await pool.execute(
-      `SELECT 
-        id, 
-        marca, 
-        modelo, 
-        anio, 
-        matricula, 
-        bastidor, 
-        cif_propietario AS cifPropietario,
-        especialidad, 
-        tipo_conduccion AS tipoConduccion, 
-        preferencia_rigidez AS preferenciaRigidez
-       FROM motos
-       ORDER BY marca, modelo`
-    );
-    res.json(rows);
-  } catch (e) {
-    console.error("Error obteniendo todas las motos:", e);
+    const rawVehicles = await gdtallerService.getVehicles();
+    const vehicles = rawVehicles.map(gdtallerService.mapVehicleFromGDTaller);
+    const cuestionarioMap = await getCuestionarioMotosMap();
+
+    const merged = vehicles.map((v) => mergeVehicleWithCuestionario(v, cuestionarioMap));
+
+    res.json(merged);
+  } catch (error) {
+    console.error("Error obteniendo todas las motos:", error);
+    if (error.message.includes("GDTaller")) {
+      return res.status(503).json({ error: "GDTaller no disponible. Intenta de nuevo en unos minutos." });
+    }
     res.status(500).json({ error: "Error obteniendo motos" });
   }
 });
 
-// GET - Obtener moto por ID (CON CAMPOS DEL CUESTIONARIO CORREGIDOS)
+// GET - Obtener moto por ID (GDTaller vehiculoID) o matrícula
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const [rows] = await pool.execute(
-      `SELECT 
-        id, 
-        marca, 
-        modelo, 
-        anio, 
-        matricula, 
-        bastidor, 
-        cif_propietario AS cifPropietario,
-        especialidad, 
-        tipo_conduccion AS tipoConduccion, 
-        preferencia_rigidez AS preferenciaRigidez
-       FROM motos
-       WHERE id = ?`,
-      [id]
-    );
 
-    if (rows.length === 0) {
+    // Buscar en todos los vehículos de GDTaller
+    const rawVehicles = await gdtallerService.getVehicles();
+    const vehicles = rawVehicles.map(gdtallerService.mapVehicleFromGDTaller);
+
+    let vehicle = vehicles.find((v) => String(v.id) === String(id));
+    if (!vehicle) {
+      vehicle = vehicles.find((v) => v.matricula === id);
+    }
+
+    if (!vehicle) {
       return res.status(404).json({ message: "Moto no encontrada" });
     }
 
-    res.json(rows[0]);
-  } catch (e) {
-    console.error("Error obteniendo moto por ID:", e);
+    // Merge con cuestionario local (si MySQL falla, se devuelve sin cuestionario)
+    if (vehicle.matricula) {
+      const q = await getCuestionarioByMatricula(vehicle.matricula);
+      if (q) {
+        vehicle.especialidad = q.especialidad;
+        vehicle.tipoConduccion = q.tipoConduccion;
+        vehicle.preferenciaRigidez = q.preferenciaRigidez;
+      }
+    }
+
+    res.json(vehicle);
+  } catch (error) {
+    console.error("Error obteniendo moto por ID:", error);
+    if (error.message.includes("GDTaller")) {
+      return res.status(503).json({ error: "GDTaller no disponible. Intenta de nuevo en unos minutos." });
+    }
     res.status(500).json({ error: "Error obteniendo moto" });
-  }
-});
-
-// POST - Crear nueva moto
-router.post("/", async (req, res) => {
-  try {
-    const {
-      marca,
-      modelo,
-      anio,
-      matricula,
-      bastidor,
-      cifPropietario, // Frontend envía en camelCase
-      especialidad,
-      tipoConduccion, // Frontend envía en camelCase
-      preferenciaRigidez, // Frontend envía en camelCase
-    } = req.body;
-
-    if (!marca || !modelo || !cifPropietario) {
-      return res.status(400).json({
-        message: "Marca, modelo y CIF del propietario son obligatorios",
-      });
-    }
-
-    const query = `
-      INSERT INTO motos 
-      (marca, modelo, anio, matricula, bastidor, cif_propietario, especialidad, tipo_conduccion, preferencia_rigidez) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    const [result] = await pool.execute(query, [
-      marca,
-      modelo,
-      anio,
-      matricula,
-      bastidor,
-      cifPropietario, // Se guarda como cif_propietario en DB
-      especialidad,
-      tipoConduccion, // Se guarda como tipo_conduccion en DB
-      preferenciaRigidez, // Se guarda como preferencia_rigidez en DB
-    ]);
-
-    res.status(201).json({
-      message: "Moto creada exitosamente",
-      motoId: result.insertId,
-    });
-  } catch (e) {
-    console.error("Error creando moto:", e);
-    res.status(500).json({ error: "Error creando moto" });
-  }
-});
-
-// PUT - Actualizar moto (CON CAMPOS DEL CUESTIONARIO CORREGIDOS)
-router.put("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const {
-      marca,
-      modelo,
-      anio,
-      matricula,
-      bastidor,
-      cifPropietario, // Frontend envía en camelCase
-      especialidad,
-      tipoConduccion, // Frontend envía en camelCase
-      preferenciaRigidez, // Frontend envía en camelCase
-    } = req.body;
-
-    const query = `
-      UPDATE motos 
-      SET marca = ?, modelo = ?, anio = ?, matricula = ?, bastidor = ?, 
-          cif_propietario = ?, especialidad = ?, tipo_conduccion = ?, preferencia_rigidez = ?
-      WHERE id = ?
-    `;
-
-    const [result] = await pool.execute(query, [
-      marca,
-      modelo,
-      anio,
-      matricula,
-      bastidor,
-      cifPropietario, // Se guarda como cif_propietario en DB
-      especialidad,
-      tipoConduccion, // Se guarda como tipo_conduccion en DB
-      preferenciaRigidez, // Se guarda como preferencia_rigidez en DB
-      id,
-    ]);
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Moto no encontrada" });
-    }
-
-    res.json({ message: "Moto actualizada exitosamente" });
-  } catch (e) {
-    console.error("Error actualizando moto:", e);
-    res.status(500).json({ error: "Error actualizando moto" });
-  }
-});
-
-// DELETE - Eliminar moto
-router.delete("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const [result] = await pool.execute("DELETE FROM motos WHERE id = ?", [id]);
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Moto no encontrada" });
-    }
-
-    res.json({ message: "Moto eliminada exitosamente" });
-  } catch (e) {
-    console.error("Error eliminando moto:", e);
-    res.status(500).json({ error: "Error eliminando moto" });
   }
 });
 

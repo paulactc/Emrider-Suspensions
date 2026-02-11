@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InputSearchCustom from "../admin/forms/InputSearchCustom";
 import UleachCustom from "../Page.Custom/UleachCustom";
+import api from "../../../services/Api";
 
 function ListCustom({
   listCustom,
@@ -9,12 +10,33 @@ function ListCustom({
   filters,
   listBikes,
 }) {
+  // --- CARGA DIRECTA SI NO HAY DATOS ---
+  const [localClientes, setLocalClientes] = useState([]);
+  const [cargando, setCargando] = useState(false);
+
+  useEffect(() => {
+    const tieneCustom = Custom && Array.isArray(Custom) && Custom.length > 0;
+    const tieneList = listCustom && Array.isArray(listCustom) && listCustom.length > 0;
+
+    if (!tieneCustom && !tieneList) {
+      setCargando(true);
+      api.getClientes()
+        .then((data) => setLocalClientes(Array.isArray(data) ? data : []))
+        .catch((err) => console.error("Error cargando clientes en ListCustom:", err))
+        .finally(() => setCargando(false));
+    }
+  }, [Custom, listCustom]);
+
   // --- PAGINACIÓN ---
   const [paginaActual, setPaginaActual] = useState(1);
   const clientesPorPagina = 10;
 
   const dataToUse =
-    Custom && Array.isArray(Custom) && Custom.length > 0 ? Custom : listCustom;
+    Custom && Array.isArray(Custom) && Custom.length > 0
+      ? Custom
+      : listCustom && Array.isArray(listCustom) && listCustom.length > 0
+        ? listCustom
+        : localClientes;
 
   // Calcular los índices para paginación
   const indiceUltimoCliente = paginaActual * clientesPorPagina;
@@ -87,7 +109,7 @@ function ListCustom({
               if (
                 !eachCustom ||
                 typeof eachCustom !== "object" ||
-                (!eachCustom.nombre && !eachCustom.apellidos)
+                (!eachCustom.nombre && !eachCustom.apellidos && !eachCustom.nombre_completo)
               ) {
                 return null;
               }
@@ -102,7 +124,7 @@ function ListCustom({
             })
           ) : (
             <div>
-              <p>No hay datos disponibles para mostrar.</p>
+              <p>{cargando ? "Cargando clientes desde GDTaller..." : "No hay datos disponibles para mostrar."}</p>
             </div>
           )}
         </div>

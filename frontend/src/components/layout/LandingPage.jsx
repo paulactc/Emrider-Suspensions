@@ -6,36 +6,64 @@ import logoAndreani from "/images/AndreaniMHS.png";
 import logoShowa from "/images/Showa.png";
 import logoSkf from "/images/SKF.png";
 import { NavLink } from "react-router";
-
 import { useNavigate } from "react-router";
+import api from "../../../services/Api";
+
 function LandingPage(props) {
   const [login, setLogin] = useState({
     user: "",
     pass: "",
   });
+  const [loginError, setLoginError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const handleInput = (ev) => {
     const { name, value } = ev.target;
-
     setLogin({
       ...login,
       [name]: value,
     });
+    setLoginError("");
   };
   const navigate = useNavigate();
 
-  const handleAccess = () => {
-    if (login.user === "paula" && login.pass === "pass") {
-      // Es admin
-      console.log("Navigating to /list");
-      props.handleButton(); // ← Sin pasar evento
-      navigate("/admin/clientes");
-      window.scrollTo(0, 0);
-    } else {
-      console.log("Navigating to /list");
-      props.handleButton(); // ← Sin pasar evento
-      navigate("/cliente");
-      window.scrollTo(0, 0);
+  const handleAccess = async () => {
+    setLoginError("");
+    setLoading(true);
+
+    if (!login.user || !login.pass) {
+      setLoginError("Introduce usuario y clave");
+      setLoading(false);
+      return;
     }
+
+    try {
+      // Detectar si el usuario introduce un DNI/NIF o un email
+      const isDni = /^[0-9]{7,8}[a-zA-Z]$/.test(login.user.trim());
+      const result = isDni
+        ? await api.loginWithDni(login.user.trim(), login.pass)
+        : await api.login(login.user.trim(), login.pass);
+
+      if (result.success) {
+        localStorage.setItem("token", result.data.token);
+        localStorage.setItem("user", JSON.stringify(result.data.user));
+
+        if (result.data.user.rol === "admin") {
+          navigate("/admin/clientes");
+        } else {
+          navigate("/cliente");
+        }
+        window.scrollTo(0, 0);
+        return;
+      }
+
+      setLoginError("Usuario o clave incorrectos");
+    } catch (err) {
+      console.error("Error en login:", err.message);
+      setLoginError("Usuario o clave incorrectos");
+    }
+
+    setLoading(false);
   };
   return (
     <div className="offpage">
@@ -75,7 +103,7 @@ function LandingPage(props) {
         </div>
       </div>
 
-      <section className="form-login-body">
+      <form className="form-login-body" onSubmit={(e) => { e.preventDefault(); handleAccess(); }}>
         <h2 className="header-title">ACCESO</h2>
         <label className="input-label">Usuario:</label>
         <input
@@ -84,7 +112,7 @@ function LandingPage(props) {
           value={login.user}
           onInput={handleInput}
           type="text"
-          placeholder="ejemplo@emrider.es"
+          placeholder="DNI o email"
         />
         <label className="input-label">Clave:</label>
         <input
@@ -95,13 +123,19 @@ function LandingPage(props) {
           type="password"
           placeholder="••••••••"
         />
-        <button className="btngo" onClick={handleAccess}>
-          Acceso
+        {loginError && (
+          <p style={{ color: "#f44336", margin: "0.5rem 0" }}>{loginError}</p>
+        )}
+        <button className="btngo" type="submit" disabled={loading}>
+          {loading ? "Accediendo..." : "Acceso"}
         </button>
         <NavLink className="btngo" to="/nuevo-usuario">
           Nueva cuenta
         </NavLink>
-      </section>
+        <NavLink to="/forgot-password" style={{ color: "#e53935", textDecoration: "none", fontSize: "0.9rem", marginTop: "0.5rem", display: "inline-block" }}>
+          ¿Olvidaste tu contraseña?
+        </NavLink>
+      </form>
     </div>
   );
 }

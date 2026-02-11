@@ -1,4 +1,5 @@
 import ClienteDataDisplay from "./ClienteDataDisplay";
+import HistorialOrdenes from "./HistorialOrdenes";
 import { NavLink } from "react-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -136,7 +137,11 @@ function UleachCustomUser({ Custom }) {
       <div className="uleach-customer-compact__header">
         <div className="uleach-customer-compact__profile">
           <div className="uleach-customer-compact__avatar">
-            <User />
+            <img
+              src="/images/Logomonoemrider.jpeg"
+              alt="EmRider"
+              className="uleach-customer-compact__avatar-img"
+            />
           </div>
           <div className="uleach-customer-compact__basic-info">
             <h2>
@@ -153,14 +158,6 @@ function UleachCustomUser({ Custom }) {
         </div>
 
         <div className="uleach-customer-compact__quick-actions">
-          <NavLink
-            to={`/editar-cliente/${Custom.id}`}
-            className="quick-action-btn"
-            title="Editar datos"
-          >
-            <span className="span-edit" />
-            Editar
-          </NavLink>
         </div>
       </div>
 
@@ -185,53 +182,26 @@ function UleachCustomUser({ Custom }) {
         {Custom.id && (
           <>
             {tieneMotos ? (
-              // ✅ CUANDO TIENE MOTOS: Mostrar ambos botones lado a lado
-              <>
-                <NavLink
-                  to={`/admin/motos/${Custom.id}`}
-                  state={{ motos, cif: Custom.cif }}
-                  className="bike-link"
-                  title="Ver mis motocicletas"
-                >
-                  <Bike />
-                  <span>Mis motocicletas ({motos.length})</span>
-                </NavLink>
-
-                <NavLink
-                  to="/FormBike"
-                  state={{
-                    clienteId: Custom.id,
-                    clienteData: Custom,
-                    isNewMoto: true,
-                    returnPath: "/cliente",
-                  }}
-                  className="bike-link"
-                  title="Agregar nueva motocicleta"
-                >
-                  <Plus />
-                  <span>Nueva moto</span>
-                </NavLink>
-              </>
-            ) : (
-              // ✅ CUANDO NO TIENE MOTOS: Mantener el comportamiento original
               <NavLink
-                to="/FormBike"
-                state={{
-                  clienteId: Custom.id,
-                  clienteData: Custom,
-                  isNewMoto: true,
-                  returnPath: "/cliente",
-                }}
-                className="bike-link bike-link--add"
+                to={`/admin/motos/${Custom.id}`}
+                state={{ motos, cif: Custom.cif }}
+                className="bike-link"
+                title="Ver mis motocicletas"
               >
-                <Plus />
-                <span>Registrar primera motocicleta</span>
-                <ArrowRight />
+                <Bike />
+                <span>Mis motocicletas ({motos.length})</span>
               </NavLink>
+            ) : (
+              <p className="no-results-message">
+                No tiene motocicletas registradas
+              </p>
             )}
           </>
         )}
       </div>
+
+      {/* Historial de ordenes de trabajo de GDTaller */}
+      <HistorialOrdenes clientId={Custom.gdtaller_id || Custom.id} />
 
       {/* NUEVA SECCIÓN: Sistema de Niveles EmRider */}
       <div className="emrider-exclusive">

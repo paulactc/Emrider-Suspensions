@@ -5,16 +5,15 @@ import Footer from "./layout/Footer.jsx";
 import Header from "./layout/Header";
 import LandingPage from "./layout/LandingPage";
 import ListCustom from "./Page.Custom/ListCustom";
-import FormsCustom from "./admin/forms/FormsCustom";
 import FormNewUser from "./Page.Custom/FormNewUser";
+import ForgotPassword from "./Page.Custom/ForgotPassword";
+import ResetPassword from "./Page.Custom/ResetPassword";
 import TechnicalDataCustomer from "./user/TechnicalDataCustomer";
-import FormBike from "./admin/forms/FormBike";
 
 import Cliente from "./user/Cliente";
 import ListBike from "./Page.Bike/ListBike";
 import ListBikeadmin from "./Page.Bike/ListBikeadmin";
 import TechnicalDataAdmin from "./admin/forms/TechnicalDataAdmin";
-import EditarDatosCliente from "./Page.Custom/EditarDatosCliente";
 import FormTechnicalFF from "./admin/forms/FormTechnicalFF.jsx";
 import FormTechnicalRR from "./admin/forms/FormTechnicalRR.jsx";
 import FormTechnicalDataWithClientData from "./admin/forms/FormTechnicalDataWithClientData";
@@ -72,27 +71,6 @@ function App() {
   const listTechnical = dataTechnical;
   const listUsers = dataUsers;
 
-  const [clientData, setClientData] = useState({
-    nombre: "",
-    apellidos: "",
-    email: "",
-    telefono: "",
-    direccion: "",
-    codigo_postal: "",
-    poblacion: "",
-    provincia: "",
-  });
-
-  const [motoData, setMotoData] = useState({
-    id: "",
-    marca: "",
-    modelo: "",
-    año_fabricacion: "",
-    matricula: "",
-    bastidor: "",
-    cliente_id: null,
-  });
-
   const [formData, setFormData] = useState({
     peso_piloto: "",
     disciplina: "",
@@ -134,40 +112,6 @@ function App() {
     original_compression_adjuster: "",
     modified_compression_adjuster: "",
   });
-
-  // Función para crear un nuevo cliente
-  const createCliente = async (nuevoCliente) => {
-    try {
-      const result = await apiService.createCliente(nuevoCliente);
-      console.log("✅ Cliente creado:", result);
-
-      // Recargar la lista de clientes
-      const clientesActualizados = await apiService.getClientes();
-      setListCustom(clientesActualizados);
-
-      return result;
-    } catch (error) {
-      console.error("❌ Error al crear cliente:", error);
-      throw error;
-    }
-  };
-
-  // Función para actualizar un cliente
-  const updateCliente = async (id, datosActualizados) => {
-    try {
-      const result = await apiService.updateCliente(id, datosActualizados);
-      console.log("✅ Cliente actualizado:", result);
-
-      // Recargar la lista de clientes
-      const clientesActualizados = await apiService.getClientes();
-      setListCustom(clientesActualizados);
-
-      return result;
-    } catch (error) {
-      console.error("❌ Error al actualizar cliente:", error);
-      throw error;
-    }
-  };
 
   const handleInputFilter = (ev) => {
     const { id, value } = ev.target;
@@ -218,14 +162,6 @@ function App() {
     console.log("has hecho click");
   };
 
-  const handleChangeClientes = (e) => {
-    const { name, value } = e.target;
-    setClientData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -234,19 +170,10 @@ function App() {
     }));
   };
 
-  const handleChangeMotos = (e) => {
-    const { name, value } = e.target;
-    setMotoData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  // ✅ MOSTRAR PANTALLA DE CARGA GLOBAL SI ES NECESARIO
   if (loading) {
     return (
       <div style={{ textAlign: "center", padding: "2rem" }}>
-        <h2>🔄 Cargando aplicación...</h2>
+        <h2>Cargando...</h2>
         <p>Por favor espera mientras cargamos los datos iniciales.</p>
       </div>
     );
@@ -256,6 +183,12 @@ function App() {
     <>
       <Header />
       <ScrollToTop />
+      {error && (
+        <div style={{ background: "#fff3cd", color: "#856404", padding: "0.75rem 1rem", textAlign: "center", borderBottom: "1px solid #ffc107" }}>
+          {error} - Los datos de GDTaller pueden no estar disponibles.
+          <button onClick={() => setError(null)} style={{ marginLeft: "1rem", background: "none", border: "none", cursor: "pointer", fontWeight: "bold" }}>X</button>
+        </div>
+      )}
 
       <Routes>
         {/* 🏠 PÁGINA PRINCIPAL */}
@@ -300,17 +233,6 @@ function App() {
           }
         />
 
-        {/* ✏️ EDITAR CLIENTE */}
-        <Route
-          path="/editar-cliente/:id"
-          element={
-            <EditarDatosCliente
-              listCustom={listCustom}
-              updateCliente={updateCliente}
-            />
-          }
-        />
-
         {/* 🏍️ GESTIÓN DE MOTOS */}
         <Route
           path="/admin/motos/:id"
@@ -339,27 +261,12 @@ function App() {
           element={<TechnicalDataAdmin listTechnical={listTechnical} />}
         />
 
+        {/* 🔑 RECUPERACION DE CONTRASEÑA */}
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+
         {/* 📝 FORMULARIOS */}
-        <Route
-          path="/formsCustom"
-          element={
-            <FormsCustom
-              handleChange={handleChangeClientes}
-              clientData={clientData}
-              createCliente={createCliente}
-            />
-          }
-        />
         <Route path="/nuevo-usuario" element={<FormNewUser />} />
-        <Route
-          path="/FormBike"
-          element={
-            <FormBike
-              handleChangeMotos={handleChangeMotos}
-              motoData={motoData}
-            />
-          }
-        />
 
         <Route
           path="/TechnicalDataCustomer"

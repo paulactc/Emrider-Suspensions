@@ -1440,6 +1440,249 @@ footer {
   gap: 1rem;
 }
 
+// Historial de Ordenes de Trabajo
+.historial-ordenes {
+  margin-bottom: 2rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+
+    h3 {
+      color: $ohlins-white;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    svg {
+      color: $ohlins-yellow;
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+
+  &__count {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: $ohlins-gray-400;
+    background: $ohlins-gray-800;
+    padding: 0.15rem 0.6rem;
+    border-radius: 1rem;
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: $ohlins-gray-400;
+    padding: 1.5rem 0;
+
+    .spinner {
+      width: 1.2rem;
+      height: 1.2rem;
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__card {
+    background: $ohlins-gray-800;
+    border: 1px solid $ohlins-gray-700;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+
+    &--expanded {
+      border-color: $ohlins-yellow;
+    }
+
+    &-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: none;
+      border: none;
+      color: $ohlins-white;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.9rem;
+      text-align: left;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: $ohlins-gray-700;
+      }
+
+      svg {
+        width: 1rem;
+        height: 1rem;
+        color: $ohlins-gray-400;
+        flex-shrink: 0;
+      }
+    }
+
+    &-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    &-total {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    &-body {
+      padding: 0 1rem 1rem;
+      border-top: 1px solid $ohlins-gray-700;
+    }
+  }
+
+  &__ornum {
+    font-weight: 600;
+    color: $ohlins-yellow;
+  }
+
+  &__fecha {
+    color: $ohlins-gray-400;
+    font-size: 0.85rem;
+  }
+
+  &__vehiculo {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: $ohlins-gray-300;
+    font-size: 0.85rem;
+
+    &-icon {
+      width: 0.9rem;
+      height: 0.9rem;
+      color: $ohlins-yellow;
+    }
+  }
+
+  &__matricula {
+    background: $ohlins-gray-700;
+    padding: 0.1rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    color: $ohlins-gray-400;
+    margin-left: 0.25rem;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0.75rem 0 0.5rem;
+    flex-wrap: wrap;
+
+    &-item {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      color: $ohlins-gray-400;
+      font-size: 0.8rem;
+    }
+
+    &-icon {
+      width: 0.9rem;
+      height: 0.9rem;
+      color: $ohlins-yellow;
+    }
+  }
+
+  &__obs-row td {
+    padding-top: 0 !important;
+    padding-bottom: 0.5rem !important;
+    border-bottom-color: transparent !important;
+  }
+
+  &__obs {
+    display: block;
+    font-size: 0.78rem;
+    color: $ohlins-gray-400;
+    font-style: italic;
+    line-height: 1.4;
+    padding-left: 0.25rem;
+  }
+
+  &__importe {
+    font-weight: 600;
+    color: $ohlins-white;
+    white-space: nowrap;
+  }
+
+  &__kms {
+    color: $ohlins-gray-400;
+    font-size: 0.8rem;
+    margin: 0.75rem 0 0.5rem;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+
+    th {
+      text-align: left;
+      color: $ohlins-gray-400;
+      font-weight: 500;
+      padding: 0.4rem 0.5rem;
+      border-bottom: 1px solid $ohlins-gray-700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    td {
+      padding: 0.4rem 0.5rem;
+      color: $ohlins-gray-300;
+      border-bottom: 1px solid rgba($ohlins-gray-700, 0.5);
+    }
+
+    th:nth-child(2),
+    th:nth-child(3),
+    th:nth-child(4),
+    td:nth-child(2),
+    td:nth-child(3),
+    td:nth-child(4) {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    tfoot {
+      td {
+        font-weight: 600;
+        color: $ohlins-white;
+        border-bottom: none;
+        border-top: 1px solid $ohlins-gray-600;
+        padding-top: 0.6rem;
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 // Sección Exclusiva EmRider - Estilo Ohlins
 .emrider-exclusive {
   background: linear-gradient(135deg, $ohlins-gray-900 0%, $ohlins-black 100%);
@@ -2010,11 +2253,18 @@ footer {
   &__avatar {
     width: 48px;
     height: 48px;
-    background-color:rgb(224, 255, 46);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+
+    &-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 
   &__basic-info {

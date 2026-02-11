@@ -11,11 +11,14 @@ app.use(express.json());
 // Ruta de cliente
 const clienteRoutes = require("./routes/cliente");
 app.use("/api/clientes", clienteRoutes);
-module.exports = app;
 
-//Ruta de motos:
+// Ruta de motos
 const motosRoutes = require("./routes/motos");
 app.use("/api/motos", motosRoutes);
+
+// Ruta de GDTaller (sincronización con API externa)
+const gdtallerRoutes = require("./routes/gdtaller");
+app.use("/api/gdtaller", gdtallerRoutes);
 
 // CRUCIAL: Exportar la app
 module.exports = app;

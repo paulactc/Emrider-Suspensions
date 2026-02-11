@@ -567,8 +567,8 @@ const FormTechnicalDataWithClientData = React.memo(
       setGuardandoServicio(true);
       try {
         const servicioData = {
-          motoId: parseInt(motoId),
-          clienteId: clienteId ? parseInt(clienteId) : null,
+          motoId: motoId,
+          clienteId: clienteId || null,
           tipoSuspension: tipoSuspension,
           numeroOrden: formDataLocal.numeroOrden,
           fechaServicio: formDataLocal.fechaServicio,
@@ -662,8 +662,8 @@ const FormTechnicalDataWithClientData = React.memo(
       setSaving(true);
       try {
         const dataToSend = {
-          motoId: parseInt(motoId),
-          clienteId: clienteId ? parseInt(clienteId) : null,
+          motoId: motoId,
+          clienteId: clienteId || null,
           tipoSuspension: tipoSuspension,
           ...formDataLocal,
           // Filtrar arrays vacíos

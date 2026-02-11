@@ -249,8 +249,8 @@ const FormTechnicalRR = () => {
     try {
       // Preparar datos para enviar
       const dataToSend = {
-        motoId: parseInt(motoId),
-        clienteId: clienteId ? parseInt(clienteId) : null,
+        motoId: motoId,
+        clienteId: clienteId || null,
         tipoSuspension: "RR",
         ...formData,
         // Filtrar arrays vacíos

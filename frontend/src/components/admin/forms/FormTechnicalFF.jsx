@@ -187,8 +187,8 @@ const FormTechnicalFF = () => {
     setSaving(true);
     try {
       const dataToSend = {
-        motoId: parseInt(motoId),
-        clienteId: clienteId ? parseInt(clienteId) : null,
+        motoId: motoId,
+        clienteId: clienteId || null,
         tipoSuspension: "FF",
         ...formData,
         // Filtrar arrays vacíos
