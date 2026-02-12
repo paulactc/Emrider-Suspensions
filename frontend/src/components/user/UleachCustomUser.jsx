@@ -1,31 +1,91 @@
 import ClienteDataDisplay from "./ClienteDataDisplay";
 import HistorialOrdenes from "./HistorialOrdenes";
 import { NavLink } from "react-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
-  User,
   Phone,
   FileUser,
   MapPin,
-  Code,
-  Building,
-  Edit3,
   Bike,
-  Plus,
   Star,
-  Gift,
   Zap,
   Crown,
-  ArrowRight,
-  Percent,
-  Calendar,
-  Award,
-  Banana,
+  ChevronDown,
+  ChevronUp,
+  Wrench,
+  Truck,
+  ClipboardCheck,
+  MessageCircle,
+  TrendingUp,
+  Shield,
 } from "lucide-react";
 import api from "../../../services/Api";
 
+// Definicion de niveles EmRider basados en facturacion anual
+const NIVELES_EMRIDER = [
+  {
+    id: 1,
+    nombre: "EmRider Baby",
+    facturacion: { min: 1, max: 600 },
+    imagen: "/images/mono-level1.png",
+    alt: "EmRider Baby",
+    color: "rookie",
+    beneficios: [
+      { icon: ClipboardCheck, texto: "Revision tecnica gratuita del estado general de la moto (con cita previa)" },
+      { icon: MessageCircle, texto: "Asesoramiento personalizado por WhatsApp con nuestro tecnico" },
+      { icon: TrendingUp, texto: "Informe anual del estado de tus suspensiones" },
+    ],
+    rango: "1 - 600 BananaPoints \uD83C\uDF4C",
+  },
+  {
+    id: 2,
+    nombre: "EmRider Adolescent",
+    facturacion: { min: 601, max: 1200 },
+    imagen: "/images/mono-level2.png",
+    alt: "EmRider Adolescent",
+    color: "pro",
+    beneficios: [
+      { icon: Wrench, texto: "Medicion y ajuste de SAG gratuito" },
+      { icon: ClipboardCheck, texto: "Revision tecnica gratuita (con cita previa)" },
+      { icon: Star, texto: "Prioridad en citas de taller" },
+      { icon: MessageCircle, texto: "Linea directa WhatsApp con el tecnico" },
+      { icon: Shield, texto: "Garantia extendida en mano de obra: 6 meses" },
+    ],
+    rango: "601 - 1.200 BananaPoints \uD83C\uDF4C",
+  },
+  {
+    id: 3,
+    nombre: "EmRider Legend",
+    facturacion: { min: 1201, max: null },
+    imagen: "/images/Logomonoemrider.jpeg",
+    alt: "EmRider Legend",
+    color: "legend",
+    beneficios: [
+      { icon: Truck, texto: "Recogida y entrega del vehiculo a domicilio gratis" },
+      { icon: Wrench, texto: "Medicion y ajuste de SAG gratuito" },
+      { icon: ClipboardCheck, texto: "Revision tecnica gratuita (con cita previa)" },
+      { icon: Star, texto: "Maxima prioridad en agenda de taller" },
+      { icon: MessageCircle, texto: "Acceso directo al ingeniero de suspensiones" },
+      { icon: Shield, texto: "Garantia extendida en mano de obra: 12 meses" },
+    ],
+    rango: "+1.200 BananaPoints \uD83C\uDF4C",
+  },
+];
+
+function calcularNivel(facturacionAnual) {
+  for (let i = NIVELES_EMRIDER.length - 1; i >= 0; i--) {
+    if (facturacionAnual >= NIVELES_EMRIDER[i].facturacion.min) {
+      return NIVELES_EMRIDER[i];
+    }
+  }
+  return NIVELES_EMRIDER[0];
+}
+
 function UleachCustomUser({ Custom }) {
   const [motos, setMotos] = useState([]);
+  const [showDetails, setShowDetails] = useState(false);
+  const [facturacionAnual, setFacturacionAnual] = useState(0);
+  const [loadingNivel, setLoadingNivel] = useState(true);
 
   useEffect(() => {
     if (!Custom) return;
@@ -38,359 +98,266 @@ function UleachCustomUser({ Custom }) {
     }
   }, [Custom?.cif]);
 
+  // Calcular facturacion anual desde las ordenes de trabajo
+  useEffect(() => {
+    const clientId = Custom?.gdtaller_id || Custom?.id;
+    if (!clientId) {
+      setLoadingNivel(false);
+      return;
+    }
+
+    api
+      .getOrderLinesByClient(clientId)
+      .then((res) => {
+        const ordenes = res.data || [];
+        const ahora = new Date();
+        const inicioAno = new Date(ahora.getFullYear(), 0, 1);
+
+        // Sumar importes de ordenes del ano en curso
+        let total = 0;
+        for (const orden of ordenes) {
+          const fechaOrden = orden.fecha ? new Date(orden.fecha) : null;
+          if (fechaOrden && fechaOrden >= inicioAno) {
+            total += parseFloat(orden.totalImporte) || 0;
+          }
+        }
+        setFacturacionAnual(total);
+      })
+      .catch((err) => {
+        console.warn("No se pudo calcular facturacion anual:", err.message);
+        setFacturacionAnual(0);
+      })
+      .finally(() => setLoadingNivel(false));
+  }, [Custom?.gdtaller_id, Custom?.id]);
+
   const tieneMotos = motos.length > 0;
-  const safeDisplay = (value) => value || "No disponible";
+  const safeDisplay = (value) => value || "\u2014";
 
-  // Sistema de niveles por BananaPoints 🍌 EmRider
-  const clienteActual = {
-    BananaPoints: 850, // Esto vendría de tu API
-    nivel: 2, // Calculado basado en puntos
-    facturaTotal: 2400, // Para cálculo de puntos
-    visitasAno: 8, // Para cálculo de asiduidad
-  };
+  const nivelActual = useMemo(() => calcularNivel(facturacionAnual), [facturacionAnual]);
 
-  const nivelesEmRider = [
-    {
-      id: 1,
-      nombre: "Emrider baby",
-      BananaPoints: { min: 0, max: 499 },
-      imagen: "/images/mono-level1.png",
-      alt: "EmRider Baby - Nivel principiante", // Alt text para accesibilidad
-      color: "rookie",
-      beneficios: [
-        "Medición y ajuste SAG gratuito",
-        "15% descuento en material de suspensiones",
-        "Asesoramiento técnico básico",
-      ],
-      requisitos: "0-499 BananaPoints 🍌 • Nivel de entrada",
-    },
-    {
-      id: 2,
-      nombre: "Emrider adolescent",
-      BananaPoints: { min: 500, max: 1199 },
-      imagen: "/images/mono-level2.png",
-      alt: "EmRider Adolescent - Nivel intermedio", // Alt text para accesibilidad
-      color: "pro",
-      beneficios: [
-        "30% descuento en materiales (15% adicional)",
-        "Chequeo completo: 20 BananaPoints 🍌 de revisión",
-        "Setup personalizado según pilotaje",
-        "Prioridad en citas de taller",
-      ],
-      requisitos: "500-1199 BananaPoints 🍌 • Por facturación y asiduidad",
-    },
-    {
-      id: 3,
-      nombre: "Emrider Legend",
-      BananaPoints: { min: 1200, max: null },
-      imagen: "/images/Logomonoemrider.jpeg", // ✅ Ruta corregida desde components/user
-      alt: "EmRider Legend - Nivel élite", // Alt text para accesibilidad
-      color: "legend",
-      beneficios: [
-        "45% descuento en todos los materiales",
-        "Servicio VIP: recogida y entrega a domicilio",
-        "Acceso directo al ingeniero de suspensiones",
-        "Merchandising exclusivo EmRider",
-      ],
-      requisitos: "1200+ BananaPoints 🍌 • Élite de clientes EmRider",
-    },
-  ];
+  const siguienteNivel = NIVELES_EMRIDER.find((n) => n.id === nivelActual.id + 1);
 
-  const nivelActual = nivelesEmRider.find(
-    (nivel) =>
-      clienteActual.BananaPoints >= nivel.BananaPoints.min &&
-      (nivel.BananaPoints.max === null ||
-        clienteActual.BananaPoints <= nivel.BananaPoints.max)
-  );
-
-  const siguienteNivel = nivelesEmRider.find(
-    (nivel) => nivel.id === nivelActual.id + 1
-  );
-
-  const puntosParaSiguienteNivel = siguienteNivel
-    ? siguienteNivel.BananaPoints.min - clienteActual.BananaPoints
+  const faltaParaSiguiente = siguienteNivel
+    ? siguienteNivel.facturacion.min - facturacionAnual
     : 0;
 
-  const porcentajeProgreso = siguienteNivel
-    ? ((clienteActual.BananaPoints - nivelActual.BananaPoints.min) /
-        (siguienteNivel.BananaPoints.min - nivelActual.BananaPoints.min)) *
-      100
-    : 100;
+  const porcentajeProgreso = useMemo(() => {
+    if (!siguienteNivel) return 100;
+    const rangoActual = siguienteNivel.facturacion.min - nivelActual.facturacion.min;
+    const progreso = facturacionAnual - nivelActual.facturacion.min;
+    return Math.min(100, Math.max(0, (progreso / rangoActual) * 100));
+  }, [facturacionAnual, nivelActual, siguienteNivel]);
 
-  const customerDataEssential = [
-    { icon: Phone, label: "Teléfono", value: Custom.telefono },
-    { icon: FileUser, label: "Cif", value: Custom.cif },
-    {
-      icon: MapPin,
-      label: "Ubicación",
-      value: `${Custom.direccion || ""} ${Custom.poblacion || ""}, `.replace(
-        /^,\s*|,\s*$/,
-        ""
-      ),
-    },
-  ];
-  const progresoEstilo = { width: porcentajeProgreso + "%" };
+  const nombreCompleto =
+    `${Custom.nombre || ""} ${Custom.apellidos || ""}`.trim() || "Cliente";
+  const ubicacion = `${Custom.direccion || ""} ${Custom.poblacion || ""}`
+    .replace(/\s+/g, " ")
+    .trim();
 
   return (
     <div className="uleach-customer-compact">
-      {/* Header compacto con información esencial */}
-      <div className="uleach-customer-compact__header">
-        <div className="uleach-customer-compact__profile">
-          <div className="uleach-customer-compact__avatar">
+      {/* Cabecera centrada con nombre protagonista */}
+      <div className="client-summary">
+        <div className="client-summary__center">
+          <div className="client-summary__avatar">
             <img
               src="/images/Logomonoemrider.jpeg"
               alt="EmRider"
-              className="uleach-customer-compact__avatar-img"
+              className="client-summary__avatar-img"
             />
           </div>
-          <div className="uleach-customer-compact__basic-info">
-            <h2>
-              {safeDisplay(
-                `${Custom.nombre || ""} ${Custom.apellidos || ""}`.trim()
-              )}
-            </h2>
-            <p>Cliente Emrider</p>
-            <div className="uleach-customer-compact__status">
-              <Star className="status-icon" />
-              <span>Cliente Premium</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="uleach-customer-compact__quick-actions">
-        </div>
-      </div>
-
-      {/* Información esencial en formato compacto */}
-      <div className="uleach-customer-compact__info">
-        {customerDataEssential.map((item, index) => {
-          const IconComponent = item.icon;
-          return (
-            <div key={index} className="info-item">
-              <IconComponent className="info-icon" />
-              <span className="info-text">{safeDisplay(item.value)}</span>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Datos del cuestionario de pilotaje */}
-      <ClienteDataDisplay cliente={Custom} />
-
-      {/* ✅ MOTOCICLETAS - Solo cambios en la lógica, manteniendo clases existentes */}
-      <div className="uleach-customer-compact__bikes">
-        {Custom.id && (
-          <>
-            {tieneMotos ? (
-              <NavLink
-                to={`/admin/motos/${Custom.id}`}
-                state={{ motos, cif: Custom.cif }}
-                className="bike-link"
-                title="Ver mis motocicletas"
-              >
-                <Bike />
-                <span>Mis motocicletas ({motos.length})</span>
-              </NavLink>
-            ) : (
-              <p className="no-results-message">
-                No tiene motocicletas registradas
-              </p>
+          <h2 className="client-summary__nombre">{safeDisplay(nombreCompleto)}</h2>
+          <div className="client-summary__badges">
+            {!loadingNivel && (
+              <span className={`badge badge--${nivelActual.color}`}>
+                <Crown className="badge__icon" />
+                {nivelActual.nombre}
+              </span>
             )}
-          </>
-        )}
-      </div>
-
-      {/* Historial de ordenes de trabajo de GDTaller */}
-      <HistorialOrdenes clientId={Custom.gdtaller_id || Custom.id} />
-
-      {/* NUEVA SECCIÓN: Sistema de Niveles EmRider */}
-      <div className="emrider-exclusive">
-        <div className="emrider-exclusive__header">
-          <div className="exclusive-badge">
-            <Crown className="crown-icon" />
-            <span>EmRider BananaPoints </span>
+            <span className="badge badge--facturacion">
+              🍌 {Math.round(facturacionAnual).toLocaleString("es-ES")} BananaPoints
+            </span>
           </div>
-          <h3>Tribal Emrider</h3>
-          <p>Avanza por la Ruta Emrider y desbloquea recompensas</p>
         </div>
 
-        {/* Estado actual del cliente */}
-        <div className="rider-status">
-          <div className="rider-status__current">
-            <div className="current-level">
-              <div className="Nivel">TU NIVEL:</div>
-              <div className="level-icon">
-                <img
-                  src={nivelActual.imagen}
-                  alt={nivelActual.alt}
-                  className="level-image"
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    objectFit: "cover",
-                    borderRadius: "50%",
-                  }}
-                  onError={(e) => {
-                    e.target.style.display = "none";
-                    e.target.nextSibling.style.display = "block";
-                  }}
-                />
-                <div className="level-fallback" style={{ display: "none" }}>
-                  🏍️
+        <button
+          className="client-summary__toggle"
+          onClick={() => setShowDetails(!showDetails)}
+        >
+          <span>Mis datos</span>
+          {showDetails ? <ChevronUp /> : <ChevronDown />}
+        </button>
+      </div>
+
+      {/* Panel de datos colapsable */}
+      {showDetails && (
+        <div className="client-details">
+          <div className="client-details__grid">
+            <div className="client-details__item">
+              <Phone className="client-details__icon" />
+              <div>
+                <span className="client-details__label">Telefono</span>
+                <span className="client-details__value">
+                  {safeDisplay(Custom.telefono)}
+                </span>
+              </div>
+            </div>
+            <div className="client-details__item">
+              <FileUser className="client-details__icon" />
+              <div>
+                <span className="client-details__label">CIF / DNI</span>
+                <span className="client-details__value">
+                  {safeDisplay(Custom.cif)}
+                </span>
+              </div>
+            </div>
+            {ubicacion && (
+              <div className="client-details__item">
+                <MapPin className="client-details__icon" />
+                <div>
+                  <span className="client-details__label">Ubicacion</span>
+                  <span className="client-details__value">{ubicacion}</span>
                 </div>
               </div>
-              <div className="level-info">
+            )}
+          </div>
+          <ClienteDataDisplay cliente={Custom} />
+
+          <div className="client-details__motos">
+            {Custom.id && (
+              <>
+                {tieneMotos ? (
+                  <NavLink
+                    to={`/admin/motos/${Custom.id}`}
+                    state={{ motos, cif: Custom.cif }}
+                    className="bike-link"
+                    title="Ver mis motocicletas"
+                  >
+                    <Bike />
+                    <span>Mis motocicletas ({motos.length})</span>
+                  </NavLink>
+                ) : (
+                  <p className="no-results-message">
+                    No tiene motocicletas registradas
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* PROTAGONISTA: Historial de ordenes de trabajo */}
+      <HistorialOrdenes clientId={Custom.gdtaller_id || Custom.id} />
+
+      {/* Sistema de Niveles EmRider */}
+      <div className="emrider-niveles">
+        <div className="emrider-niveles__header">
+          <Crown className="emrider-niveles__header-icon" />
+          <div>
+            <h3>Tribu EmRider</h3>
+            <p>Cuanto mas ruedas con nosotros, mas recompensas desbloqueas</p>
+          </div>
+        </div>
+
+        {/* Estado actual */}
+        {!loadingNivel && (
+          <div className="emrider-niveles__estado">
+            <div className="emrider-niveles__estado-actual">
+              <img
+                src={nivelActual.imagen}
+                alt={nivelActual.alt}
+                className="emrider-niveles__estado-img"
+                onError={(e) => {
+                  e.target.style.display = "none";
+                }}
+              />
+              <div className="emrider-niveles__estado-info">
+                <span className="emrider-niveles__estado-label">Tu nivel actual</span>
                 <h4>{nivelActual.nombre}</h4>
-                <div className="points-display">
-                  <Banana className="points-icon" />
-                  <span>
-                    {clienteActual.BananaPoints.toLocaleString()} BananaPoints
-                    🍌
-                  </span>
-                </div>
+                <span className="emrider-niveles__estado-facturacion">
+                  🍌 {Math.round(facturacionAnual).toLocaleString("es-ES")} BananaPoints en {new Date().getFullYear()}
+                </span>
               </div>
             </div>
 
             {siguienteNivel && (
-              <div className="level-progress">
-                <div className="progress-info">
-                  <span>Progreso hacia {siguienteNivel.nombre}</span>
-                  <span>{puntosParaSiguienteNivel} BananaPoints restantes</span>
+              <div className="emrider-niveles__progreso">
+                <div className="emrider-niveles__progreso-info">
+                  <span>Siguiente: {siguienteNivel.nombre}</span>
+                  <span>Faltan 🍌 {Math.round(faltaParaSiguiente).toLocaleString("es-ES")}</span>
                 </div>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={progresoEstilo} />
+                <div className="emrider-niveles__progreso-bar">
+                  <div
+                    className="emrider-niveles__progreso-fill"
+                    style={{ width: porcentajeProgreso + "%" }}
+                  />
                 </div>
               </div>
             )}
           </div>
-        </div>
+        )}
 
-        {/* Grid de todos los niveles */}
-        <div className="rider-levels">
-          {nivelesEmRider.map((nivel) => {
+        {/* Grid de niveles */}
+        <div className="emrider-niveles__grid">
+          {NIVELES_EMRIDER.map((nivel) => {
             const isCurrentLevel = nivel.id === nivelActual.id;
-            const isUnlocked =
-              clienteActual.BananaPoints >= nivel.BananaPoints.min;
+            const isUnlocked = facturacionAnual >= nivel.facturacion.min;
 
             return (
               <div
                 key={nivel.id}
-                className={`level-card level-card--${nivel.color} ${
-                  isCurrentLevel ? "level-card--current" : ""
-                } ${
-                  isUnlocked ? "level-card--unlocked" : "level-card--locked"
-                }`}
+                className={`nivel-card nivel-card--${nivel.color} ${
+                  isCurrentLevel ? "nivel-card--current" : ""
+                } ${isUnlocked ? "nivel-card--unlocked" : "nivel-card--locked"}`}
               >
-                <div className="level-card__header">
-                  <div className="level-badge">
-                    {isCurrentLevel && <Crown className="current-crown" />}
-                    <div className="level-icon-large">
-                      <img
-                        src={nivel.imagen}
-                        alt={nivel.alt}
-                        className="level-image-large"
-                        style={{
-                          width: "60px",
-                          height: "60px",
-                          objectFit: "cover",
-                          borderRadius: "8px",
-                          display: "block",
-                        }}
-                        onError={(e) => {
-                          console.log("Error cargando imagen:", nivel.imagen);
-                          e.target.style.display = "none";
-                          e.target.nextSibling.style.display = "block";
-                        }}
-                      />
-                      <div
-                        className="level-fallback-large"
-                        style={{ display: "none" }}
-                      >
-                        {nivel.id === 1 ? "🏍️" : nivel.id === 2 ? "🏁" : "🏆"}
+                <div className="nivel-card__header">
+                  <div className="nivel-card__icon">
+                    <img
+                      src={nivel.imagen}
+                      alt={nivel.alt}
+                      className="nivel-card__img"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "flex";
+                      }}
+                    />
+                    <div className="nivel-card__img-fallback" style={{ display: "none" }}>
+                      {nivel.id === 1 ? "🏍️" : nivel.id === 2 ? "🏁" : "🏆"}
+                    </div>
+                    {isCurrentLevel && (
+                      <div className="nivel-card__current-badge">
+                        <Zap />
                       </div>
-                    </div>
+                    )}
                   </div>
-                  <div className="level-title">
+                  <div>
                     <h4>{nivel.nombre}</h4>
-                    <p>{nivel.requisitos}</p>
+                    <span className="nivel-card__rango">{nivel.rango}</span>
                   </div>
                 </div>
 
-                <div className="level-card__benefits">
-                  <h5>Beneficios incluidos:</h5>
-                  <ul>
-                    {nivel.beneficios.map((beneficio, index) => (
-                      <li key={index}>
-                        <Award className="benefit-icon" />
-                        <span>{beneficio}</span>
+                <ul className="nivel-card__beneficios">
+                  {nivel.beneficios.map((b, idx) => {
+                    const IconComp = b.icon;
+                    return (
+                      <li key={idx}>
+                        <IconComp className="nivel-card__beneficio-icon" />
+                        <span>{b.texto}</span>
                       </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {isCurrentLevel && (
-                  <div className="level-card__active">
-                    <div className="active-badge">
-                      <Zap />
-                      <span>NIVEL ACTUAL</span>
-                    </div>
-                  </div>
-                )}
+                    );
+                  })}
+                </ul>
 
                 {!isUnlocked && (
-                  <div className="level-card__locked">
-                    <div className="locked-overlay">
-                      <span>🔒 Bloqueado</span>
-                    </div>
+                  <div className="nivel-card__overlay">
+                    <Shield className="nivel-card__overlay-icon" />
+                    <span>Nivel bloqueado</span>
                   </div>
                 )}
               </div>
             );
           })}
-        </div>
-
-        {/* Cómo ganar BananaPoints 🍌 */}
-        <div className="points-info">
-          <h4>¿Cómo ganar BananaPoints🍌 Emrider?</h4>
-          <div className="points-methods">
-            <div className="method">
-              <div className="method-icon">💰</div>
-              <div className="method-details">
-                <h5>Por Facturación</h5>
-                <p>1 BananaPoints 🍌 por cada €1 gastado en servicios</p>
-              </div>
-            </div>
-            <div className="method">
-              <div className="method-icon">📅</div>
-              <div className="method-details">
-                <h5>Por Asiduidad</h5>
-                <p>100 BananaPoints 🍌 bonus por cada 3 visitas anuales</p>
-              </div>
-            </div>
-            <div className="method">
-              <div className="method-icon">⭐</div>
-              <div className="method-details">
-                <h5>Acciones Especiales</h5>
-                <p>Referencias, reseñas, eventos exclusivos</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="emrider-exclusive__cta">
-          <div className="exclusive-benefits">
-            <Zap className="benefits-icon" />
-            <div className="benefits-text">
-              <h4>¡Maximiza tus beneficios!</h4>
-              <p>
-                Consulta tu historial de BananaPoints 🍌 y próximas recompensas
-              </p>
-            </div>
-            <button className="benefits-btn">
-              Ver historial
-              <ArrowRight />
-            </button>
-          </div>
         </div>
       </div>
     </div>

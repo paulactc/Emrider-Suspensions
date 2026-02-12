@@ -348,30 +348,6 @@ function Cliente({ listCustom, listBikes }) {
         Custom={customToRender}
         listBikes={listBikes}
       />
-
-      {/* Botón para actualizar datos */}
-      <div
-        className="cliente-actions"
-        style={{ padding: "1rem", textAlign: "center" }}
-      >
-        <button
-          onClick={() => {
-            setQuestionnaireType("confirmation");
-            setShowQuestionnaire(true);
-          }}
-          style={{
-            background: "#4caf50",
-            color: "white",
-            border: "none",
-            padding: "0.75rem 1.5rem",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "1rem",
-          }}
-        >
-          📝 Actualizar mis datos
-        </button>
-      </div>
     </div>
   );
 }

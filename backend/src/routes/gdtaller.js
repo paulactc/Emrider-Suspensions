@@ -74,18 +74,22 @@ router.get("/order-lines/:clientId", async (req, res) => {
     const { clientId } = req.params;
     // No pasar clientId a la API de GDTaller (el filtro server-side no funciona correctamente)
     // Obtenemos todas las lineas y filtramos nosotros
-    const lines = await gdtallerService.getOrderLines();
-
-    // Obtener datos de vehiculos para enriquecer las ordenes
-    let vehiclesMap = {};
-    try {
-      const vehicles = await gdtallerService.getVehicles();
-      for (const v of vehicles) {
-        if (v.vehiculoID) vehiclesMap[v.vehiculoID] = v;
-      }
-    } catch (err) {
-      console.warn("No se pudieron obtener vehiculos para enriquecer ordenes:", err.message);
-    }
+    // Cargar order lines y vehiculos en paralelo para mayor velocidad
+    const [lines, vehiclesMap] = await Promise.all([
+      gdtallerService.getOrderLines(),
+      gdtallerService.getVehicles()
+        .then((vehicles) => {
+          const map = {};
+          for (const v of vehicles) {
+            if (v.vehiculoID) map[v.vehiculoID] = v;
+          }
+          return map;
+        })
+        .catch((err) => {
+          console.warn("No se pudieron obtener vehiculos para enriquecer ordenes:", err.message);
+          return {};
+        }),
+    ]);
 
     // Filtrar lineas de este cliente
     const clientLines = lines.filter(

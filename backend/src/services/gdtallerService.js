@@ -31,6 +31,7 @@ const CACHE_TTL_MS = 5 * 60 * 1000;
 const cache = {
   clients: { data: null, timestamp: 0 },
   vehicles: { data: null, timestamp: 0 },
+  orderLines: { data: null, timestamp: 0 },
 };
 
 function isCacheValid(key) {
@@ -40,6 +41,7 @@ function isCacheValid(key) {
 function clearCache() {
   cache.clients = { data: null, timestamp: 0 };
   cache.vehicles = { data: null, timestamp: 0 };
+  cache.orderLines = { data: null, timestamp: 0 };
   console.log("Cache de GDTaller limpiado");
 }
 
@@ -59,6 +61,7 @@ async function callGDTallerAPI(endpoint, params = {}) {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: body.toString(),
+    signal: AbortSignal.timeout(30000),
   });
 
   if (!response.ok) {
@@ -289,6 +292,11 @@ async function getVehicleByMatricula(matricula) {
  * Obtiene las líneas de pedido desde GDTaller
  */
 async function getOrderLines(options = {}) {
+  // Usar cache si es válido y no se forzaron opciones específicas
+  if (isCacheValid("orderLines") && !options.startDate && !options.endDate && !options.vehicleId && !options.clientId) {
+    return cache.orderLines.data;
+  }
+
   const params = {};
 
   params.startDate = options.startDate || options.dateFrom || "2020-01-01";
@@ -307,7 +315,14 @@ async function getOrderLines(options = {}) {
     data = JSON.parse(data);
   }
 
-  return data || [];
+  const result = data || [];
+
+  // Actualizar cache si no se usaron opciones específicas
+  if (!options.startDate && !options.endDate && !options.vehicleId && !options.clientId) {
+    cache.orderLines = { data: result, timestamp: Date.now() };
+  }
+
+  return result;
 }
 
 /**
