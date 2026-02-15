@@ -79,8 +79,8 @@ function UleachBike({ listBikes, listTechnical }) {
                   <div className="mantenimiento-alerta">
                     <AlertTriangle size={16} />
                     <span className="text-sm font-semibold">
-                      Mantenimiento
-                      <br /> caducado
+                      Mantenimiento de
+                      <br /> suspensiones caducado
                     </span>
                   </div>
                 )}

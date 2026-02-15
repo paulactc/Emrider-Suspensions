@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import InputSearchCustom from "../admin/forms/InputSearchCustom";
 import UleachCustom from "../Page.Custom/UleachCustom";
-import api from "../../../services/Api";
 
 function ListCustom({
   listCustom,
@@ -9,23 +8,8 @@ function ListCustom({
   handleInputFilter,
   filters,
   listBikes,
+  loading = false,
 }) {
-  // --- CARGA DIRECTA SI NO HAY DATOS ---
-  const [localClientes, setLocalClientes] = useState([]);
-  const [cargando, setCargando] = useState(false);
-
-  useEffect(() => {
-    const tieneCustom = Custom && Array.isArray(Custom) && Custom.length > 0;
-    const tieneList = listCustom && Array.isArray(listCustom) && listCustom.length > 0;
-
-    if (!tieneCustom && !tieneList) {
-      setCargando(true);
-      api.getClientes()
-        .then((data) => setLocalClientes(Array.isArray(data) ? data : []))
-        .catch((err) => console.error("Error cargando clientes en ListCustom:", err))
-        .finally(() => setCargando(false));
-    }
-  }, [Custom, listCustom]);
 
   // --- PAGINACIÓN ---
   const [paginaActual, setPaginaActual] = useState(1);
@@ -34,9 +18,7 @@ function ListCustom({
   const dataToUse =
     Custom && Array.isArray(Custom) && Custom.length > 0
       ? Custom
-      : listCustom && Array.isArray(listCustom) && listCustom.length > 0
-        ? listCustom
-        : localClientes;
+      : Array.isArray(listCustom) ? listCustom : [];
 
   // Calcular los índices para paginación
   const indiceUltimoCliente = paginaActual * clientesPorPagina;
@@ -124,7 +106,7 @@ function ListCustom({
             })
           ) : (
             <div>
-              <p>{cargando ? "Cargando clientes desde GDTaller..." : "No hay datos disponibles para mostrar."}</p>
+              <p>{loading ? "Cargando clientes..." : "No hay datos disponibles para mostrar."}</p>
             </div>
           )}
         </div>

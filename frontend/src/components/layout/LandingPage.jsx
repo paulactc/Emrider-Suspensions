@@ -69,11 +69,11 @@ function LandingPage(props) {
     <div className="offpage">
       <section className="bigsection">
         <img className="imglog" src={logoEmrider} alt="icon" />
-        <h1 className="title">Emrider Suspensions</h1>
+        <h1 className="title">EmRider Garage</h1>
       </section>
 
       <div className="sectmedium">
-        <h3>Accede a tu historial técnico exclusivo con Emrider</h3>
+        <h3>Accede a tu historial técnico exclusivo con EmRider Garage</h3>
 
         <div className="brand-list">
           <div className="wrapper">
@@ -93,7 +93,7 @@ function LandingPage(props) {
           <p className="parra">
             Consulta de forma exclusiva tu historial técnico de suspensiones{" "}
             <br />
-            Solo para clientes Emrider.
+            Solo para clientes EmRider.
             <br />
             <br />
             <span className="highlight-text">

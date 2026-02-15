@@ -86,14 +86,14 @@ function HistorialOrdenes({ clientId }) {
         <h3>Historial de trabajos</h3>
         {ordenes.length > 0 && (
           <span className="historial-ordenes__count">
-            {ordenes.length} {ordenes.length === 1 ? "orden" : "ordenes"}
+            {ordenes.length} {ordenes.length === 1 ? "trabajo" : "trabajos"}
           </span>
         )}
       </div>
 
       {ordenes.length === 0 ? (
         <p className="no-results-message">
-          No hay ordenes de trabajo registradas
+          No hay trabajos registrados
         </p>
       ) : (
         <div className="historial-ordenes__list">
@@ -111,9 +111,6 @@ function HistorialOrdenes({ clientId }) {
                   onClick={() => toggleOrder(orden.orNum)}
                 >
                   <div className="historial-ordenes__card-info">
-                    <span className="historial-ordenes__ornum">
-                      {orden.orNum}
-                    </span>
                     <span className="historial-ordenes__fecha">
                       {formatDate(orden.fecha)}
                     </span>

@@ -39,13 +39,20 @@ function UleachCustom({ eachCustom, listBikes, listTechnical }) {
   return (
     <>
       <li className="listclient">
-        <p className="datos-cliente">
-          Cliente:{" "}
-          {safeDisplay(
-            eachCustom.nombre_completo
-            || `${eachCustom.nombre || ""} ${eachCustom.apellidos || ""}`.trim()
-          )}
-        </p>
+        <div className="cliente-header">
+          <img
+            src="/images/Logomonoemrider.jpeg"
+            alt="EmRider"
+            className="cliente-logo"
+          />
+          <p className="datos-cliente">
+            Cliente:{" "}
+            {safeDisplay(
+              eachCustom.nombre_completo
+              || `${eachCustom.nombre || ""} ${eachCustom.apellidos || ""}`.trim()
+            )}
+          </p>
+        </div>
 
         <p className="datos-cliente">
           Teléfono: {safeDisplay(eachCustom.telefono)}

@@ -4,7 +4,7 @@ function Footer() {
   return (
     <>
       <footer>
-        <p className="vm">EmriderSuspensions © 2025</p>
+        <p className="vm">EmRider Garage © 2025</p>
 
         <div className="rrss">
           <a href="https://www.facebook.com" className="rrss_link">

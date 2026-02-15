@@ -7,6 +7,8 @@ export default defineConfig({
   base: "./",
   server: {
     open: "/",
+    host: true,
+    allowedHosts: [".ngrok-free.app", ".ngrok.io"],
     watch: {
       usePolling: true,
     },

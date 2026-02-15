@@ -39,26 +39,32 @@ function ScrollToTop() {
 function App() {
   const [listCustom, setListCustom] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  // Cargar clientes desde el backend
+  // Cargar clientes desde el backend (con reintento automático)
   useEffect(() => {
+    let cancelled = false;
+
     const fetchClientes = async () => {
-      try {
-        setLoading(true);
-        const clientes = await apiService.getClientes();
-        setListCustom(clientes);
-      } catch (error) {
-        console.error("❌ Error al cargar clientes:", error);
-        setError("Error al cargar los clientes");
-        // Fallback: usar datos estáticos si el backend no está disponible
-        // setListCustom(dataCustom);
-      } finally {
-        setLoading(false);
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const clientes = await apiService.getClientes();
+          if (!cancelled) {
+            setListCustom(clientes);
+            setLoading(false);
+          }
+          return;
+        } catch (err) {
+          console.error(`Intento ${attempt + 1}/2 falló:`, err.message);
+          if (attempt === 0) {
+            await new Promise((r) => setTimeout(r, 2000));
+          }
+        }
       }
+      if (!cancelled) setLoading(false);
     };
 
     fetchClientes();
+    return () => { cancelled = true; };
   }, []);
 
   const [filters, setFilters] = useState({
@@ -170,25 +176,10 @@ function App() {
     }));
   };
 
-  if (loading) {
-    return (
-      <div style={{ textAlign: "center", padding: "2rem" }}>
-        <h2>Cargando...</h2>
-        <p>Por favor espera mientras cargamos los datos iniciales.</p>
-      </div>
-    );
-  }
-
   return (
     <>
       <Header />
       <ScrollToTop />
-      {error && (
-        <div style={{ background: "#fff3cd", color: "#856404", padding: "0.75rem 1rem", textAlign: "center", borderBottom: "1px solid #ffc107" }}>
-          {error} - Los datos de GDTaller pueden no estar disponibles.
-          <button onClick={() => setError(null)} style={{ marginLeft: "1rem", background: "none", border: "none", cursor: "pointer", fontWeight: "bold" }}>X</button>
-        </div>
-      )}
 
       <Routes>
         {/* 🏠 PÁGINA PRINCIPAL */}
@@ -209,6 +200,7 @@ function App() {
               filters={filters}
               listBikes={listBikes}
               listCustom={listCustom}
+              loading={loading}
             />
           }
         />
@@ -229,6 +221,7 @@ function App() {
               filters={filters}
               listBikes={listBikes}
               listCustom={listCustom}
+              loading={loading}
             />
           }
         />

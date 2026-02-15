@@ -146,6 +146,23 @@ async function runMigrations() {
     `)
   );
 
+  await runSafeMigration("Tabla datos_tecnicos verificada", () =>
+    pool.execute(`
+      CREATE TABLE IF NOT EXISTS datos_tecnicos (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        servicio_id INT NULL,
+        moto_id VARCHAR(50) NULL,
+        cliente_id VARCHAR(50) NULL,
+        tipo_suspension ENUM('FF','RR') NOT NULL,
+        datos_json JSON NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_datos_tecnicos_moto (moto_id),
+        INDEX idx_datos_tecnicos_servicio (servicio_id)
+      )
+    `)
+  );
+
   // Crear usuario admin por defecto si no existe
   await runSafeMigration("Usuario admin verificado", async () => {
     const [adminExists] = await pool.execute(

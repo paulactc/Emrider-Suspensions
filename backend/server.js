@@ -5,13 +5,22 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const { testConnection } = require("../backend/src/config/database");
+const { testConnection } = require("./src/config/database");
 
 // Probar conexión al iniciar el servidor
 testConnection();
 
 // Middlewares
-app.use(cors());
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",")
+  : ["http://localhost:5173", "http://localhost:3000"];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -29,6 +38,9 @@ app.use("/api/questionnaire", require("./src/routes/questionnaire"));
 // 🆕 NUEVA RUTA: Información de servicios (para tu flujo secuencial)
 app.use("/api/servicios-info", require("./src/routes/serviciosInfo"));
 
+// Datos técnicos (FF/RR)
+app.use("/api/datos-tecnicos", require("./src/routes/datosTecnicos"));
+
 // 🆕 NUEVA RUTA: Sincronización con GDTaller API externa
 app.use("/api/gdtaller", require("./src/routes/gdtaller"));
 
@@ -37,6 +49,7 @@ console.log("  - /api/clientes");
 console.log("  - /api/motos");
 console.log("  - /api/questionnaire");
 console.log("  - /api/servicios-info");
+console.log("  - /api/datos-tecnicos");
 console.log("  - 🆕 /api/gdtaller (Sincronización API externa)");
 
 // Manejo de errores
@@ -45,6 +58,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Error interno del servidor" });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });

@@ -8,7 +8,7 @@ const Header = () => {
         <NavLink to="/">
           <img className="logo_hdr" src={logoEmrider} alt="logo" />
         </NavLink>
-        <span className="vibeH">EmriderSuspensions</span>
+        <span className="vibeH">EmRider Garage</span>
       </div>
     </header>
   );

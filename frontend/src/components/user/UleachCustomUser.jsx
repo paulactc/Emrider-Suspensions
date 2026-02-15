@@ -18,6 +18,8 @@ import {
   MessageCircle,
   TrendingUp,
   Shield,
+  HeartHandshake,
+  Award,
 } from "lucide-react";
 import api from "../../../services/Api";
 
@@ -84,6 +86,7 @@ function calcularNivel(facturacionAnual) {
 function UleachCustomUser({ Custom }) {
   const [motos, setMotos] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
+  const [showMotos, setShowMotos] = useState(false);
   const [facturacionAnual, setFacturacionAnual] = useState(0);
   const [loadingNivel, setLoadingNivel] = useState(true);
 
@@ -223,27 +226,45 @@ function UleachCustomUser({ Custom }) {
           </div>
           <ClienteDataDisplay cliente={Custom} />
 
-          <div className="client-details__motos">
-            {Custom.id && (
-              <>
-                {tieneMotos ? (
-                  <NavLink
-                    to={`/admin/motos/${Custom.id}`}
-                    state={{ motos, cif: Custom.cif }}
-                    className="bike-link"
-                    title="Ver mis motocicletas"
-                  >
+        </div>
+      )}
+
+      {/* Motocicletas del cliente - con desplegable */}
+      {Custom.id && tieneMotos && (
+        <div className="client-motos-section">
+          <button
+            className="client-motos-section__toggle"
+            onClick={() => setShowMotos(!showMotos)}
+          >
+            <div className="client-motos-section__toggle-left">
+              <Bike />
+              <span>Mis Motocicletas ({motos.length})</span>
+            </div>
+            {showMotos ? <ChevronUp /> : <ChevronDown />}
+          </button>
+
+          {showMotos && (
+            <div className="client-motos-section__grid">
+              {motos.map((moto) => (
+                <div key={moto.id || moto.matricula} className="moto-card">
+                  <div className="moto-card__icon">
                     <Bike />
-                    <span>Mis motocicletas ({motos.length})</span>
-                  </NavLink>
-                ) : (
-                  <p className="no-results-message">
-                    No tiene motocicletas registradas
-                  </p>
-                )}
-              </>
-            )}
-          </div>
+                  </div>
+                  <div className="moto-card__info">
+                    <span className="moto-card__nombre">
+                      {moto.marca} {moto.modelo}
+                    </span>
+                    <span className="moto-card__matricula">
+                      {moto.matricula}
+                    </span>
+                    {moto.anio && (
+                      <span className="moto-card__anio">Ano {moto.anio}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -251,11 +272,28 @@ function UleachCustomUser({ Custom }) {
       <HistorialOrdenes clientId={Custom.gdtaller_id || Custom.id} />
 
       {/* Sistema de Niveles EmRider */}
-      <div className="emrider-niveles">
-        <div className="emrider-niveles__header">
-          <Crown className="emrider-niveles__header-icon" />
+      <div className="emrider-tribu">
+        <div className="emrider-tribu__welcome">
+          <div className="emrider-tribu__welcome-icon">
+            <HeartHandshake />
+          </div>
           <div>
-            <h3>Tribu EmRider</h3>
+            <h3 className="emrider-tribu__welcome-title">
+              Bienvenido a la Tribu, {Custom.nombre || Custom.apellidos || "rider"}
+            </h3>
+            <p className="emrider-tribu__welcome-text">
+              Cada kilometro que compartes con nosotros cuenta. Gracias por confiar en EmRider.
+            </p>
+          </div>
+        </div>
+
+        <div className="emrider-niveles">
+        <div className="emrider-niveles__header">
+          <div className="emrider-niveles__header-icon-wrap">
+            <Award className="emrider-niveles__header-icon" />
+          </div>
+          <div>
+            <h3>Tu nivel y recompensas</h3>
             <p>Cuanto mas ruedas con nosotros, mas recompensas desbloqueas</p>
           </div>
         </div>
@@ -359,6 +397,7 @@ function UleachCustomUser({ Custom }) {
             );
           })}
         </div>
+      </div>
       </div>
     </div>
   );

@@ -142,6 +142,7 @@ const FormTechnicalDataWithClientData = React.memo(
     const [servicioGuardado, setServicioGuardado] = useState(false);
     const [guardandoServicio, setGuardandoServicio] = useState(false);
     const [servicioId, setServicioId] = useState(null); // Para guardar el ID del servicio existente
+    const [datosTecnicosId, setDatosTecnicosId] = useState(null); // Para guardar el ID de datos técnicos existentes
 
     // ✅ OPTIMIZADO: Estado inicial más ligero - arrays se crean solo cuando se necesiten
     const [formDataLocal, setFormDataLocal] = useState(() => {
@@ -181,8 +182,8 @@ const FormTechnicalDataWithClientData = React.memo(
           springLength: formData.springLength || "",
           compressionAdjuster: formData.compressionAdjuster || "",
           reboundAdjuster: formData.reboundAdjuster || "",
-          compressionSettings: formData.compressionSettings || [],
-          reboundSettings: formData.reboundSettings || [],
+          compressionSettings: formData.compressionSettings?.length ? formData.compressionSettings : Array(20).fill(""),
+          reboundSettings: formData.reboundSettings?.length ? formData.reboundSettings : Array(20).fill(""),
 
           // Campos técnicos específicos RR (Amortiguador)
           mainRate: formData.mainRate || "",
@@ -211,12 +212,10 @@ const FormTechnicalDataWithClientData = React.memo(
           gas: formData.gas || "",
           compressionOriginal: formData.compressionOriginal || "",
           compressionModification: formData.compressionModification || "",
-          reboundOriginal: formData.reboundOriginal || [],
-          reboundModification: formData.reboundModification || [],
-          originalCompressionAdjuster:
-            formData.originalCompressionAdjuster || [],
-          modifiedCompressionAdjuster:
-            formData.modifiedCompressionAdjuster || [],
+          reboundOriginal: formData.reboundOriginal?.length ? formData.reboundOriginal : Array(20).fill(""),
+          reboundModification: formData.reboundModification?.length ? formData.reboundModification : Array(20).fill(""),
+          originalCompressionAdjuster: formData.originalCompressionAdjuster?.length ? formData.originalCompressionAdjuster : Array(20).fill(""),
+          modifiedCompressionAdjuster: formData.modifiedCompressionAdjuster?.length ? formData.modifiedCompressionAdjuster : Array(20).fill(""),
         };
       }
 
@@ -338,6 +337,31 @@ const FormTechnicalDataWithClientData = React.memo(
             servicioError.message
           );
           // No bloquear el flujo si falla cargar el servicio
+        }
+
+        // Cargar datos técnicos existentes para esta moto
+        try {
+          console.log("🔍 Buscando datos técnicos existentes para moto:", motoId);
+          const datosTecnicos = await api.getDatosTecnicosByMoto(motoId);
+          if (datosTecnicos.success && datosTecnicos.data.length > 0) {
+            // Buscar datos del mismo tipo de suspensión
+            const datosMismoTipo = datosTecnicos.data.find(
+              (d) => d.tipo_suspension === tipoSuspension
+            );
+            if (datosMismoTipo) {
+              console.log("✅ Datos técnicos existentes encontrados:", datosMismoTipo);
+              setDatosTecnicosId(datosMismoTipo.id);
+
+              // Pre-rellenar campos técnicos desde datos_json
+              const campos = datosMismoTipo.datos_json || {};
+              setFormDataLocal((prev) => ({
+                ...prev,
+                ...campos,
+              }));
+            }
+          }
+        } catch (dtError) {
+          console.warn("⚠️ Error cargando datos técnicos:", dtError.message);
         }
 
         // ✅ OPTIMIZADO: Cargar datos del cliente de forma más eficiente
@@ -661,32 +685,22 @@ const FormTechnicalDataWithClientData = React.memo(
 
       setSaving(true);
       try {
+        const filterArray = (arr) =>
+          Array.isArray(arr) ? arr.filter((val) => val !== "") : [];
+
         const dataToSend = {
+          servicioId: servicioId || null,
           motoId: motoId,
           clienteId: clienteId || null,
           tipoSuspension: tipoSuspension,
           ...formDataLocal,
           // Filtrar arrays vacíos
-          compressionSettings: formDataLocal.compressionSettings.filter(
-            (val) => val !== ""
-          ),
-          reboundSettings: formDataLocal.reboundSettings.filter(
-            (val) => val !== ""
-          ),
-          reboundOriginal: formDataLocal.reboundOriginal.filter(
-            (val) => val !== ""
-          ),
-          reboundModification: formDataLocal.reboundModification.filter(
-            (val) => val !== ""
-          ),
-          originalCompressionAdjuster:
-            formDataLocal.originalCompressionAdjuster.filter(
-              (val) => val !== ""
-            ),
-          modifiedCompressionAdjuster:
-            formDataLocal.modifiedCompressionAdjuster.filter(
-              (val) => val !== ""
-            ),
+          compressionSettings: filterArray(formDataLocal.compressionSettings),
+          reboundSettings: filterArray(formDataLocal.reboundSettings),
+          reboundOriginal: filterArray(formDataLocal.reboundOriginal),
+          reboundModification: filterArray(formDataLocal.reboundModification),
+          originalCompressionAdjuster: filterArray(formDataLocal.originalCompressionAdjuster),
+          modifiedCompressionAdjuster: filterArray(formDataLocal.modifiedCompressionAdjuster),
         };
 
         if (needsQuestionnaire) {
@@ -695,11 +709,24 @@ const FormTechnicalDataWithClientData = React.memo(
 
         console.log(`Datos técnicos ${tipoSuspension} a enviar:`, dataToSend);
 
-        // Simular guardado
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        let result;
+        if (datosTecnicosId) {
+          console.log("📝 Actualizando datos técnicos existentes ID:", datosTecnicosId);
+          result = await api.updateDatosTecnicos(datosTecnicosId, dataToSend);
+        } else {
+          console.log("🆕 Creando nuevos datos técnicos");
+          result = await api.createDatosTecnicos(dataToSend);
+        }
 
-        alert(`Datos técnicos ${tipoSuspension} guardados correctamente`);
-        navigate(-1);
+        if (result && result.success) {
+          if (!datosTecnicosId && result.data && result.data.id) {
+            setDatosTecnicosId(result.data.id);
+          }
+          alert(`Datos técnicos ${tipoSuspension} guardados correctamente`);
+          navigate(-1);
+        } else {
+          throw new Error(result?.message || "Error al guardar los datos técnicos");
+        }
       } catch (error) {
         console.error("Error guardando datos técnicos:", error);
         setErrors({ general: "Error al guardar los datos técnicos" });
