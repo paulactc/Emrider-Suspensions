@@ -1,79 +1,88 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
+import api from "../../../services/Api";
 
 function FormNewUser() {
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const dniRegex = /^[0-9]{8}[A-Z]$/; // Regex para validar el DNI español
+  const dniRegex = /^[0-9]{8}[A-Z]$/;
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Obtener valores usando FormData (más seguro)
     const formData = new FormData(event.target);
     const email = formData.get("email") || "";
-    const dni = formData.get("dni") || "";
+    const dni = (formData.get("dni") || "").toUpperCase();
     const password = formData.get("password") || "";
     const repeatPassword = formData.get("repeatPassword") || "";
 
-    // Limpiar error anterior
     setError("");
+    setSuccess("");
 
-    // 1. Validar campos vacíos PRIMERO
+    // Validaciones
     if (email === "") {
       setError("El correo electrónico no puede estar vacío.");
+      return;
+    }
+    if (!email.includes("@")) {
+      setError("El correo electrónico debe contener '@'.");
       return;
     }
     if (dni === "") {
       setError("El DNI no puede estar vacío.");
       return;
     }
-    if (password === "") {
-      setError("La contraseña no puede estar vacía.");
-      return;
-    }
-    if (repeatPassword === "") {
-      setError("Debe repetir la contraseña.");
-      return;
-    }
-
-    // 2. Validar formato de email
-    if (!email.includes("@")) {
-      setError("El correo electrónico debe contener '@'.");
-      return;
-    }
-
-    // 3. Validar formato de DNI
     if (!dniRegex.test(dni)) {
       setError("El DNI debe tener 8 dígitos seguidos de una letra mayúscula.");
       return;
     }
-
-    // 4. Validar que la contraseña tenga al menos un número
+    if (password === "") {
+      setError("La contraseña no puede estar vacía.");
+      return;
+    }
+    if (password.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
     const contentnumber = /\d/;
     if (!contentnumber.test(password)) {
       setError("La contraseña debe contener al menos un número.");
       return;
     }
-
-    // 5. Validar que las contraseñas coincidan
     if (password !== repeatPassword) {
       setError("Las contraseñas no coinciden.");
       return;
     }
 
-    // Si llegamos aquí, todo está correcto
-    setError("");
+    // Llamar al API de registro REAL
+    setLoading(true);
+    try {
+      const result = await api.register({
+        nombre: dni,
+        email,
+        password,
+        dni,
+      });
 
-    // En un entorno de producción, podrías usar una librería de notificaciones
-    const successMessage = document.createElement("div");
-    successMessage.className = "success-message";
-    successMessage.textContent = "Usuario creado correctamente!";
-    document.body.appendChild(successMessage);
-    setTimeout(() => {
-      document.body.removeChild(successMessage);
-    }, 3000); // Eliminar el mensaje después de 3 segundos
-
-    console.log({ email, dni, password });
+      if (result && result.success) {
+        setSuccess("Usuario creado correctamente. Redirigiendo al login...");
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+      } else {
+        setError(result?.message || "Error al registrar el usuario.");
+      }
+    } catch (err) {
+      console.error("Error en registro:", err);
+      const message =
+        err?.message || err?.response?.data?.message || "Error al registrar el usuario.";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -97,6 +106,24 @@ function FormNewUser() {
             </div>
           )}
 
+          {/* MOSTRAR ÉXITO */}
+          {success && (
+            <div
+              style={{
+                background: "rgba(16, 185, 129, 0.15)",
+                border: "1px solid #10b981",
+                borderRadius: "8px",
+                padding: "0.75rem 1rem",
+                marginBottom: "1rem",
+                color: "#10b981",
+                fontWeight: 600,
+                textAlign: "center",
+              }}
+            >
+              {success}
+            </div>
+          )}
+
           <div className="input-group">
             <label htmlFor="email" className="input-label">
               Correo Electrónico
@@ -112,14 +139,15 @@ function FormNewUser() {
 
           <div className="input-group">
             <label htmlFor="dni" className="input-label">
-              DNI
+              DNI / CIF
             </label>
             <input
               className="input-field"
               type="text"
               name="dni"
               id="dni"
-              placeholder="12345678A"
+              placeholder="47231882W"
+              style={{ textTransform: "uppercase" }}
             />
           </div>
 
@@ -149,22 +177,24 @@ function FormNewUser() {
             />
           </div>
 
-          <button type="submit" className="submit-button">
+          <button type="submit" className="submit-button" disabled={loading}>
             <span className="submit-button-content">
-              Crear Usuario
-              <svg
-                className="submit-button-icon"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 7l5 5m0 0l-5 5m5-5H6"
-                />
-              </svg>
+              {loading ? "Registrando..." : "Crear Usuario"}
+              {!loading && (
+                <svg
+                  className="submit-button-icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
+              )}
             </span>
           </button>
         </div>
@@ -178,28 +208,6 @@ function FormNewUser() {
           </div>
         </div>
       </form>
-      {/* Mensaje de éxito flotante */}
-      <style>
-        {`
-        @keyframes fadeOut {
-          from { opacity: 1; }
-          to { opacity: 0; }
-        }
-        .success-message {
-          position: fixed;
-          bottom: 20px;
-          left: 50%;
-          transform: translateX(-50%);
-          background-color: rgba(76, 175, 80, 0.9); /* Green */
-          color: white;
-          padding: 15px 25px;
-          border-radius: 8px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-          z-index: 1000;
-          animation: fadeOut 0.5s ease-out 2.5s forwards;
-        }
-        `}
-      </style>
     </div>
   );
 }

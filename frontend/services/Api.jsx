@@ -13,7 +13,17 @@ class ApiService {
       });
 
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        // Intentar leer el mensaje de error del backend
+        let errorMessage = `Error ${response.status}: ${response.statusText}`;
+        try {
+          const errorBody = await response.json();
+          if (errorBody.message) {
+            errorMessage = errorBody.message;
+          }
+        } catch (_) {
+          // Si no se puede parsear el body, usar el mensaje por defecto
+        }
+        throw new Error(errorMessage);
       }
 
       return await response.json();

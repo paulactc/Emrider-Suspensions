@@ -77,6 +77,19 @@ function Cliente({ listCustom, listBikes }) {
           }
         }
 
+        // Si no se encontró cliente en GDTaller, crear uno básico desde los datos del usuario registrado
+        if (!cliente && userCif) {
+          console.log("⚠️ Cliente no encontrado en GDTaller, usando datos locales del usuario");
+          cliente = {
+            id: userCif,
+            cif: userCif,
+            nombre: user.nombre || "Cliente",
+            apellidos: "",
+            email: user.email || "",
+            telefono: user.telefono || "",
+          };
+        }
+
         // ✅ VALIDACIÓN: Verificar que tenemos un cliente válido
         if (!cliente) {
           throw new Error(
@@ -85,7 +98,7 @@ function Cliente({ listCustom, listBikes }) {
         }
 
         if (!cliente.id) {
-          throw new Error("El cliente no tiene un ID válido");
+          cliente.id = userCif || "unknown";
         }
 
         // ✅ VALIDACIÓN: Agregar valores por defecto para campos faltantes

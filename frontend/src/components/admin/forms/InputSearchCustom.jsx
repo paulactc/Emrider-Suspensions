@@ -1,4 +1,3 @@
-import { NavLink } from "react-router";
 function InputSearchCustom({ handleInputFilter, filters }) {
   return (
     <>
@@ -30,9 +29,6 @@ function InputSearchCustom({ handleInputFilter, filters }) {
             />
           </div>
         </form>
-        <NavLink className="Newcustom" to="/formsCustom">
-          Crear nuevo cliente
-        </NavLink>
       </section>
     </>
   );

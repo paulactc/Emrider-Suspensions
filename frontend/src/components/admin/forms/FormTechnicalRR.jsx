@@ -27,6 +27,7 @@ const FormTechnicalRR = () => {
   const [motoData, setMotoData] = useState(null);
   const [clienteData, setClienteData] = useState(null);
   const [needsQuestionnaire, setNeedsQuestionnaire] = useState(false);
+  const [existingRecordId, setExistingRecordId] = useState(null);
 
   // Estado del formulario - Datos del cliente (cuestionario)
   const [questionnaireData, setQuestionnaireData] = useState({
@@ -173,6 +174,39 @@ const FormTechnicalRR = () => {
       } else {
         console.log("⚠️ No hay clienteId proporcionado");
       }
+
+      // Cargar datos técnicos existentes para esta moto (tipo RR)
+      if (motoId) {
+        try {
+          const datosTecnicos = await api.getDatosTecnicosByMoto(motoId);
+          const existingRR = Array.isArray(datosTecnicos)
+            ? datosTecnicos.find((d) => d.tipo_suspension === "RR")
+            : null;
+
+          if (existingRR) {
+            console.log("📋 Datos técnicos RR existentes encontrados:", existingRR);
+            setExistingRecordId(existingRR.id);
+
+            const saved = existingRR.datos_json || existingRR;
+            setFormData((prev) => ({
+              ...prev,
+              ...Object.keys(prev).reduce((acc, key) => {
+                if (Array.isArray(prev[key])) {
+                  const savedArr = saved[key] || [];
+                  acc[key] = prev[key].map((_, i) =>
+                    i < savedArr.length ? String(savedArr[i]) : ""
+                  );
+                } else if (saved[key] !== undefined && saved[key] !== null) {
+                  acc[key] = String(saved[key]);
+                }
+                return acc;
+              }, {}),
+            }));
+          }
+        } catch (err) {
+          console.log("ℹ️ No hay datos técnicos RR previos para esta moto");
+        }
+      }
     } catch (error) {
       console.error("❌ Error cargando datos:", error);
       setErrors({ general: "Error al cargar los datos iniciales" });
@@ -271,14 +305,25 @@ const FormTechnicalRR = () => {
 
       console.log("Datos RR a enviar:", dataToSend);
 
-      // Simular guardado
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      let result;
+      if (existingRecordId) {
+        // Actualizar registro existente
+        result = await api.updateDatosTecnicos(existingRecordId, dataToSend);
+        console.log("✅ Datos técnicos RR actualizados:", result);
+      } else {
+        // Crear nuevo registro
+        result = await api.createDatosTecnicos(dataToSend);
+        console.log("✅ Datos técnicos RR creados:", result);
+        if (result?.data?.id) {
+          setExistingRecordId(result.data.id);
+        }
+      }
 
       alert("Datos técnicos RR guardados correctamente");
       navigate(-1);
     } catch (error) {
       console.error("Error guardando datos técnicos:", error);
-      setErrors({ general: "Error al guardar los datos técnicos" });
+      setErrors({ general: "Error al guardar los datos técnicos: " + (error.message || "Error desconocido") });
     } finally {
       setSaving(false);
     }

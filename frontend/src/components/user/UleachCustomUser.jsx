@@ -20,6 +20,9 @@ import {
   Shield,
   HeartHandshake,
   Award,
+  Calendar,
+  Gauge,
+  Hash,
 } from "lucide-react";
 import api from "../../../services/Api";
 
@@ -90,13 +93,32 @@ function UleachCustomUser({ Custom }) {
   const [facturacionAnual, setFacturacionAnual] = useState(0);
   const [loadingNivel, setLoadingNivel] = useState(true);
 
+  const [serviciosPorMoto, setServiciosPorMoto] = useState({});
+  const [motoExpandida, setMotoExpandida] = useState(null);
+
   useEffect(() => {
     if (!Custom) return;
 
     if (Custom.cif) {
       api
         .getMotosByCif(Custom.cif)
-        .then(setMotos)
+        .then((motosData) => {
+          setMotos(motosData || []);
+          // Cargar servicios para cada moto
+          (motosData || []).forEach((moto) => {
+            const motoKey = moto.matricula || moto.id;
+            if (motoKey) {
+              api.getServiciosByMoto(motoKey)
+                .then((res) => {
+                  setServiciosPorMoto((prev) => ({
+                    ...prev,
+                    [motoKey]: res.data || [],
+                  }));
+                })
+                .catch(() => {});
+            }
+          });
+        })
         .catch((err) => console.error("Error cargando motos por CIF:", err));
     }
   }, [Custom?.cif]);
@@ -135,6 +157,51 @@ function UleachCustomUser({ Custom }) {
 
   const tieneMotos = motos.length > 0;
   const safeDisplay = (value) => value || "\u2014";
+
+  // Helper: comprobar estado de mantenimiento de suspensiones
+  const getMantenimientoStatus = (moto) => {
+    const motoKey = moto.matricula || moto.id;
+    const servicios = serviciosPorMoto[motoKey] || [];
+
+    // Si no hay ningun servicio de suspensiones registrado por EmRider
+    if (servicios.length === 0) {
+      return { status: "sin-datos", texto: "Sin servicio de suspensiones registrado" };
+    }
+
+    // Buscar el servicio mas reciente (para mostrar fecha de registro)
+    const servicioReciente = [...servicios].sort(
+      (a, b) => new Date(b.fecha_servicio || 0) - new Date(a.fecha_servicio || 0)
+    )[0];
+    const fechaRegistro = servicioReciente?.fecha_servicio;
+
+    // Buscar la fecha de proximo mantenimiento mas reciente
+    const conFecha = servicios.filter((s) => s.fecha_proximo_mantenimiento);
+    if (conFecha.length === 0) {
+      return { status: "sin-datos", texto: `Servicio realizado el ${formatDate(fechaRegistro)}` };
+    }
+
+    const fechaProximo = conFecha.sort(
+      (a, b) => new Date(b.fecha_servicio || 0) - new Date(a.fecha_servicio || 0)
+    )[0].fecha_proximo_mantenimiento;
+
+    const ahora = new Date();
+    const fecha = new Date(fechaProximo);
+    const diffDias = Math.ceil((fecha - ahora) / (1000 * 60 * 60 * 24));
+
+    if (diffDias < 0) {
+      return { status: "caducado", texto: `Servicio realizado - Mantenimiento de suspensiones caducado (${formatDate(fechaProximo)})` };
+    }
+    if (diffDias <= 30) {
+      return { status: "proximo", texto: `Servicio realizado - Mantenimiento de suspensiones proximo (${formatDate(fechaProximo)})` };
+    }
+    return { status: "ok", texto: `Servicio realizado - Proximo mantenimiento de suspensiones: ${formatDate(fechaProximo)}` };
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
+  };
 
   const nivelActual = useMemo(() => calcularNivel(facturacionAnual), [facturacionAnual]);
 
@@ -230,7 +297,7 @@ function UleachCustomUser({ Custom }) {
       )}
 
       {/* Motocicletas del cliente - con desplegable */}
-      {Custom.id && tieneMotos && (
+      {Custom.id && (
         <div className="client-motos-section">
           <button
             className="client-motos-section__toggle"
@@ -244,25 +311,110 @@ function UleachCustomUser({ Custom }) {
           </button>
 
           {showMotos && (
-            <div className="client-motos-section__grid">
-              {motos.map((moto) => (
-                <div key={moto.id || moto.matricula} className="moto-card">
-                  <div className="moto-card__icon">
-                    <Bike />
-                  </div>
-                  <div className="moto-card__info">
-                    <span className="moto-card__nombre">
-                      {moto.marca} {moto.modelo}
-                    </span>
-                    <span className="moto-card__matricula">
-                      {moto.matricula}
-                    </span>
-                    {moto.anio && (
-                      <span className="moto-card__anio">Ano {moto.anio}</span>
-                    )}
-                  </div>
+            <div className="client-motos-section__list">
+              {tieneMotos ? (
+                motos.map((moto) => {
+                  const motoKey = moto.matricula || moto.id;
+                  const mantenimiento = getMantenimientoStatus(moto);
+                  const isOpen = motoExpandida === motoKey;
+
+                  return (
+                    <div key={moto.id || moto.matricula} className={`moto-card ${isOpen ? "moto-card--open" : ""}`}>
+                      {/* Cabecera clickable */}
+                      <button
+                        className="moto-card__toggle"
+                        onClick={() => setMotoExpandida(isOpen ? null : motoKey)}
+                      >
+                        <div className="moto-card__toggle-left">
+                          <div className="moto-card__icon">
+                            <Bike />
+                          </div>
+                          <div className="moto-card__info">
+                            <span className="moto-card__nombre">
+                              {moto.marca} {moto.modelo}
+                            </span>
+                            <span className="moto-card__matricula">
+                              {moto.matricula || "Sin matricula"}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="moto-card__toggle-right">
+                          <div className={`moto-card__status-dot moto-card__status-dot--${mantenimiento.status}`} />
+                          {isOpen ? <ChevronUp /> : <ChevronDown />}
+                        </div>
+                      </button>
+
+                      {/* Panel expandible */}
+                      {isOpen && (
+                        <div className="moto-card__detail">
+                          {/* Ficha de la moto */}
+                          <div className="moto-card__ficha">
+                            <h4 className="moto-card__section-title">Ficha del vehiculo</h4>
+                            <div className="moto-card__ficha-grid">
+                              <div className="moto-card__ficha-item">
+                                <Bike className="moto-card__ficha-icon" />
+                                <div>
+                                  <span className="moto-card__ficha-label">Marca / Modelo</span>
+                                  <span className="moto-card__ficha-value">{moto.marca || "—"} {moto.modelo || "—"}</span>
+                                </div>
+                              </div>
+                              <div className="moto-card__ficha-item">
+                                <Hash className="moto-card__ficha-icon" />
+                                <div>
+                                  <span className="moto-card__ficha-label">Matricula</span>
+                                  <span className="moto-card__ficha-value">{moto.matricula || "—"}</span>
+                                </div>
+                              </div>
+                              <div className="moto-card__ficha-item">
+                                <Calendar className="moto-card__ficha-icon" />
+                                <div>
+                                  <span className="moto-card__ficha-label">Ano</span>
+                                  <span className="moto-card__ficha-value">{moto.anio || "—"}</span>
+                                </div>
+                              </div>
+                              {moto.bastidor && (
+                                <div className="moto-card__ficha-item">
+                                  <FileUser className="moto-card__ficha-icon" />
+                                  <div>
+                                    <span className="moto-card__ficha-label">Bastidor</span>
+                                    <span className="moto-card__ficha-value">{moto.bastidor}</span>
+                                  </div>
+                                </div>
+                              )}
+                              {moto.km && (
+                                <div className="moto-card__ficha-item">
+                                  <Gauge className="moto-card__ficha-icon" />
+                                  <div>
+                                    <span className="moto-card__ficha-label">Kilometros</span>
+                                    <span className="moto-card__ficha-value">{Number(moto.km).toLocaleString("es-ES")} km</span>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Estado de mantenimiento de suspensiones */}
+                          <div className="moto-card__section">
+                            <h4 className="moto-card__section-title">Mantenimiento de suspensiones</h4>
+                            <div className={`moto-card__mantenimiento moto-card__mantenimiento--${mantenimiento.status}`}>
+                              <Wrench className="moto-card__mantenimiento-icon" />
+                              <span>{mantenimiento.texto}</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="moto-card moto-card--empty">
+                  <Bike />
+                  <p>No se encontraron motocicletas registradas.</p>
+                  <p style={{ fontSize: "0.85rem", opacity: 0.7 }}>
+                    Si tienes motos en EmRider, contacta con nosotros para que las asociemos a tu cuenta.
+                  </p>
                 </div>
-              ))}
+              )}
             </div>
           )}
         </div>

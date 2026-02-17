@@ -10,6 +10,7 @@ import {
   FileText,
   Wrench,
   Gauge,
+  Zap,
 } from "lucide-react";
 import api from "../../../../services/Api";
 
@@ -25,6 +26,7 @@ const FormTechnicalFF = () => {
   const [motoData, setMotoData] = useState(null);
   const [clienteData, setClienteData] = useState(null);
   const [needsQuestionnaire, setNeedsQuestionnaire] = useState(false);
+  const [existingRecordId, setExistingRecordId] = useState(null);
 
   // Estado del formulario - Datos del cliente (cuestionario)
   const [questionnaireData, setQuestionnaireData] = useState({
@@ -35,7 +37,7 @@ const FormTechnicalFF = () => {
     preferenciaRigidez: "",
   });
 
-  // Estado del formulario - Datos técnicos FF (simplificado)
+  // Estado del formulario - Datos técnicos FF completos
   const [formData, setFormData] = useState({
     // Información del servicio
     numeroOrden: "",
@@ -51,26 +53,49 @@ const FormTechnicalFF = () => {
     año: "",
     referencia: "",
 
-    // Datos técnicos específicos FF (horquilla)
-    oilType: "",
-    oilLevel: "",
-    springRate: "",
-    compressionDamping: "",
-    reboundDamping: "",
-    preload: "",
-    sag: "",
+    // Selección de lado (Right / Left)
+    side: "",
 
-    // Medidas específicas FF
-    forkLength: "",
-    strokeLength: "",
-    oilCapacity: "",
+    // Spring Data (igual que RR, adaptado a horquilla)
+    mainRate: "",
+    springRef: "",
+    length: "",
+    numeroSpiras: "",
+    outerDiameter: "",
+    innerDiameter: "",
+    spire: "",
+    rebSpring: "",
+    totalLength: "",
+    stroke: "",
+    shaft: "",
+    piston: "",
+    internalSpacer: "",
+    height: "",
+    strokeToBumpRubber: "",
+    rod: "",
+    reboundSpring: "",
     springLength: "",
-    compressionAdjuster: "",
-    reboundAdjuster: "",
+    springUpperDiameter: "",
+    springLowerDiameter: "",
+    headRodEnd: "",
+    upperMount: "",
+    lowerMount: "",
 
-    // ✅ AGREGAMOS: Ajustadores de compresión para FF
-    compressionSettings: Array(20).fill(""), // 20 posiciones para horquilla
-    reboundSettings: Array(20).fill(""), // 20 posiciones para horquilla
+    // Aceite y gas
+    oil: "",
+    gas: "",
+
+    // Compresión
+    compressionOriginal: "",
+    compressionModification: "",
+
+    // Ritorno (arrays de valores)
+    reboundOriginal: Array(25).fill(""),
+    reboundModification: Array(25).fill(""),
+
+    // Ajustadores de compresión
+    originalCompressionAdjuster: Array(30).fill(""),
+    modifiedCompressionAdjuster: Array(30).fill(""),
   });
 
   useEffect(() => {
@@ -81,6 +106,8 @@ const FormTechnicalFF = () => {
   const loadInitialData = async () => {
     try {
       setLoading(true);
+      console.log("🔍 Iniciando carga de datos FF...");
+      console.log("📊 motoId:", motoId, "clienteId:", clienteId);
 
       // Cargar datos de la moto
       if (motoId) {
@@ -97,27 +124,71 @@ const FormTechnicalFF = () => {
         console.log("✅ Cliente cargado:", cliente);
         setClienteData(cliente);
 
-        const needsQuest =
-          !cliente.peso ||
-          !cliente.nivelPilotaje ||
-          !cliente.especialidad ||
-          !cliente.tipoConduccion ||
-          !cliente.preferenciaRigidez;
+        const peso = cliente.peso;
+        const nivelPilotaje = cliente.nivel_pilotaje || cliente.nivelPilotaje;
+        const especialidad = cliente.especialidad;
+        const tipoConduccion =
+          cliente.tipo_conduccion || cliente.tipoConduccion;
+        const preferenciaRigidez =
+          cliente.preferencia_rigidez || cliente.preferenciaRigidez;
 
+        const needsQuest =
+          !peso ||
+          !nivelPilotaje ||
+          !especialidad ||
+          !tipoConduccion ||
+          !preferenciaRigidez;
+
+        console.log("🔍 ¿Necesita cuestionario?", needsQuest);
         setNeedsQuestionnaire(needsQuest);
 
         if (!needsQuest) {
           setQuestionnaireData({
-            peso: cliente.peso || "",
-            nivelPilotaje: cliente.nivelPilotaje || "",
-            especialidad: cliente.especialidad || "",
-            tipoConduccion: cliente.tipoConduccion || "",
-            preferenciaRigidez: cliente.preferenciaRigidez || "",
+            peso: peso || "",
+            nivelPilotaje: nivelPilotaje || "",
+            especialidad: especialidad || "",
+            tipoConduccion: tipoConduccion || "",
+            preferenciaRigidez: preferenciaRigidez || "",
           });
         }
       }
+
+      // Cargar datos técnicos existentes para esta moto (tipo FF)
+      if (motoId) {
+        try {
+          const datosTecnicos = await api.getDatosTecnicosByMoto(motoId);
+          const existingFF = Array.isArray(datosTecnicos)
+            ? datosTecnicos.find((d) => d.tipo_suspension === "FF")
+            : null;
+
+          if (existingFF) {
+            console.log("📋 Datos técnicos FF existentes encontrados:", existingFF);
+            setExistingRecordId(existingFF.id);
+
+            // Recuperar datos guardados del JSON
+            const saved = existingFF.datos_json || existingFF;
+            setFormData((prev) => ({
+              ...prev,
+              ...Object.keys(prev).reduce((acc, key) => {
+                if (Array.isArray(prev[key])) {
+                  // Para arrays, rellenar con los datos guardados
+                  const savedArr = saved[key] || [];
+                  acc[key] = prev[key].map((_, i) =>
+                    i < savedArr.length ? String(savedArr[i]) : ""
+                  );
+                } else if (saved[key] !== undefined && saved[key] !== null) {
+                  acc[key] = String(saved[key]);
+                }
+                return acc;
+              }, {}),
+            }));
+          }
+        } catch (err) {
+          console.log("ℹ️ No hay datos técnicos FF previos para esta moto");
+        }
+      }
     } catch (error) {
-      console.error("Error cargando datos:", error);
+      console.error("❌ Error cargando datos:", error);
       setErrors({ general: "Error al cargar los datos iniciales" });
     } finally {
       setLoading(false);
@@ -145,7 +216,6 @@ const FormTechnicalFF = () => {
     }));
   };
 
-  // ✅ AGREGAMOS: Función para manejar arrays
   const handleArrayChange = (field, index, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -160,6 +230,9 @@ const FormTechnicalFF = () => {
       newErrors.numeroOrden = "Número de orden requerido";
     if (!formData.servicioSuspension)
       newErrors.servicioSuspension = "Tipo de servicio requerido";
+    if (!formData.marca) newErrors.marca = "Marca de suspensión requerida";
+    if (!formData.modelo) newErrors.modelo = "Modelo de suspensión requerido";
+    if (!formData.side) newErrors.side = "Debe seleccionar Right o Left";
 
     if (needsQuestionnaire) {
       if (!questionnaireData.peso) newErrors.peso = "Peso del piloto requerido";
@@ -192,10 +265,14 @@ const FormTechnicalFF = () => {
         tipoSuspension: "FF",
         ...formData,
         // Filtrar arrays vacíos
-        compressionSettings: formData.compressionSettings.filter(
+        reboundOriginal: formData.reboundOriginal.filter((val) => val !== ""),
+        reboundModification: formData.reboundModification.filter(
           (val) => val !== ""
         ),
-        reboundSettings: formData.reboundSettings.filter((val) => val !== ""),
+        originalCompressionAdjuster:
+          formData.originalCompressionAdjuster.filter((val) => val !== ""),
+        modifiedCompressionAdjuster:
+          formData.modifiedCompressionAdjuster.filter((val) => val !== ""),
       };
 
       if (needsQuestionnaire) {
@@ -204,13 +281,25 @@ const FormTechnicalFF = () => {
 
       console.log("Datos FF a enviar:", dataToSend);
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      let result;
+      if (existingRecordId) {
+        // Actualizar registro existente
+        result = await api.updateDatosTecnicos(existingRecordId, dataToSend);
+        console.log("✅ Datos técnicos FF actualizados:", result);
+      } else {
+        // Crear nuevo registro
+        result = await api.createDatosTecnicos(dataToSend);
+        console.log("✅ Datos técnicos FF creados:", result);
+        if (result?.data?.id) {
+          setExistingRecordId(result.data.id);
+        }
+      }
 
       alert("Datos técnicos FF guardados correctamente");
       navigate(-1);
     } catch (error) {
       console.error("Error guardando datos técnicos FF:", error);
-      setErrors({ general: "Error al guardar los datos técnicos" });
+      setErrors({ general: "Error al guardar los datos técnicos: " + (error.message || "Error desconocido") });
     } finally {
       setSaving(false);
     }
@@ -220,7 +309,7 @@ const FormTechnicalFF = () => {
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
-        <p>Cargando formulario...</p>
+        <p>Cargando formulario FF...</p>
       </div>
     );
   }
@@ -502,7 +591,7 @@ const FormTechnicalFF = () => {
                   value={formData.modelo}
                   onChange={(e) => handleInputChange("modelo", e.target.value)}
                   className={`form-input ${errors.modelo ? "error" : ""}`}
-                  placeholder="SHOWA"
+                  placeholder="SHOWA SFF-AIR"
                 />
                 {errors.modelo && (
                   <span className="error-text">{errors.modelo}</span>
@@ -534,62 +623,86 @@ const FormTechnicalFF = () => {
                   placeholder="NIX-30-43"
                 />
               </div>
+
+              {/* Selección Right / Left */}
+              <div className="form-group full-width">
+                <label className="form-label">Lado de la horquilla (Side) *</label>
+                <div className="side-selector">
+                  <button
+                    type="button"
+                    className={`side-btn ${formData.side === "right" ? "active" : ""}`}
+                    onClick={() => handleInputChange("side", "right")}
+                  >
+                    RIGHT
+                  </button>
+                  <button
+                    type="button"
+                    className={`side-btn ${formData.side === "left" ? "active" : ""}`}
+                    onClick={() => handleInputChange("side", "left")}
+                  >
+                    LEFT
+                  </button>
+                </div>
+                {errors.side && (
+                  <span className="error-text">{errors.side}</span>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Datos técnicos específicos FF */}
+          {/* Spring Data */}
           <div className="form-section">
             <div className="section-header">
-              <Wrench size={24} />
-              <h2>Datos Técnicos FF - Horquilla</h2>
+              <Zap size={24} />
+              <h2>Spring Data</h2>
             </div>
 
             <div className="form-grid">
               <div className="form-group">
-                <label className="form-label">Tipo de aceite</label>
-                <input
-                  type="text"
-                  value={formData.oilType}
-                  onChange={(e) => handleInputChange("oilType", e.target.value)}
-                  className="form-input"
-                  placeholder="Fork Oil 5W"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Nivel de aceite (mm)</label>
-                <input
-                  type="number"
-                  value={formData.oilLevel}
-                  onChange={(e) =>
-                    handleInputChange("oilLevel", e.target.value)
-                  }
-                  className="form-input"
-                  placeholder="120"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Spring Rate (N/mm)</label>
+                <label className="form-label">Main Rate (N/mm)</label>
                 <input
                   type="number"
                   step="0.1"
-                  value={formData.springRate}
+                  value={formData.mainRate}
                   onChange={(e) =>
-                    handleInputChange("springRate", e.target.value)
+                    handleInputChange("mainRate", e.target.value)
                   }
                   className="form-input"
-                  placeholder="7.5"
+                  placeholder="9.5"
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Compresión</label>
+                <label className="form-label">Spring Ref</label>
+                <input
+                  type="text"
+                  value={formData.springRef}
+                  onChange={(e) =>
+                    handleInputChange("springRef", e.target.value)
+                  }
+                  className="form-input"
+                  placeholder="SPR-95-300"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Length (mm)</label>
                 <input
                   type="number"
-                  value={formData.compressionDamping}
+                  value={formData.length}
+                  onChange={(e) => handleInputChange("length", e.target.value)}
+                  className="form-input"
+                  placeholder="300"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Número de espiras</label>
+                <input
+                  type="number"
+                  value={formData.numeroSpiras}
                   onChange={(e) =>
-                    handleInputChange("compressionDamping", e.target.value)
+                    handleInputChange("numeroSpiras", e.target.value)
                   }
                   className="form-input"
                   placeholder="12"
@@ -597,91 +710,313 @@ const FormTechnicalFF = () => {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Rebote</label>
+                <label className="form-label">Outer Diameter (mm)</label>
                 <input
                   type="number"
-                  value={formData.reboundDamping}
+                  step="0.1"
+                  value={formData.outerDiameter}
                   onChange={(e) =>
-                    handleInputChange("reboundDamping", e.target.value)
+                    handleInputChange("outerDiameter", e.target.value)
                   }
                   className="form-input"
-                  placeholder="14"
+                  placeholder="46"
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Precarga (mm)</label>
+                <label className="form-label">Inner Diameter (mm)</label>
                 <input
                   type="number"
-                  value={formData.preload}
-                  onChange={(e) => handleInputChange("preload", e.target.value)}
-                  className="form-input"
-                  placeholder="5"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">SAG (mm)</label>
-                <input
-                  type="number"
-                  value={formData.sag}
-                  onChange={(e) => handleInputChange("sag", e.target.value)}
-                  className="form-input"
-                  placeholder="30"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Longitud Horquilla (mm)</label>
-                <input
-                  type="number"
-                  value={formData.forkLength}
+                  step="0.1"
+                  value={formData.innerDiameter}
                   onChange={(e) =>
-                    handleInputChange("forkLength", e.target.value)
+                    handleInputChange("innerDiameter", e.target.value)
                   }
                   className="form-input"
-                  placeholder="650"
+                  placeholder="40"
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Recorrido (mm)</label>
+                <label className="form-label">Spire (mm)</label>
                 <input
                   type="number"
-                  value={formData.strokeLength}
+                  step="0.1"
+                  value={formData.spire}
+                  onChange={(e) => handleInputChange("spire", e.target.value)}
+                  className="form-input"
+                  placeholder="2.5"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Rebound Spring</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={formData.rebSpring}
                   onChange={(e) =>
-                    handleInputChange("strokeLength", e.target.value)
+                    handleInputChange("rebSpring", e.target.value)
                   }
+                  className="form-input"
+                  placeholder="2.0"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Total Length (mm)</label>
+                <input
+                  type="number"
+                  value={formData.totalLength}
+                  onChange={(e) =>
+                    handleInputChange("totalLength", e.target.value)
+                  }
+                  className="form-input"
+                  placeholder="320"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Stroke (mm)</label>
+                <input
+                  type="number"
+                  value={formData.stroke}
+                  onChange={(e) => handleInputChange("stroke", e.target.value)}
                   className="form-input"
                   placeholder="120"
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Capacidad Aceite (ml)</label>
+                <label className="form-label">Shaft (mm)</label>
                 <input
                   type="number"
-                  value={formData.oilCapacity}
+                  value={formData.shaft}
+                  onChange={(e) => handleInputChange("shaft", e.target.value)}
+                  className="form-input"
+                  placeholder="22"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Piston (mm)</label>
+                <input
+                  type="number"
+                  value={formData.piston}
+                  onChange={(e) => handleInputChange("piston", e.target.value)}
+                  className="form-input"
+                  placeholder="46"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Internal Spacer (mm)</label>
+                <input
+                  type="number"
+                  value={formData.internalSpacer}
                   onChange={(e) =>
-                    handleInputChange("oilCapacity", e.target.value)
+                    handleInputChange("internalSpacer", e.target.value)
                   }
                   className="form-input"
-                  placeholder="450"
+                  placeholder="15"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Height (mm)</label>
+                <input
+                  type="number"
+                  value={formData.height}
+                  onChange={(e) => handleInputChange("height", e.target.value)}
+                  className="form-input"
+                  placeholder="580"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Stroke to Bump Rubber (mm)</label>
+                <input
+                  type="number"
+                  value={formData.strokeToBumpRubber}
+                  onChange={(e) =>
+                    handleInputChange("strokeToBumpRubber", e.target.value)
+                  }
+                  className="form-input"
+                  placeholder="110"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Rod (mm)</label>
+                <input
+                  type="number"
+                  value={formData.rod}
+                  onChange={(e) => handleInputChange("rod", e.target.value)}
+                  className="form-input"
+                  placeholder="22"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Spring Length (mm)</label>
+                <input
+                  type="number"
+                  value={formData.springLength}
+                  onChange={(e) =>
+                    handleInputChange("springLength", e.target.value)
+                  }
+                  className="form-input"
+                  placeholder="250"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Spring Upper Diameter (mm)</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={formData.springUpperDiameter}
+                  onChange={(e) =>
+                    handleInputChange("springUpperDiameter", e.target.value)
+                  }
+                  className="form-input"
+                  placeholder="38"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Spring Lower Diameter (mm)</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={formData.springLowerDiameter}
+                  onChange={(e) =>
+                    handleInputChange("springLowerDiameter", e.target.value)
+                  }
+                  className="form-input"
+                  placeholder="38"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Head Rod End</label>
+                <input
+                  type="text"
+                  value={formData.headRodEnd}
+                  onChange={(e) =>
+                    handleInputChange("headRodEnd", e.target.value)
+                  }
+                  className="form-input"
+                  placeholder="Estándar"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Upper Mount</label>
+                <input
+                  type="text"
+                  value={formData.upperMount}
+                  onChange={(e) =>
+                    handleInputChange("upperMount", e.target.value)
+                  }
+                  className="form-input"
+                  placeholder="Estándar"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Lower Mount</label>
+                <input
+                  type="text"
+                  value={formData.lowerMount}
+                  onChange={(e) =>
+                    handleInputChange("lowerMount", e.target.value)
+                  }
+                  className="form-input"
+                  placeholder="Pinza"
                 />
               </div>
             </div>
           </div>
 
-          {/* ✅ AGREGAMOS: Ajustadores de Compresión FF */}
+          {/* Oil & Gas */}
           <div className="form-section">
             <div className="section-header">
               <Gauge size={24} />
-              <h2>Ajustadores de Compresión FF</h2>
-              <p>Valores de 1 a 20 posiciones (horquilla)</p>
+              <h2>Oil & Gas</h2>
+            </div>
+
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="form-label">Oil</label>
+                <input
+                  type="text"
+                  value={formData.oil}
+                  onChange={(e) => handleInputChange("oil", e.target.value)}
+                  className="form-input"
+                  placeholder="Fork Oil 5W"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Gas</label>
+                <input
+                  type="text"
+                  value={formData.gas}
+                  onChange={(e) => handleInputChange("gas", e.target.value)}
+                  className="form-input"
+                  placeholder="Nitrógeno 10 bar"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Compresión */}
+          <div className="form-section">
+            <div className="section-header">
+              <Wrench size={24} />
+              <h2>Compresión</h2>
+            </div>
+
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="form-label">Compresión Original</label>
+                <input
+                  type="number"
+                  value={formData.compressionOriginal}
+                  onChange={(e) =>
+                    handleInputChange("compressionOriginal", e.target.value)
+                  }
+                  className="form-input"
+                  placeholder="15"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Compresión Modificada</label>
+                <input
+                  type="number"
+                  value={formData.compressionModification}
+                  onChange={(e) =>
+                    handleInputChange("compressionModification", e.target.value)
+                  }
+                  className="form-input"
+                  placeholder="12"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Ritorno Original */}
+          <div className="form-section">
+            <div className="section-header">
+              <Settings size={24} />
+              <h2>Ritorno (Return) - Original</h2>
+              <p>Valores de 1 a 25 posiciones</p>
             </div>
 
             <div className="array-grid">
-              {formData.compressionSettings.map((value, index) => (
+              {formData.reboundOriginal.map((value, index) => (
                 <div key={index} className="array-item">
                   <label className="array-label">{index + 1}</label>
                   <input
@@ -689,7 +1024,7 @@ const FormTechnicalFF = () => {
                     value={value}
                     onChange={(e) =>
                       handleArrayChange(
-                        "compressionSettings",
+                        "reboundOriginal",
                         index,
                         e.target.value
                       )
@@ -702,16 +1037,16 @@ const FormTechnicalFF = () => {
             </div>
           </div>
 
-          {/* ✅ AGREGAMOS: Ajustadores de Rebote FF */}
+          {/* Ritorno Modificado */}
           <div className="form-section">
             <div className="section-header">
               <Settings size={24} />
-              <h2>Ajustadores de Rebote FF</h2>
-              <p>Valores de 1 a 20 posiciones (horquilla)</p>
+              <h2>Ritorno (Return) - Modificado</h2>
+              <p>Valores de 1 a 25 posiciones</p>
             </div>
 
             <div className="array-grid">
-              {formData.reboundSettings.map((value, index) => (
+              {formData.reboundModification.map((value, index) => (
                 <div key={index} className="array-item">
                   <label className="array-label">{index + 1}</label>
                   <input
@@ -719,7 +1054,67 @@ const FormTechnicalFF = () => {
                     value={value}
                     onChange={(e) =>
                       handleArrayChange(
-                        "reboundSettings",
+                        "reboundModification",
+                        index,
+                        e.target.value
+                      )
+                    }
+                    className="array-input"
+                    placeholder="0"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Ajustadores de Compresión Originales */}
+          <div className="form-section">
+            <div className="section-header">
+              <Gauge size={24} />
+              <h2>Ajustadores de Compresión - Originales</h2>
+              <p>Valores de 1 a 30 posiciones</p>
+            </div>
+
+            <div className="array-grid">
+              {formData.originalCompressionAdjuster.map((value, index) => (
+                <div key={index} className="array-item">
+                  <label className="array-label">{index + 1}</label>
+                  <input
+                    type="number"
+                    value={value}
+                    onChange={(e) =>
+                      handleArrayChange(
+                        "originalCompressionAdjuster",
+                        index,
+                        e.target.value
+                      )
+                    }
+                    className="array-input"
+                    placeholder="0"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Ajustadores de Compresión Modificados */}
+          <div className="form-section">
+            <div className="section-header">
+              <Gauge size={24} />
+              <h2>Ajustadores de Compresión - Modificados</h2>
+              <p>Valores de 1 a 30 posiciones</p>
+            </div>
+
+            <div className="array-grid">
+              {formData.modifiedCompressionAdjuster.map((value, index) => (
+                <div key={index} className="array-item">
+                  <label className="array-label">{index + 1}</label>
+                  <input
+                    type="number"
+                    value={value}
+                    onChange={(e) =>
+                      handleArrayChange(
+                        "modifiedCompressionAdjuster",
                         index,
                         e.target.value
                       )
@@ -748,7 +1143,7 @@ const FormTechnicalFF = () => {
                 }
                 className="form-textarea"
                 rows="6"
-                placeholder="Describa cualquier observación importante sobre el servicio realizado..."
+                placeholder="Describa cualquier observación importante sobre el servicio realizado, problemas encontrados, recomendaciones, etc."
               />
             </div>
           </div>
@@ -778,7 +1173,7 @@ const FormTechnicalFF = () => {
         </form>
       </div>
 
-      {/* ✅ ESTILOS CSS COMPLETOS */}
+      {/* ESTILOS CSS COMPLETOS */}
       <style jsx>{`
         .app-containerform {
           min-height: 100vh;
@@ -960,11 +1355,45 @@ const FormTechnicalFF = () => {
           font-weight: 500;
         }
 
-        /* ✅ ESTILOS PARA ARRAYS */
+        /* Selector Right / Left */
+        .side-selector {
+          display: flex;
+          gap: 1rem;
+        }
+
+        .side-btn {
+          flex: 1;
+          padding: 1rem 2rem;
+          border: 2px solid #d1d5db;
+          border-radius: 8px;
+          background: white;
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #6b7280;
+          cursor: pointer;
+          transition: all 0.2s;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+        }
+
+        .side-btn:hover {
+          border-color: #3b82f6;
+          color: #3b82f6;
+          background: #eff6ff;
+        }
+
+        .side-btn.active {
+          border-color: #3b82f6;
+          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+          color: white;
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        /* ESTILOS PARA ARRAYS */
         .array-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-          gap: 1rem;
+          grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+          gap: 0.75rem;
           max-height: 400px;
           overflow-y: auto;
           padding: 1rem;
@@ -977,23 +1406,24 @@ const FormTechnicalFF = () => {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.25rem;
         }
 
         .array-label {
-          font-size: 0.75rem;
+          font-size: 0.6875rem;
           font-weight: 600;
           color: #6b7280;
           text-align: center;
+          line-height: 1;
         }
 
         .array-input {
           width: 100%;
-          padding: 0.5rem;
+          padding: 0.375rem 0.25rem;
           border: 1px solid #d1d5db;
           border-radius: 4px;
           text-align: center;
-          font-size: 0.875rem;
+          font-size: 0.75rem;
           transition: all 0.2s;
         }
 
@@ -1109,10 +1539,14 @@ const FormTechnicalFF = () => {
           }
 
           .array-grid {
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
           }
 
           .form-actions {
+            flex-direction: column;
+          }
+
+          .side-selector {
             flex-direction: column;
           }
         }

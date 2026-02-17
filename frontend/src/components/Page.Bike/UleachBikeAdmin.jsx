@@ -29,12 +29,14 @@ const SuspensionTypeModal = ({ isOpen, onClose, onSelect, motoData }) => {
 
         <div className="modal-body">
           <p>Selecciona el tipo de suspensión para configurar:</p>
-          <p className="moto-info">
-            <strong>
-              {motoData?.marca} {motoData?.modelo}
-            </strong>
-            {motoData?.matricula && ` - ${motoData.matricula}`}
-          </p>
+          {(motoData?.marca || motoData?.modelo || motoData?.matricula) && (
+            <p className="moto-info">
+              <strong>
+                {motoData?.marca} {motoData?.modelo}
+              </strong>
+              {motoData?.matricula && ` - ${motoData.matricula}`}
+            </p>
+          )}
 
           <div className="suspension-options">
             <button

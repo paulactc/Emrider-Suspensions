@@ -10,7 +10,7 @@ class AuthController {
   static async register(req, res) {
     try {
       const {
-        nombre,
+        nombre = "",
         email,
         password,
         dni,
@@ -18,24 +18,34 @@ class AuthController {
         rol = "cliente",
       } = req.body;
 
+      // Si no envían nombre, usar el DNI como nombre temporal
+      const nombreFinal = nombre || dni;
+
       // Validar campos requeridos
-      if (!nombre || !email || !password || !dni) {
+      if (!email || !password || !dni) {
         return res.status(400).json({
           success: false,
-          message: "Nombre, email, password y DNI son requeridos",
+          message: "Email, contraseña y DNI son obligatorios para el registro.",
         });
       }
 
       // Verificar si el usuario ya existe
       const existingUser = await executeQuery(
-        "SELECT id FROM usuarios WHERE email = ? OR dni = ?",
+        "SELECT id, email, dni FROM usuarios WHERE email = ? OR dni = ?",
         [email, dni]
       );
 
       if (existingUser.success && existingUser.data.length > 0) {
+        const existing = existingUser.data[0];
+        if (existing.dni?.toLowerCase() === dni?.toLowerCase()) {
+          return res.status(409).json({
+            success: false,
+            message: "Ya existe una cuenta con este DNI. Si no recuerdas tu contraseña, utiliza la opción de recuperar contraseña.",
+          });
+        }
         return res.status(409).json({
           success: false,
-          message: "Ya existe un usuario con ese email o DNI",
+          message: "Ya existe una cuenta con este correo electrónico.",
         });
       }
 
@@ -46,19 +56,19 @@ class AuthController {
       // Preparar transacción para crear usuario y cliente
       const queries = [
         {
-          query: `INSERT INTO usuarios (nombre, email, password, dni, telefono, rol) 
+          query: `INSERT INTO usuarios (nombre, email, password, dni, telefono, rol)
                   VALUES (?, ?, ?, ?, ?, ?)`,
-          params: [nombre, email, hashedPassword, dni, telefono, rol],
+          params: [nombreFinal, email, hashedPassword, dni, telefono || null, rol],
         },
       ];
 
       const result = await executeTransaction(queries);
 
       if (!result.success) {
+        console.error("Error BD al registrar:", result.error);
         return res.status(500).json({
           success: false,
-          message: "Error al registrar usuario",
-          error: result.error,
+          message: "No se ha podido completar el registro. Por favor, contacta con EmRider.",
         });
       }
 
@@ -96,8 +106,7 @@ class AuthController {
       console.error("Error en registro:", error);
       res.status(500).json({
         success: false,
-        message: "Error interno del servidor",
-        error: error.message,
+        message: "Ha ocurrido un error inesperado. Por favor, contacta con EmRider.",
       });
     }
   }
@@ -111,7 +120,7 @@ class AuthController {
       if ((!email && !dni) || !password) {
         return res.status(400).json({
           success: false,
-          message: "Email/DNI y password son requeridos",
+          message: "Introduce tu email o DNI y tu contraseña.",
         });
       }
 
@@ -129,7 +138,7 @@ class AuthController {
       if (!userResult.success || userResult.data.length === 0) {
         return res.status(401).json({
           success: false,
-          message: "Credenciales inválidas",
+          message: "No existe ninguna cuenta con estos datos. Si eres cliente de EmRider, regístrate primero o contacta con nosotros.",
         });
       }
 
@@ -141,7 +150,7 @@ class AuthController {
       if (!isValidPassword) {
         return res.status(401).json({
           success: false,
-          message: "Credenciales inválidas",
+          message: "La contraseña no es correcta. Si no la recuerdas, utiliza la opción de recuperar contraseña.",
         });
       }
 
@@ -177,8 +186,7 @@ class AuthController {
       console.error("Error en login:", error);
       res.status(500).json({
         success: false,
-        message: "Error interno del servidor",
-        error: error.message,
+        message: "Ha ocurrido un error inesperado. Por favor, contacta con EmRider.",
       });
     }
   }

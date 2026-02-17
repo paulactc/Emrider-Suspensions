@@ -49,21 +49,81 @@ function mergeVehicleWithCuestionario(vehicle, cuestionarioMap) {
   };
 }
 
-// GET - Obtener motos por CIF (GDTaller + merge cuestionario local)
+// Helper: obtener motos desde servicios_info local (fallback cuando GDTaller no está disponible)
+async function getMotosFromLocalDB(cif) {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT
+        matricula_moto AS matricula,
+        marca, modelo, año AS anio,
+        moto_id AS id,
+        cif_cliente,
+        MAX(fecha_servicio) AS ultimoServicio,
+        MAX(fecha_proximo_mantenimiento) AS fechaProximoMantenimiento,
+        GROUP_CONCAT(DISTINCT tipo_suspension) AS tiposSuspension,
+        MAX(status) AS ultimoStatus
+       FROM servicios_info
+       WHERE LOWER(cif_cliente) = LOWER(?)
+       GROUP BY matricula_moto, marca, modelo, año, moto_id, cif_cliente
+       ORDER BY MAX(fecha_servicio) DESC`,
+      [cif]
+    );
+    return rows.map((r) => ({
+      id: r.id || r.matricula || `local-${r.matricula}`,
+      matricula: r.matricula || "",
+      marca: r.marca || "Sin marca",
+      modelo: r.modelo || "Sin modelo",
+      anio: r.anio || null,
+      cifPropietario: r.cif_cliente,
+      ultimoServicio: r.ultimoServicio,
+      fechaProximoMantenimiento: r.fechaProximoMantenimiento,
+      tiposSuspension: r.tiposSuspension,
+      ultimoStatus: r.ultimoStatus,
+      fuenteLocal: true,
+    }));
+  } catch (err) {
+    console.warn("Error consultando motos locales:", err.message);
+    return [];
+  }
+}
+
+// GET - Obtener motos por CIF (GDTaller + merge cuestionario local, con fallback a BD local)
 router.get("/by-cif/:cif", async (req, res) => {
   try {
     const { cif } = req.params;
+    let vehicles = [];
+    let fromLocal = false;
 
-    const vehicles = await gdtallerService.getVehiclesByCif(cif);
+    // Intentar obtener de GDTaller primero
+    try {
+      vehicles = await gdtallerService.getVehiclesByCif(cif);
+    } catch (gdError) {
+      console.warn("GDTaller no disponible, usando datos locales:", gdError.message);
+      vehicles = await getMotosFromLocalDB(cif);
+      fromLocal = true;
+    }
+
+    // Si GDTaller devolvió vacío, intentar también con datos locales
+    if (!fromLocal && vehicles.length === 0) {
+      const localMotos = await getMotosFromLocalDB(cif);
+      if (localMotos.length > 0) {
+        vehicles = localMotos;
+        fromLocal = true;
+      }
+    }
+
     const cuestionarioMap = await getCuestionarioMotosMap();
-
     const merged = vehicles.map((v) => mergeVehicleWithCuestionario(v, cuestionarioMap));
 
     res.json(merged);
   } catch (error) {
     console.error("Error obteniendo motos por CIF:", error);
-    if (error.message.includes("GDTaller")) {
-      return res.status(503).json({ error: "GDTaller no disponible. Intenta de nuevo en unos minutos." });
+    // Último intento: datos locales
+    try {
+      const localMotos = await getMotosFromLocalDB(req.params.cif);
+      return res.json(localMotos);
+    } catch (localErr) {
+      console.error("Error también en fallback local:", localErr);
     }
     res.status(500).json({ error: "Error obteniendo motos" });
   }
