@@ -146,6 +146,28 @@ async function runMigrations() {
     `)
   );
 
+  await runSafeMigration("Columna datos_tecnicos_json en servicios_info", async () => {
+    const [[{ cnt }]] = await pool.execute(
+      `SELECT COUNT(*) as cnt FROM INFORMATION_SCHEMA.COLUMNS
+       WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'servicios_info'
+       AND COLUMN_NAME = 'datos_tecnicos_json'`
+    );
+    if (cnt === 0) {
+      await pool.execute(`ALTER TABLE servicios_info ADD COLUMN datos_tecnicos_json JSON NULL`);
+    }
+  });
+
+  await runSafeMigration("Columna observaciones_servicio en servicios_info", async () => {
+    const [[{ cnt }]] = await pool.execute(
+      `SELECT COUNT(*) as cnt FROM INFORMATION_SCHEMA.COLUMNS
+       WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'servicios_info'
+       AND COLUMN_NAME = 'observaciones_servicio'`
+    );
+    if (cnt === 0) {
+      await pool.execute(`ALTER TABLE servicios_info ADD COLUMN observaciones_servicio TEXT NULL`);
+    }
+  });
+
   await runSafeMigration("Tabla datos_tecnicos verificada", () =>
     pool.execute(`
       CREATE TABLE IF NOT EXISTS datos_tecnicos (

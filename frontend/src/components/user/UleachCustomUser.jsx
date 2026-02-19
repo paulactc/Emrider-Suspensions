@@ -1,5 +1,6 @@
 import ClienteDataDisplay from "./ClienteDataDisplay";
 import HistorialOrdenes from "./HistorialOrdenes";
+import DatosTecnicosServicio from "./DatosTecnicosServicio";
 import { NavLink } from "react-router";
 import React, { useEffect, useState, useMemo } from "react";
 import {
@@ -219,7 +220,9 @@ function UleachCustomUser({ Custom }) {
   }, [facturacionAnual, nivelActual, siguienteNivel]);
 
   const nombreCompleto =
-    `${Custom.nombre || ""} ${Custom.apellidos || ""}`.trim() || "Cliente";
+    Custom.nombre_completo ||
+    `${Custom.nombre || ""} ${Custom.apellidos || ""}`.trim() ||
+    "Cliente";
   const ubicacion = `${Custom.direccion || ""} ${Custom.poblacion || ""}`
     .replace(/\s+/g, " ")
     .trim();
@@ -368,7 +371,7 @@ function UleachCustomUser({ Custom }) {
                               <div className="moto-card__ficha-item">
                                 <Calendar className="moto-card__ficha-icon" />
                                 <div>
-                                  <span className="moto-card__ficha-label">Ano</span>
+                                  <span className="moto-card__ficha-label">Año</span>
                                   <span className="moto-card__ficha-value">{moto.anio || "—"}</span>
                                 </div>
                               </div>
@@ -423,6 +426,9 @@ function UleachCustomUser({ Custom }) {
       {/* PROTAGONISTA: Historial de ordenes de trabajo */}
       <HistorialOrdenes clientId={Custom.gdtaller_id || Custom.id} />
 
+      {/* Datos técnicos de servicios de suspensiones */}
+      {Custom.cif && <DatosTecnicosServicio cif={Custom.cif} />}
+
       {/* Sistema de Niveles EmRider */}
       <div className="emrider-tribu">
         <div className="emrider-tribu__welcome">
@@ -431,7 +437,7 @@ function UleachCustomUser({ Custom }) {
           </div>
           <div>
             <h3 className="emrider-tribu__welcome-title">
-              Bienvenido a la Tribu, {Custom.nombre || Custom.apellidos || "rider"}
+              Bienvenido a la Tribu, {Custom.nombre || (Custom.nombre_completo || "").split(" ")[0] || Custom.apellidos?.split(" ")[0] || "rider"}
             </h3>
             <p className="emrider-tribu__welcome-text">
               Cada kilometro que compartes con nosotros cuenta. Gracias por confiar en EmRider.

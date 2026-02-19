@@ -69,8 +69,8 @@ router.get("/:id", async (req, res) => {
         id, moto_id, cliente_id, cif_cliente, matricula_moto,
         numero_orden, fecha_servicio, km_moto,
         fecha_proximo_mantenimiento, servicio_suspension, observaciones,
-        peso_piloto, disciplina, marca, modelo, año, referencia,
-        status, tipo_suspension, created_at, updated_at
+        observaciones_servicio, peso_piloto, disciplina, marca, modelo, año, referencia,
+        status, tipo_suspension, datos_tecnicos_json, created_at, updated_at
        FROM servicios_info
        WHERE id = ?`,
       [id]
@@ -83,15 +83,56 @@ router.get("/:id", async (req, res) => {
       });
     }
 
+    const row = rows[0];
+    if (row.datos_tecnicos_json && typeof row.datos_tecnicos_json === "string") {
+      row.datos_tecnicos_json = JSON.parse(row.datos_tecnicos_json);
+    }
+
     res.json({
       success: true,
-      data: rows[0],
+      data: row,
     });
   } catch (error) {
     console.error("Error obteniendo servicio:", error);
     res.status(500).json({
       success: false,
       message: "Error al obtener el servicio",
+      error: error.message,
+    });
+  }
+});
+
+// GET - Obtener servicios por CIF de cliente (con datos técnicos)
+router.get("/by-cif/:cif", async (req, res) => {
+  try {
+    const { cif } = req.params;
+
+    const [rows] = await pool.execute(
+      `SELECT
+        id, moto_id, cliente_id, cif_cliente, matricula_moto,
+        fecha_servicio, km_moto, fecha_proximo_mantenimiento,
+        servicio_suspension, peso_piloto, disciplina, marca, modelo, año, referencia,
+        status, tipo_suspension, datos_tecnicos_json, created_at, updated_at
+       FROM servicios_info
+       WHERE cif_cliente = ? AND datos_tecnicos_json IS NOT NULL
+       ORDER BY fecha_servicio DESC`,
+      [cif]
+    );
+
+    const data = rows.map((row) => ({
+      ...row,
+      datos_tecnicos_json:
+        row.datos_tecnicos_json && typeof row.datos_tecnicos_json === "string"
+          ? JSON.parse(row.datos_tecnicos_json)
+          : row.datos_tecnicos_json,
+    }));
+
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error("Error obteniendo servicios por CIF:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener los servicios",
       error: error.message,
     });
   }
@@ -108,17 +149,25 @@ router.get("/by-moto/:identifier", async (req, res) => {
         id, moto_id, cliente_id, cif_cliente, matricula_moto,
         numero_orden, fecha_servicio, km_moto,
         fecha_proximo_mantenimiento, servicio_suspension, observaciones,
-        peso_piloto, disciplina, marca, modelo, año, referencia,
-        status, tipo_suspension, created_at, updated_at
+        observaciones_servicio, peso_piloto, disciplina, marca, modelo, año, referencia,
+        status, tipo_suspension, datos_tecnicos_json, created_at, updated_at
        FROM servicios_info
        WHERE moto_id = ? OR matricula_moto = ?
        ORDER BY created_at DESC`,
       [identifier, identifier]
     );
 
+    const data = rows.map((row) => ({
+      ...row,
+      datos_tecnicos_json:
+        row.datos_tecnicos_json && typeof row.datos_tecnicos_json === "string"
+          ? JSON.parse(row.datos_tecnicos_json)
+          : row.datos_tecnicos_json,
+    }));
+
     res.json({
       success: true,
-      data: rows,
+      data,
     });
   } catch (error) {
     console.error("Error obteniendo servicios por moto:", error);
@@ -248,12 +297,14 @@ router.put("/:id", async (req, res) => {
       fechaProximoMantenimiento,
       servicioSuspension,
       observaciones,
+      observacionesServicio,
       pesoPiloto,
       disciplina,
       marca,
       modelo,
       año,
       referencia,
+      datosTecnicosJson,
     } = req.body;
 
     const [existing] = await pool.execute(
@@ -268,42 +319,46 @@ router.put("/:id", async (req, res) => {
       });
     }
 
-    const hasOptionalFields = marca && modelo && año && referencia;
-    const status = hasOptionalFields ? "completed" : "pending";
+    // Construir SET dinámico para no sobreescribir campos no enviados
+    const setClauses = [];
+    const params = [];
 
-    const query = `
-      UPDATE servicios_info
-      SET numero_orden = ?, fecha_servicio = ?, km_moto = ?,
-          fecha_proximo_mantenimiento = ?, servicio_suspension = ?,
-          observaciones = ?, peso_piloto = ?, disciplina = ?,
-          marca = ?, modelo = ?, año = ?, referencia = ?,
-          status = ?, updated_at = NOW()
-      WHERE id = ?
-    `;
+    if (numeroOrden !== undefined) { setClauses.push("numero_orden = ?"); params.push(numeroOrden); }
+    if (fechaServicio !== undefined) { setClauses.push("fecha_servicio = ?"); params.push(fechaServicio || null); }
+    if (kmMoto !== undefined) { setClauses.push("km_moto = ?"); params.push(kmMoto || null); }
+    if (fechaProximoMantenimiento !== undefined) { setClauses.push("fecha_proximo_mantenimiento = ?"); params.push(fechaProximoMantenimiento || null); }
+    if (servicioSuspension !== undefined) { setClauses.push("servicio_suspension = ?"); params.push(servicioSuspension); }
+    if (observaciones !== undefined) { setClauses.push("observaciones = ?"); params.push(observaciones || null); }
+    if (observacionesServicio !== undefined) { setClauses.push("observaciones_servicio = ?"); params.push(observacionesServicio || null); }
+    if (pesoPiloto !== undefined) { setClauses.push("peso_piloto = ?"); params.push(pesoPiloto || null); }
+    if (disciplina !== undefined) { setClauses.push("disciplina = ?"); params.push(disciplina || null); }
+    if (marca !== undefined) { setClauses.push("marca = ?"); params.push(marca || null); }
+    if (modelo !== undefined) { setClauses.push("modelo = ?"); params.push(modelo || null); }
+    if (año !== undefined) { setClauses.push("año = ?"); params.push(año || null); }
+    if (referencia !== undefined) { setClauses.push("referencia = ?"); params.push(referencia || null); }
+    if (datosTecnicosJson !== undefined) {
+      setClauses.push("datos_tecnicos_json = ?");
+      params.push(JSON.stringify(datosTecnicosJson));
+      setClauses.push("status = 'completed'");
+    }
 
-    const [result] = await pool.execute(query, [
-      numeroOrden,
-      fechaServicio || null,
-      kmMoto || null,
-      fechaProximoMantenimiento || null,
-      servicioSuspension,
-      observaciones || null,
-      pesoPiloto || null,
-      disciplina || null,
-      marca || null,
-      modelo || null,
-      año || null,
-      referencia || null,
-      status,
-      id,
-    ]);
+    if (setClauses.length === 0) {
+      return res.json({ success: true, message: "Sin cambios", data: { id } });
+    }
+
+    setClauses.push("updated_at = NOW()");
+    params.push(id);
+
+    const [result] = await pool.execute(
+      `UPDATE servicios_info SET ${setClauses.join(", ")} WHERE id = ?`,
+      params
+    );
 
     res.json({
       success: true,
       message: "Servicio actualizado exitosamente",
       data: {
         id: id,
-        status: status,
         affectedRows: result.affectedRows,
       },
     });

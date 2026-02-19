@@ -270,6 +270,11 @@ class ApiService {
     return this.makeRequest(`/servicios-info/by-moto/${encodeURIComponent(motoId)}`);
   }
 
+  // Obtener servicios con datos técnicos por CIF de cliente
+  async getServiciosByCif(cif) {
+    return this.makeRequest(`/servicios-info/by-cif/${encodeURIComponent(cif)}`);
+  }
+
   // Crear nueva información de servicio
   async createServicioInfo(servicioData) {
     return this.makeRequest("/servicios-info", {

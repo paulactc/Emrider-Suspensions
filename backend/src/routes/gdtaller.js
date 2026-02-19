@@ -24,6 +24,28 @@ router.get("/test-connection", async (req, res) => {
   }
 });
 
+// GET - Debug: ver datos RAW de GDTaller para un cliente por CIF
+router.get("/debug-client/:cif", async (req, res) => {
+  try {
+    const { cif } = req.params;
+    gdtallerService.clearCache();
+    const rawClients = await gdtallerService.getClients();
+    const raw = rawClients.find(
+      (c) => c.cif && c.cif.replace(/\s+/g, "").toLowerCase() === cif.toLowerCase()
+    );
+    if (!raw) {
+      return res.json({ found: false, cif, total_clientes: rawClients.length });
+    }
+    res.json({
+      found: true,
+      raw_gdtaller: raw,
+      mapped: gdtallerService.mapClientFromGDTaller(raw),
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // GET - Obtener clientes desde GDTaller
 router.get("/clients", async (req, res) => {
   try {
@@ -152,6 +174,32 @@ router.get("/order-lines/:clientId", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error obteniendo ordenes del cliente",
+      error: error.message,
+    });
+  }
+});
+
+// GET - Probar GetVehicules con startDate=2021-01-01 y endDate=hoy (raw, sin mapear)
+router.get("/test-vehicules", async (_req, res) => {
+  try {
+    const startDate = "2021-01-01";
+    const endDate = new Date().toISOString().split("T")[0];
+
+    // Llamada directa al servicio para ver la respuesta cruda de GDTALLER
+    const gdtallerService = require("../services/gdtallerService");
+    const vehicles = await gdtallerService.getVehicles({ startDate, endDate });
+
+    res.json({
+      success: true,
+      params_enviados: { startDate, endDate, endpoint: "GetVehicules" },
+      total_vehiculos: vehicles.length,
+      muestra_primeros_3: vehicles.slice(0, 3),
+    });
+  } catch (error) {
+    console.error("Error en test GetVehicules:", error);
+    res.status(500).json({
+      success: false,
+      endpoint: "GetVehicules",
       error: error.message,
     });
   }

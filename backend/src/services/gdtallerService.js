@@ -132,16 +132,16 @@ async function getVehicles(options = {}) {
   }
 
   const params = {};
-  params.startDate = options.startDate || "2020-01-01";
+  params.startDate = options.startDate || "2021-01-01";
   params.endDate = options.endDate || new Date().toISOString().split("T")[0];
 
   if (options.clientId) {
     params.clientId = options.clientId;
   }
 
-  // Intentar endpoint GetVehicles
+  // Intentar endpoint GetVehicules (nombre oficial confirmado por GDTALLER)
   try {
-    const response = await callGDTallerAPI("GetVehicles", params);
+    const response = await callGDTallerAPI("GetVehicules", params);
 
     if (response.code === 200) {
       let data = response.data;
@@ -158,7 +158,7 @@ async function getVehicles(options = {}) {
       return result;
     }
   } catch (err) {
-    console.warn("GetVehicles no disponible, usando fallback GetOrderLines:", err.message);
+    console.warn("GetVehicules no disponible, usando fallback GetOrderLines:", err.message);
   }
 
   // Fallback: extraer vehículos únicos desde GetOrderLines
@@ -172,7 +172,7 @@ async function getVehicles(options = {}) {
 async function getVehiclesFromOrderLines(params) {
   try {
     const response = await callGDTallerAPI("GetOrderLines", {
-      startDate: params.startDate || "2020-01-01",
+      startDate: params.startDate || "2021-01-01",
       endDate: params.endDate || new Date().toISOString().split("T")[0],
     });
 
@@ -363,7 +363,7 @@ function mapClientFromGDTaller(gdClient) {
     nombre_completo: nombre_completo,
     email: gdClient.email || null,
     telefono: telefono,
-    cif: gdClient.cif || null,
+    cif: gdClient.cif ? gdClient.cif.replace(/\s+/g, "").toLowerCase() : null,
     direccion: gdClient.domicilio || null,
     poblacion: gdClient.localidad || null,
     localidad: gdClient.localidad || null,
@@ -376,6 +376,37 @@ function mapClientFromGDTaller(gdClient) {
 }
 
 /**
+ * Extrae el año de fabricación de un VIN estándar de 17 caracteres.
+ * El 10º carácter (índice 9) codifica el año modelo según la norma ISO 3779.
+ * El ciclo se repite cada 30 años (desde 1980); si la versión +30 es ≤ año actual, se usa la más reciente.
+ */
+function getAnioFromVIN(vin) {
+  if (!vin) return null;
+  const clean = vin.replace(/[\s-]/g, "").toUpperCase();
+  if (clean.length !== 17) return null;
+
+  const vinYearMap = {
+    A: 1980, B: 1981, C: 1982, D: 1983, E: 1984, F: 1985,
+    G: 1986, H: 1987, J: 1988, K: 1989, L: 1990, M: 1991,
+    N: 1992, P: 1993, R: 1994, S: 1995, T: 1996, V: 1997,
+    W: 1998, X: 1999, Y: 2000,
+    1: 2001, 2: 2002, 3: 2003, 4: 2004, 5: 2005,
+    6: 2006, 7: 2007, 8: 2008, 9: 2009,
+  };
+
+  let year = vinYearMap[clean[9]];
+  if (!year) return null;
+
+  // Si el año base es anterior a 2010 y la versión +30 años no supera el año actual, usar la más reciente
+  const currentYear = new Date().getFullYear();
+  if (year < 2010 && year + 30 <= currentYear) {
+    year = year + 30;
+  }
+
+  return year;
+}
+
+/**
  * Mapea un vehículo de GDTaller al formato del frontend
  */
 function mapVehicleFromGDTaller(gdVehicle) {
@@ -384,11 +415,11 @@ function mapVehicleFromGDTaller(gdVehicle) {
     gdtaller_id: gdVehicle.vehiculoID,
     marca: gdVehicle.marca || null,
     modelo: gdVehicle.modelo || null,
-    anio: null,
+    anio: getAnioFromVIN(gdVehicle.bastidor) || null,
     matricula: gdVehicle.matricula || null,
     bastidor: gdVehicle.bastidor || null,
-    cifPropietario: gdVehicle.cliCif ? gdVehicle.cliCif.replace(/\s+/g, "") : null,
-    cif_propietario: gdVehicle.cliCif ? gdVehicle.cliCif.replace(/\s+/g, "") : null,
+    cifPropietario: gdVehicle.cliCif ? gdVehicle.cliCif.replace(/\s+/g, "").toLowerCase() : null,
+    cif_propietario: gdVehicle.cliCif ? gdVehicle.cliCif.replace(/\s+/g, "").toLowerCase() : null,
     kilometraje: gdVehicle.kms || null,
     color: gdVehicle.color || null,
     version: gdVehicle.version || null,
@@ -396,7 +427,7 @@ function mapVehicleFromGDTaller(gdVehicle) {
     potencia_cv: gdVehicle.potCV || null,
     potencia_kw: gdVehicle.potKW || null,
     gdtaller_client_id: gdVehicle.clienteID,
-    cliente_nombre: gdVehicle.clienteNombre || null,
+    cliente_nombre: gdVehicle.cliNombre || gdVehicle.clienteNombre || null,
     cliente_apellidos: gdVehicle.cliApellidos || null,
     cliente_localidad: gdVehicle.cliLoc || null,
     cliente_cp: gdVehicle.cliCP || null,

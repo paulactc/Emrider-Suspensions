@@ -14,6 +14,7 @@ function FormNewUser() {
     event.preventDefault();
 
     const formData = new FormData(event.target);
+    const nombre = formData.get("nombre") || "";
     const email = formData.get("email") || "";
     const dni = (formData.get("dni") || "").toUpperCase();
     const password = formData.get("password") || "";
@@ -23,6 +24,10 @@ function FormNewUser() {
     setSuccess("");
 
     // Validaciones
+    if (nombre === "") {
+      setError("El nombre no puede estar vacío.");
+      return;
+    }
     if (email === "") {
       setError("El correo electrónico no puede estar vacío.");
       return;
@@ -61,7 +66,7 @@ function FormNewUser() {
     setLoading(true);
     try {
       const result = await api.register({
-        nombre: dni,
+        nombre,
         email,
         password,
         dni,
@@ -123,6 +128,19 @@ function FormNewUser() {
               {success}
             </div>
           )}
+
+          <div className="input-group">
+            <label htmlFor="nombre" className="input-label">
+              Nombre y Apellidos
+            </label>
+            <input
+              className="input-field"
+              type="text"
+              name="nombre"
+              id="nombre"
+              placeholder="Antonio Ruiz Cifuentes"
+            />
+          </div>
 
           <div className="input-group">
             <label htmlFor="email" className="input-label">

@@ -85,14 +85,18 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ message: "Cliente no encontrado" });
     }
 
-    // Merge con cuestionario local (si MySQL falla, se devuelve sin cuestionario)
+    // Merge con cuestionario local y nombre local en paralelo
     if (client.cif) {
-      const q = await getCuestionarioByCif(client.cif);
+      const [q, nombresMap] = await Promise.all([
+        getCuestionarioByCif(client.cif),
+        getNombresUsuariosMap(),
+      ]);
       if (q) {
         client.peso = q.peso;
         client.nivelPilotaje = q.nivelPilotaje;
         client.fechaUltimaConfirmacion = q.fechaUltimaConfirmacion;
       }
+      client = mergeNombre(client, nombresMap);
     }
 
     res.json(client);

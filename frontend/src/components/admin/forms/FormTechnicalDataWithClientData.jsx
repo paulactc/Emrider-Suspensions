@@ -379,7 +379,7 @@ const FormTechnicalDataWithClientData = React.memo(
                 setTimeout(() => reject(new Error("Timeout al cargar clientes")), 5000)
               ),
             ]);
-            cliente = clientes.find((c) => c.cif === moto.cifPropietario);
+            cliente = clientes.find((c) => (c.cif || "").toLowerCase() === (moto.cifPropietario || "").toLowerCase());
           }
         } catch (clienteError) {
           console.warn("Error cargando cliente:", clienteError.message);
@@ -935,7 +935,7 @@ const FormTechnicalDataWithClientData = React.memo(
             </div>
             {clienteData ? (
               <div className="info-grid">
-                <div className="info-item"><span className="info-label">Nombre:</span><span className="info-value">{clienteData.nombre} {clienteData.apellidos}</span></div>
+                <div className="info-item"><span className="info-label">Nombre:</span><span className="info-value">{clienteData.nombre_completo || `${clienteData.nombre || ""} ${clienteData.apellidos || ""}`.trim() || "—"}</span></div>
                 <div className="info-item"><span className="info-label">CIF:</span><span className="info-value">{clienteData.cif}</span></div>
                 <div className="info-item"><span className="info-label">Datos de Pilotaje:</span><span className="info-value"><ClienteDataDisplay cliente={clienteData} /></span></div>
               </div>
@@ -950,7 +950,7 @@ const FormTechnicalDataWithClientData = React.memo(
             {motoData ? (
               <div className="info-grid">
                 <div className="info-item"><span className="info-label">Marca/Modelo:</span><span className="info-value">{motoData.marca} {motoData.modelo}</span></div>
-                <div className="info-item"><span className="info-label">Ano:</span><span className="info-value">{motoData.anio}</span></div>
+                <div className="info-item"><span className="info-label">Año:</span><span className="info-value">{motoData.anio || "—"}</span></div>
                 <div className="info-item"><span className="info-label">Matricula:</span><span className="info-value">{motoData.matricula}</span></div>
                 <div className="info-item"><span className="info-label">Especialidad:</span><span className="info-value">{motoData.especialidad ? mapearEspecialidad(motoData.especialidad) : <span className="missing-data">No disponible</span>}</span></div>
                 <div className="info-item"><span className="info-label">Tipo Conduccion:</span><span className="info-value">{(motoData.tipoConduccion ?? motoData.tipo_conduccion) || <span className="missing-data">No disponible</span>}</span></div>
@@ -1041,7 +1041,7 @@ const FormTechnicalDataWithClientData = React.memo(
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Ano</label>
+                  <label className="form-label">Año</label>
                   <input type="number" value={formDataLocal.año} onChange={(e) => handleInputChange("año", e.target.value)}
                     className="form-input" placeholder="2021" min="1990" max={new Date().getFullYear()} disabled={!datosCompletos || servicioGuardado} />
                 </div>
