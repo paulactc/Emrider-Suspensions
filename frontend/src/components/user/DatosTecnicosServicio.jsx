@@ -230,12 +230,20 @@ function DatosTecnicosRR({ datos }) {
   );
 }
 
-function DatosTecnicosServicio({ cif }) {
+function DatosTecnicosServicio({ cif, servicios: serviciosProp }) {
   const [servicios, setServicios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
 
   useEffect(() => {
+    // Si nos pasan los servicios directamente, usarlos sin fetch
+    if (serviciosProp !== undefined) {
+      setServicios(
+        (serviciosProp || []).filter((s) => s.datos_tecnicos_json)
+      );
+      setLoading(false);
+      return;
+    }
     if (!cif) {
       setLoading(false);
       return;
@@ -246,7 +254,7 @@ function DatosTecnicosServicio({ cif }) {
       .then((res) => setServicios(res.data || []))
       .catch(() => setServicios([]))
       .finally(() => setLoading(false));
-  }, [cif]);
+  }, [cif, serviciosProp]);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "—";

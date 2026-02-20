@@ -87,7 +87,7 @@ function calcularNivel(facturacionAnual) {
   return NIVELES_EMRIDER[0];
 }
 
-function UleachCustomUser({ Custom }) {
+function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFilled }) {
   const [motos, setMotos] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
   const [showMotos, setShowMotos] = useState(false);
@@ -96,6 +96,18 @@ function UleachCustomUser({ Custom }) {
 
   const [serviciosPorMoto, setServiciosPorMoto] = useState({});
   const [motoExpandida, setMotoExpandida] = useState(null);
+
+  // Todos los servicios con datos técnicos, ordenados por fecha desc
+  const serviciosTecnicos = useMemo(() => {
+    return Object.values(serviciosPorMoto)
+      .flat()
+      .filter((s) => s.datos_tecnicos_json)
+      .sort(
+        (a, b) =>
+          new Date(b.fecha_servicio || b.created_at || 0) -
+          new Date(a.fecha_servicio || a.created_at || 0)
+      );
+  }, [serviciosPorMoto]);
 
   useEffect(() => {
     if (!Custom) return;
@@ -296,6 +308,30 @@ function UleachCustomUser({ Custom }) {
           </div>
           <ClienteDataDisplay cliente={Custom} />
 
+          {/* Acceso al cuestionario personal */}
+          {onOpenQuestionnaire && (
+            <div className="client-questionnaire-access">
+              <div className="client-questionnaire-access__info">
+                <ClipboardCheck size={16} className="client-questionnaire-access__icon" />
+                <span className="client-questionnaire-access__label">
+                  Cuestionario de pilotaje
+                </span>
+                <span
+                  className={`client-questionnaire-access__badge ${
+                    questionnaireClienteFilled ? "done" : "pending"
+                  }`}
+                >
+                  {questionnaireClienteFilled ? "Completado" : "Pendiente"}
+                </span>
+              </div>
+              <button
+                className="client-questionnaire-access__btn"
+                onClick={() => onOpenQuestionnaire("cliente")}
+              >
+                {questionnaireClienteFilled ? "Actualizar datos" : "Completar ahora"}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -404,6 +440,26 @@ function UleachCustomUser({ Custom }) {
                               <span>{mantenimiento.texto}</span>
                             </div>
                           </div>
+
+                          {/* Cuestionario de suspensión de la moto */}
+                          {onOpenQuestionnaire && (
+                            <div className="moto-card__section">
+                              <h4 className="moto-card__section-title">Preferencias de suspensión</h4>
+                              <div className="moto-card__questionnaire-row">
+                                <span className="moto-card__questionnaire-status">
+                                  {moto.especialidad
+                                    ? `${moto.especialidad} · ${moto.tipoConduccion} · ${moto.preferenciaRigidez}`
+                                    : "Sin configurar"}
+                                </span>
+                                <button
+                                  className="moto-card__questionnaire-btn"
+                                  onClick={() => onOpenQuestionnaire("moto", moto.id)}
+                                >
+                                  {moto.especialidad ? "Actualizar" : "Configurar"}
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -427,7 +483,7 @@ function UleachCustomUser({ Custom }) {
       <HistorialOrdenes clientId={Custom.gdtaller_id || Custom.id} />
 
       {/* Datos técnicos de servicios de suspensiones */}
-      {Custom.cif && <DatosTecnicosServicio cif={Custom.cif} />}
+      <DatosTecnicosServicio servicios={serviciosTecnicos} />
 
       {/* Sistema de Niveles EmRider */}
       <div className="emrider-tribu">

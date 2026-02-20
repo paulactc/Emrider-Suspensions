@@ -22,6 +22,7 @@ const ClienteQuestionario = ({
   onComplete,
   onSkip,
   esConfirmacion = false,
+  mode = "all", // 'all' | 'cliente-only' | 'moto-only'
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [clienteData, setClienteData] = useState({
@@ -233,8 +234,16 @@ const ClienteQuestionario = ({
     });
   });
 
-  const totalSteps = steps.length;
-  const currentStepData = steps[currentStep];
+  // Filtrar pasos según el modo
+  const activeSteps =
+    mode === "moto-only"
+      ? steps.filter((s) => s.type !== "cliente")
+      : mode === "cliente-only"
+      ? steps.filter((s) => s.type === "cliente")
+      : steps;
+
+  const totalSteps = activeSteps.length;
+  const currentStepData = activeSteps[currentStep];
   const isLastStep = currentStep === totalSteps - 1;
 
   const getCurrentValue = () => {
@@ -297,10 +306,14 @@ const ClienteQuestionario = ({
     setIsCompleting(true);
     const dataToSend = {
       cliente: { id: cliente.id, ...clienteData },
-      motocicletas: Object.keys(motosData).map((motoId) => ({
-        id: isNaN(Number(motoId)) ? motoId : Number(motoId),
-        ...motosData[motoId],
-      })),
+      motocicletas:
+        mode !== "cliente-only"
+          ? Object.keys(motosData).map((motoId) => ({
+              id: isNaN(Number(motoId)) ? motoId : Number(motoId),
+              ...motosData[motoId],
+            }))
+          : [],
+      skipClientSave: mode === "moto-only",
     };
     try {
       await onComplete(dataToSend);

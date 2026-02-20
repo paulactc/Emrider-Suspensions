@@ -269,14 +269,31 @@ async function getClientByCif(cif) {
 }
 
 /**
- * Obtiene vehículos filtrando por CIF del propietario (normaliza CIF para comparación)
+ * Obtiene vehículos filtrando por CIF del propietario.
+ * Prioriza filtrar por clienteID (más fiable) buscando primero el cliente por CIF.
+ * Usa cliCif como fallback si no se encuentra el cliente en GDTaller.
  */
 async function getVehiclesByCif(cif) {
-  const vehicles = await getVehicles();
   const cifNorm = normalizeCif(cif);
-  return vehicles
-    .filter((v) => normalizeCif(v.cliCif) === cifNorm)
-    .map(mapVehicleFromGDTaller);
+
+  // Obtener clienteID del cliente con ese CIF (más fiable que cliCif en vehículos)
+  let clienteID = null;
+  try {
+    const clients = await getClients();
+    const client = clients.find((c) => normalizeCif(c.cif) === cifNorm);
+    if (client) clienteID = client.clienteID;
+  } catch (err) {
+    console.warn("No se pudo resolver clienteID para CIF, usando cliCif como fallback:", err.message);
+  }
+
+  const vehicles = await getVehicles();
+
+  // Filtrar por clienteID si lo tenemos (fiable), si no caer en cliCif
+  const filtered = clienteID !== null
+    ? vehicles.filter((v) => String(v.clienteID) === String(clienteID))
+    : vehicles.filter((v) => normalizeCif(v.cliCif) === cifNorm);
+
+  return filtered.map(mapVehicleFromGDTaller);
 }
 
 /**

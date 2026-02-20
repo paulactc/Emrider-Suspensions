@@ -7,6 +7,7 @@ import api from "../../../services/Api";
 function Cliente({ listCustom, listBikes }) {
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [questionnaireType, setQuestionnaireType] = useState("first-time");
+  const [manualConfig, setManualConfig] = useState({ mode: "all", motoId: null });
   const [clienteMotos, setClienteMotos] = useState([]);
   const [customToRender, setCustomToRender] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -146,45 +147,21 @@ function Cliente({ listCustom, listBikes }) {
 
   const checkClienteStatus = async (cliente) => {
     try {
-      console.log("🔍 Verificando estado del cuestionario...");
-      console.log("📊 Datos del cliente para cuestionario:", {
-        peso: cliente.peso,
-        nivelPilotaje: cliente.nivelPilotaje,
-        fechaUltimaConfirmacion: cliente.fechaUltimaConfirmacion,
-      });
-
-      // Verificar si el cliente tiene datos del cuestionario
       const tieneRespuestas = cliente.peso && cliente.nivelPilotaje;
-
       if (!tieneRespuestas) {
-        console.log("❗ Cliente necesita completar cuestionario inicial");
         setQuestionnaireType("first-time");
+        setManualConfig({ mode: "all", motoId: null });
         setShowQuestionnaire(true);
-        return;
-      }
-
-      // Verificar si necesita confirmación anual
-      const fechaUltimaConfirmacion = cliente.fechaUltimaConfirmacion;
-      if (fechaUltimaConfirmacion) {
-        const ahora = new Date();
-        const unAnoAtras = new Date(
-          ahora.getFullYear() - 1,
-          ahora.getMonth(),
-          ahora.getDate()
-        );
-        const fechaConfirmacion = new Date(fechaUltimaConfirmacion);
-
-        if (fechaConfirmacion < unAnoAtras) {
-          console.log("⏰ Cliente necesita confirmación anual");
-          setQuestionnaireType("confirmation");
-          setShowQuestionnaire(true);
-        } else {
-          console.log("✅ Cliente no necesita cuestionario");
-        }
       }
     } catch (error) {
       console.error("Error verificando estado del cuestionario:", error);
     }
+  };
+
+  const handleOpenQuestionnaire = (mode = "all", motoId = null) => {
+    setManualConfig({ mode, motoId });
+    setQuestionnaireType("manual");
+    setShowQuestionnaire(true);
   };
 
   const loadClienteMotos = async (cif) => {
@@ -218,15 +195,17 @@ function Cliente({ listCustom, listBikes }) {
         setShowQuestionnaire(false);
         alert("✅ ¡Datos guardados correctamente!");
 
-        // Actualizar datos locales del cliente
-        setCustomToRender((prev) => ({
-          ...prev,
-          peso: formData.cliente.peso,
-          nivelPilotaje: formData.cliente.nivelPilotaje,
-          fechaUltimaConfirmacion: new Date().toISOString(),
-        }));
+        // Actualizar datos locales del cliente (solo si se guardaron datos del cliente)
+        if (!formData.skipClientSave) {
+          setCustomToRender((prev) => ({
+            ...prev,
+            peso: formData.cliente.peso,
+            nivelPilotaje: formData.cliente.nivelPilotaje,
+            fechaUltimaConfirmacion: new Date().toISOString(),
+          }));
+        }
 
-        // Recargar motos con nuevos datos
+        // Recargar motos con nuevos datos de cuestionario
         if (customToRender?.cif) {
           await loadClienteMotos(customToRender.cif);
         }
@@ -240,10 +219,7 @@ function Cliente({ listCustom, listBikes }) {
   };
 
   const handleQuestionnaireSkip = () => {
-    if (questionnaireType === "first-time") {
-      console.log("⏭️ Omitiendo cuestionario inicial");
-      setShowQuestionnaire(false);
-    }
+    setShowQuestionnaire(false);
   };
 
   // 🔄 ESTADO DE CARGA
@@ -333,27 +309,46 @@ function Cliente({ listCustom, listBikes }) {
 
   // 📋 MOSTRAR CUESTIONARIO
   if (showQuestionnaire) {
+    const motosParaCuestionario = manualConfig.motoId
+      ? motosNormalizadas.filter(
+          (m) => String(m.id) === String(manualConfig.motoId)
+        )
+      : motosNormalizadas;
+
+    const questionnaireMode =
+      manualConfig.mode === "moto"
+        ? "moto-only"
+        : manualConfig.mode === "cliente"
+        ? "cliente-only"
+        : "all";
+
+    const introTitle =
+      questionnaireType === "first-time"
+        ? `¡Bienvenido ${customToRender.nombre || "Cliente"}!`
+        : manualConfig.mode === "moto"
+        ? "Configuración de suspensión"
+        : "Cuestionario de pilotaje";
+
+    const introText =
+      questionnaireType === "first-time"
+        ? "Para brindarte el mejor servicio, necesitamos conocer algunos datos importantes sobre ti y tus motocicletas."
+        : manualConfig.mode === "moto"
+        ? "Actualiza las preferencias de suspensión de tu moto."
+        : "Actualiza tus datos de peso y nivel de pilotaje.";
+
     return (
       <div className="cliente-container">
         <div className="questionnaire-wrapper">
           <div className="questionnaire-intro">
-            <h1>
-              {questionnaireType === "first-time"
-                ? `¡Bienvenido ${customToRender.nombre || "Cliente"}!`
-                : "Confirmación anual de datos"}
-            </h1>
-            <p>
-              {questionnaireType === "first-time"
-                ? "Para brindarte el mejor servicio, necesitamos conocer algunos datos importantes sobre ti y tus motocicletas."
-                : "Para mantener tu configuración de suspensión optimizada, confirmemos tus datos actuales."}
-            </p>
-
+            <h1>{introTitle}</h1>
+            <p>{introText}</p>
             <ClienteQuestionario
               cliente={customToRender}
-              motos={motosNormalizadas}
+              motos={motosParaCuestionario}
               onComplete={handleQuestionnaireComplete}
               onSkip={handleQuestionnaireSkip}
-              esConfirmacion={questionnaireType === "confirmation"}
+              esConfirmacion={false}
+              mode={questionnaireMode}
             />
           </div>
         </div>
@@ -368,6 +363,10 @@ function Cliente({ listCustom, listBikes }) {
         key={customToRender.id}
         Custom={customToRender}
         listBikes={listBikes}
+        onOpenQuestionnaire={handleOpenQuestionnaire}
+        questionnaireClienteFilled={
+          !!(customToRender.peso && customToRender.nivelPilotaje)
+        }
       />
     </div>
   );

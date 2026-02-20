@@ -1663,6 +1663,116 @@ footer {
   }
 }
 
+// === ACCESO CUESTIONARIO PERSONAL (dentro de client-details) ===
+.client-questionnaire-access {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  background: $ohlins-gray-800;
+  border: 1px solid $ohlins-gray-700;
+  border-radius: 0.6rem;
+  flex-wrap: wrap;
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  &__icon {
+    color: $ohlins-yellow;
+    flex-shrink: 0;
+  }
+
+  &__label {
+    color: $ohlins-white;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  &__badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    &.done {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    &.pending {
+      background: rgba(251, 191, 36, 0.15);
+      color: $ohlins-yellow;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+  }
+
+  &__btn {
+    background: $ohlins-gray-700;
+    border: 1px solid $ohlins-yellow;
+    color: $ohlins-yellow;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.45rem 1rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    white-space: nowrap;
+
+    &:hover {
+      background: rgba(251, 191, 36, 0.12);
+      box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2);
+    }
+  }
+}
+
+// === CUESTIONARIO DE SUSPENSIÓN POR MOTO (dentro de moto-card) ===
+.moto-card {
+  &__questionnaire-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding: 0.6rem 0.85rem;
+    background: $ohlins-gray-800;
+    border: 1px solid $ohlins-gray-700;
+    border-radius: 0.5rem;
+  }
+
+  &__questionnaire-status {
+    font-size: 0.82rem;
+    color: $ohlins-gray-400;
+    text-transform: capitalize;
+  }
+
+  &__questionnaire-btn {
+    background: transparent;
+    border: 1px solid $ohlins-yellow;
+    color: $ohlins-yellow;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.35rem 0.85rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    white-space: nowrap;
+
+    &:hover {
+      background: rgba(251, 191, 36, 0.1);
+    }
+  }
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;

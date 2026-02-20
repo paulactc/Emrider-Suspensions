@@ -23,6 +23,33 @@ async function getCuestionarioClientesMap() {
   }
 }
 
+// Helper: obtener mapa de nombres de usuarios locales por DNI
+async function getNombresUsuariosMap() {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT dni, nombre FROM usuarios WHERE dni IS NOT NULL AND dni != ''`
+    );
+    const map = {};
+    for (const u of rows) {
+      if (u.dni) map[u.dni.toLowerCase()] = u.nombre;
+    }
+    return map;
+  } catch (err) {
+    console.warn("MySQL no disponible para nombres de usuarios:", err.message);
+    return {};
+  }
+}
+
+// Helper: fusionar nombre local (de usuarios) en el cliente de GDTaller si procede
+function mergeNombre(client, nombresMap) {
+  if (!client.cif || !nombresMap) return client;
+  const localNombre = nombresMap[client.cif.toLowerCase()];
+  if (localNombre) {
+    return { ...client, nombre: localNombre };
+  }
+  return client;
+}
+
 // Helper: obtener cuestionario de un cliente por CIF de forma segura
 async function getCuestionarioByCif(cif) {
   try {

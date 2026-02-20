@@ -40,10 +40,10 @@ async function resolveVehicleMatricula(identifier) {
 
 // POST - Guardar respuestas del cuestionario
 router.post("/", async (req, res) => {
-  const { cliente, motocicletas } = req.body;
+  const { cliente, motocicletas, skipClientSave } = req.body;
 
   try {
-    console.log("Guardando cuestionario:", { cliente, motocicletas });
+    console.log("Guardando cuestionario:", { cliente, motocicletas, skipClientSave });
 
     // Resolver CIF del cliente
     const cif = await resolveClientCif(cliente.id);
@@ -54,13 +54,15 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // UPSERT datos del cliente en cuestionario_clientes
-    await pool.execute(
-      `INSERT INTO cuestionario_clientes (cif, peso, nivel_pilotaje, fecha_ultima_confirmacion)
-       VALUES (?, ?, ?, NOW())
-       ON DUPLICATE KEY UPDATE peso = VALUES(peso), nivel_pilotaje = VALUES(nivel_pilotaje), fecha_ultima_confirmacion = NOW()`,
-      [cif, cliente.peso, cliente.nivelPilotaje]
-    );
+    // UPSERT datos del cliente (omitir si skipClientSave es true)
+    if (!skipClientSave) {
+      await pool.execute(
+        `INSERT INTO cuestionario_clientes (cif, peso, nivel_pilotaje, fecha_ultima_confirmacion)
+         VALUES (?, ?, ?, NOW())
+         ON DUPLICATE KEY UPDATE peso = VALUES(peso), nivel_pilotaje = VALUES(nivel_pilotaje), fecha_ultima_confirmacion = NOW()`,
+        [cif, cliente.peso, cliente.nivelPilotaje]
+      );
+    }
 
     console.log(`Cliente CIF ${cif} actualizado: peso=${cliente.peso}, nivel=${cliente.nivelPilotaje}`);
 

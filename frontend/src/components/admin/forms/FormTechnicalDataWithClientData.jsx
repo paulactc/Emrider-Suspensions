@@ -327,29 +327,144 @@ const FormTechnicalDataWithClientData = React.memo(
               servicioExistente.datos_tecnicos_json !== null &&
               Object.keys(servicioExistente.datos_tecnicos_json).length > 0;
 
+            // Campos basicos del servicio (comunes a ambas ramas)
+            const baseServiceFields = {
+              numeroOrden: servicioExistente.numero_orden,
+              fechaServicio: servicioExistente.fecha_servicio
+                ? new Date(servicioExistente.fecha_servicio).toISOString().split("T")[0]
+                : undefined,
+              kmMoto: servicioExistente.km_moto,
+              fechaProximoMantenimiento: servicioExistente.fecha_proximo_mantenimiento
+                ? new Date(servicioExistente.fecha_proximo_mantenimiento).toISOString().split("T")[0]
+                : undefined,
+              servicioSuspension: servicioExistente.servicio_suspension,
+              observaciones: servicioExistente.observaciones,
+              observacionesServicio: servicioExistente.observaciones_servicio,
+              marca: servicioExistente.marca,
+              modelo: servicioExistente.modelo,
+              año: servicioExistente.año,
+              referenciasuspension: servicioExistente.referencia,
+              pesoPiloto: servicioExistente.peso_piloto,
+              disciplina: servicioExistente.disciplina,
+            };
+
             if (tieneDatosTecnicos) {
-              setServicioGuardado(false);
-              setServicioId(null);
+              const dtj = servicioExistente.datos_tecnicos_json;
+              const mp = dtj.muellePrincipal || {};
+              const mc = dtj.muelleCompresion || {};
+              const pm = dtj.pistonMain || {};
+              const pc = dtj.pistonCompresion || {};
+              const pad = (arr) => {
+                const a = arr || [];
+                return [...a, ...Array(Math.max(0, 40 - a.length)).fill("")];
+              };
+
+              setFormDataLocal((prev) => ({
+                ...prev,
+                // Datos basicos del servicio
+                ...Object.fromEntries(
+                  Object.entries(baseServiceFields).filter(([, v]) => v !== undefined && v !== null && v !== "")
+                ),
+                // Datos tecnicos JSON - FF
+                oilType: dtj.oilType ?? prev.oilType,
+                oilLevel: dtj.oilLevel ?? prev.oilLevel,
+                hComp: dtj.hComp ?? prev.hComp,
+                springRate: dtj.springRate ?? prev.springRate,
+                compressionDamping: dtj.compressionDamping ?? prev.compressionDamping,
+                reboundDamping: dtj.reboundDamping ?? prev.reboundDamping,
+                preload: dtj.preload ?? prev.preload,
+                sag: dtj.sag ?? prev.sag,
+                gas: dtj.gas ?? prev.gas,
+                gasFF: dtj.gasFF ?? prev.gasFF,
+                forkLength: dtj.forkLength ?? prev.forkLength,
+                strokeLength: dtj.strokeLength ?? prev.strokeLength,
+                oilCapacity: dtj.oilCapacity ?? prev.oilCapacity,
+                springLength: dtj.springLength ?? prev.springLength,
+                compressionAdjuster: dtj.compressionAdjuster ?? prev.compressionAdjuster,
+                reboundAdjuster: dtj.reboundAdjuster ?? prev.reboundAdjuster,
+                // Muelle principal
+                muellePrincipalSpringRate: mp.springRate ?? prev.muellePrincipalSpringRate,
+                muellePrincipalDiametroInterior: mp.diametroInterior ?? prev.muellePrincipalDiametroInterior,
+                muellePrincipalDiametroExterior: mp.diametroExterior ?? prev.muellePrincipalDiametroExterior,
+                muellePrincipalDiametroSpiras: mp.diametroSpiras ?? prev.muellePrincipalDiametroSpiras,
+                muellePrincipalLargo: mp.largo ?? prev.muellePrincipalLargo,
+                muellePrincipalNumEspiras: mp.numEspiras ?? prev.muellePrincipalNumEspiras,
+                muellePrincipalTopeFisico: mp.topeFisico ?? prev.muellePrincipalTopeFisico,
+                // Muelle compresion
+                muelleCompresionSpringRate: mc.springRate ?? prev.muelleCompresionSpringRate,
+                muelleCompresionDiametroInterior: mc.diametroInterior ?? prev.muelleCompresionDiametroInterior,
+                muelleCompresionDiametroExterior: mc.diametroExterior ?? prev.muelleCompresionDiametroExterior,
+                muelleCompresionLargo: mc.largo ?? prev.muelleCompresionLargo,
+                muelleCompresionNumEspiras: mc.numEspiras ?? prev.muelleCompresionNumEspiras,
+                muelleCompresionTopeFisico: mc.topeFisico ?? prev.muelleCompresionTopeFisico,
+                // Piston Main
+                pistonMainDiametroPiston: pm.diametroPiston ?? prev.pistonMainDiametroPiston,
+                pistonMainDiametroEje: pm.diametroEje ?? prev.pistonMainDiametroEje,
+                pistonMainCompresionOriginalDerecho: pm.compresionOriginalDerecho?.length ? pad(pm.compresionOriginalDerecho) : prev.pistonMainCompresionOriginalDerecho,
+                pistonMainCompresionModificadoDerecho: pm.compresionModificadoDerecho?.length ? pad(pm.compresionModificadoDerecho) : prev.pistonMainCompresionModificadoDerecho,
+                pistonMainCompresionOriginalIzquierdo: pm.compresionOriginalIzquierdo?.length ? pad(pm.compresionOriginalIzquierdo) : prev.pistonMainCompresionOriginalIzquierdo,
+                pistonMainCompresionModificadoIzquierdo: pm.compresionModificadoIzquierdo?.length ? pad(pm.compresionModificadoIzquierdo) : prev.pistonMainCompresionModificadoIzquierdo,
+                pistonMainCheckvalveOriginalDerecho: pm.checkvalveOriginalDerecho?.length ? pad(pm.checkvalveOriginalDerecho) : prev.pistonMainCheckvalveOriginalDerecho,
+                pistonMainCheckvalveModificadoDerecho: pm.checkvalveModificadoDerecho?.length ? pad(pm.checkvalveModificadoDerecho) : prev.pistonMainCheckvalveModificadoDerecho,
+                pistonMainCheckvalveOriginalIzquierdo: pm.checkvalveOriginalIzquierdo?.length ? pad(pm.checkvalveOriginalIzquierdo) : prev.pistonMainCheckvalveOriginalIzquierdo,
+                pistonMainCheckvalveModificadoIzquierdo: pm.checkvalveModificadoIzquierdo?.length ? pad(pm.checkvalveModificadoIzquierdo) : prev.pistonMainCheckvalveModificadoIzquierdo,
+                pistonMainReboteOriginalDerecho: pm.reboteOriginalDerecho?.length ? pad(pm.reboteOriginalDerecho) : prev.pistonMainReboteOriginalDerecho,
+                pistonMainReboteModificadoDerecho: pm.reboteModificadoDerecho?.length ? pad(pm.reboteModificadoDerecho) : prev.pistonMainReboteModificadoDerecho,
+                pistonMainReboteOriginalIzquierdo: pm.reboteOriginalIzquierdo?.length ? pad(pm.reboteOriginalIzquierdo) : prev.pistonMainReboteOriginalIzquierdo,
+                pistonMainReboteModificadoIzquierdo: pm.reboteModificadoIzquierdo?.length ? pad(pm.reboteModificadoIzquierdo) : prev.pistonMainReboteModificadoIzquierdo,
+                // Piston Compresion
+                pistonCompresionDiametroPiston: pc.diametroPiston ?? prev.pistonCompresionDiametroPiston,
+                pistonCompresionDiametroEje: pc.diametroEje ?? prev.pistonCompresionDiametroEje,
+                pistonCompresionCompresionOriginalDerecho: pc.compresionOriginalDerecho?.length ? pad(pc.compresionOriginalDerecho) : prev.pistonCompresionCompresionOriginalDerecho,
+                pistonCompresionCompresionModificadoDerecho: pc.compresionModificadoDerecho?.length ? pad(pc.compresionModificadoDerecho) : prev.pistonCompresionCompresionModificadoDerecho,
+                pistonCompresionCompresionOriginalIzquierdo: pc.compresionOriginalIzquierdo?.length ? pad(pc.compresionOriginalIzquierdo) : prev.pistonCompresionCompresionOriginalIzquierdo,
+                pistonCompresionCompresionModificadoIzquierdo: pc.compresionModificadoIzquierdo?.length ? pad(pc.compresionModificadoIzquierdo) : prev.pistonCompresionCompresionModificadoIzquierdo,
+                pistonCompresionCheckvalveOriginalDerecho: pc.checkvalveOriginalDerecho?.length ? pad(pc.checkvalveOriginalDerecho) : prev.pistonCompresionCheckvalveOriginalDerecho,
+                pistonCompresionCheckvalveModificadoDerecho: pc.checkvalveModificadoDerecho?.length ? pad(pc.checkvalveModificadoDerecho) : prev.pistonCompresionCheckvalveModificadoDerecho,
+                pistonCompresionCheckvalveOriginalIzquierdo: pc.checkvalveOriginalIzquierdo?.length ? pad(pc.checkvalveOriginalIzquierdo) : prev.pistonCompresionCheckvalveOriginalIzquierdo,
+                pistonCompresionCheckvalveModificadoIzquierdo: pc.checkvalveModificadoIzquierdo?.length ? pad(pc.checkvalveModificadoIzquierdo) : prev.pistonCompresionCheckvalveModificadoIzquierdo,
+                // RR
+                mainRate: dtj.mainRate ?? prev.mainRate,
+                springRef: dtj.springRef ?? prev.springRef,
+                length: dtj.length ?? prev.length,
+                numeroSpiras: dtj.numeroSpiras ?? prev.numeroSpiras,
+                outerDiameter: dtj.outerDiameter ?? prev.outerDiameter,
+                innerDiameter: dtj.innerDiameter ?? prev.innerDiameter,
+                spire: dtj.spire ?? prev.spire,
+                rebSpring: dtj.rebSpring ?? prev.rebSpring,
+                totalLength: dtj.totalLength ?? prev.totalLength,
+                stroke: dtj.stroke ?? prev.stroke,
+                shaft: dtj.shaft ?? prev.shaft,
+                piston: dtj.piston ?? prev.piston,
+                internalSpacer: dtj.internalSpacer ?? prev.internalSpacer,
+                height: dtj.height ?? prev.height,
+                strokeToBumpRubber: dtj.strokeToBumpRubber ?? prev.strokeToBumpRubber,
+                rod: dtj.rod ?? prev.rod,
+                reboundSpring: dtj.reboundSpring ?? prev.reboundSpring,
+                springUpperDiameter: dtj.springUpperDiameter ?? prev.springUpperDiameter,
+                springLowerDiameter: dtj.springLowerDiameter ?? prev.springLowerDiameter,
+                headRodEnd: dtj.headRodEnd ?? prev.headRodEnd,
+                upperMount: dtj.upperMount ?? prev.upperMount,
+                lowerMount: dtj.lowerMount ?? prev.lowerMount,
+                oil: dtj.oil ?? prev.oil,
+                gasRR: dtj.gas ?? prev.gasRR,
+                compressionOriginal: dtj.compressionOriginal ?? prev.compressionOriginal,
+                compressionModification: dtj.compressionModification ?? prev.compressionModification,
+                reboundOriginal: dtj.reboundOriginal?.length ? dtj.reboundOriginal : prev.reboundOriginal,
+                reboundModification: dtj.reboundModification?.length ? dtj.reboundModification : prev.reboundModification,
+                originalCompressionAdjuster: dtj.originalCompressionAdjuster?.length ? dtj.originalCompressionAdjuster : prev.originalCompressionAdjuster,
+                modifiedCompressionAdjuster: dtj.modifiedCompressionAdjuster?.length ? dtj.modifiedCompressionAdjuster : prev.modifiedCompressionAdjuster,
+              }));
+
+              if (pm.subtipo) setPistonMainSubtipo(pm.subtipo);
+              setServicioId(servicioExistente.id);
+              setServicioGuardado(true);
             } else {
               setFormDataLocal((prev) => ({
                 ...prev,
-                numeroOrden: servicioExistente.numero_orden || prev.numeroOrden,
-                fechaServicio: servicioExistente.fecha_servicio
-                  ? new Date(servicioExistente.fecha_servicio).toISOString().split("T")[0]
-                  : prev.fechaServicio,
-                kmMoto: servicioExistente.km_moto || prev.kmMoto,
-                fechaProximoMantenimiento: servicioExistente.fecha_proximo_mantenimiento
-                  ? new Date(servicioExistente.fecha_proximo_mantenimiento).toISOString().split("T")[0]
-                  : prev.fechaProximoMantenimiento,
-                servicioSuspension: servicioExistente.servicio_suspension || prev.servicioSuspension,
-                observaciones: servicioExistente.observaciones || prev.observaciones,
-                observacionesServicio: servicioExistente.observaciones_servicio || prev.observacionesServicio,
-                marca: servicioExistente.marca || prev.marca,
-                modelo: servicioExistente.modelo || prev.modelo,
-                año: servicioExistente.año || prev.año,
-                referenciasuspension: servicioExistente.referencia || prev.referenciasuspension,
-                pesoPiloto: servicioExistente.peso_piloto || prev.pesoPiloto,
-                disciplina: servicioExistente.disciplina || prev.disciplina,
+                ...Object.fromEntries(
+                  Object.entries(baseServiceFields).filter(([, v]) => v !== undefined && v !== null && v !== "")
+                ),
               }));
 
               setServicioId(servicioExistente.id);
