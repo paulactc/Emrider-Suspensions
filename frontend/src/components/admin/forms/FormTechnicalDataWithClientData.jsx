@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import api from "../../../../services/Api";
 import CuestionarioParaTecnico from "./CuestionarioParaTecnico";
+import NotificationModal from "../../common/NotificationModal";
 import "../../../styles/FormTechnicalDataWithClientData.scss";
 
 // Componente para mostrar datos del cliente de forma compacta
@@ -114,6 +115,8 @@ const FormTechnicalDataWithClientData = React.memo(
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [needsQuestionnaire, setNeedsQuestionnaire] = useState(false);
+    const [notif, setNotif] = useState({ open: false, type: "success", message: "" });
+    const showNotif = (type, message) => setNotif({ open: true, type, message });
 
     // Estados para el flujo secuencial
     const [servicioGuardado, setServicioGuardado] = useState(false);
@@ -632,11 +635,11 @@ const FormTechnicalDataWithClientData = React.memo(
                 ? "Onroad"
                 : "Offroad",
           }));
-          alert("Datos del cuestionario guardados correctamente. Ahora puedes continuar con el servicio tecnico.");
+          showNotif("success", "Datos del cuestionario guardados correctamente. Ahora puedes continuar con el servicio tecnico.");
         }
       } catch (error) {
         console.error("Error guardando datos del cuestionario:", error);
-        alert("Error al guardar los datos del cuestionario: " + error.message);
+        showNotif("error", "Error al guardar los datos del cuestionario: " + error.message);
       }
     };
 
@@ -683,7 +686,7 @@ const FormTechnicalDataWithClientData = React.memo(
           if (!servicioId && result.data && result.data.id) {
             setServicioId(result.data.id);
           }
-          alert("Informacion del servicio guardada correctamente. Ahora puedes continuar con los datos tecnicos.");
+          showNotif("success", "Informacion del servicio guardada correctamente. Ahora puedes continuar con los datos tecnicos.");
         } else {
           throw new Error(result?.message || "Error al guardar el servicio");
         }
@@ -696,24 +699,12 @@ const FormTechnicalDataWithClientData = React.memo(
     }, [formDataLocal, motoId, clienteId, tipoSuspension, servicioId]);
 
     const validateForm = () => {
-      const newErrors = {};
-
       if (!servicioGuardado) {
-        newErrors.general = "Primero debe guardar la informacion del servicio";
-        setErrors(newErrors);
+        setErrors({ general: "Primero debe guardar la informacion del servicio" });
         return false;
       }
-
-      if (needsQuestionnaire) {
-        if (!questionnaireData.peso) newErrors.peso = "Peso del piloto requerido";
-        if (!questionnaireData.nivelPilotaje) newErrors.nivelPilotaje = "Nivel de pilotaje requerido";
-        if (!questionnaireData.especialidad) newErrors.especialidad = "Especialidad requerida";
-        if (!questionnaireData.tipoConduccion) newErrors.tipoConduccion = "Tipo de conduccion requerido";
-        if (!questionnaireData.preferenciaRigidez) newErrors.preferenciaRigidez = "Preferencia de rigidez requerida";
-      }
-
-      setErrors(newErrors);
-      return Object.keys(newErrors).length === 0;
+      setErrors({});
+      return true;
     };
 
     const handleSubmit = async (e) => {
@@ -840,7 +831,7 @@ const FormTechnicalDataWithClientData = React.memo(
         });
 
         if (result && result.success) {
-          alert(`Datos tecnicos ${tipoSuspension} guardados correctamente`);
+          showNotif("success", `Datos tecnicos ${tipoSuspension} guardados correctamente`);
           navigate(-1);
         } else {
           throw new Error(result?.message || "Error al guardar los datos tecnicos");
@@ -1392,6 +1383,12 @@ const FormTechnicalDataWithClientData = React.memo(
             </div>
           </div>
         </form>
+      <NotificationModal
+        isOpen={notif.open}
+        type={notif.type}
+        message={notif.message}
+        onClose={() => setNotif((prev) => ({ ...prev, open: false }))}
+      />
       </div>
     );
   }

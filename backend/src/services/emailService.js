@@ -52,4 +52,31 @@ async function sendPasswordResetEmail(email, resetUrl) {
   console.log("Email de recuperacion enviado a:", email);
 }
 
-module.exports = { sendPasswordResetEmail };
+async function sendSugerenciaEmail({ cif, nombre, mensaje }) {
+  const remitente = nombre || cif || "Cliente desconocido";
+
+  const mailOptions = {
+    from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    to: "info@emrider.es",
+    subject: `[EmRider] Sugerencia/Incidencia de ${remitente}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h1 style="color: #fbbf24; margin: 0;">EmRider Garage</h1>
+          <p style="color: #888; margin: 4px 0 0;">Nueva sugerencia o incidencia recibida</p>
+        </div>
+        <div style="background: #1f2937; border-radius: 10px; padding: 24px; border: 1px solid #374151;">
+          <p style="color: #9ca3af; margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em;">Cliente</p>
+          <p style="color: #f9fafb; margin: 0 0 20px; font-weight: 600;">${remitente}${cif ? ` · <span style="color:#9ca3af">${cif}</span>` : ""}</p>
+          <p style="color: #9ca3af; margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em;">Mensaje</p>
+          <p style="color: #f9fafb; margin: 0; line-height: 1.65; white-space: pre-wrap;">${mensaje}</p>
+        </div>
+      </div>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+  console.log("Email de sugerencia enviado al admin");
+}
+
+module.exports = { sendPasswordResetEmail, sendSugerenciaEmail };

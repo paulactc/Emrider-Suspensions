@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Wrench, ChevronDown, ChevronUp, Loader, Bike, Calendar } from "lucide-react";
 import api from "../../../services/Api";
 
@@ -230,10 +230,11 @@ function DatosTecnicosRR({ datos }) {
   );
 }
 
-function DatosTecnicosServicio({ cif, servicios: serviciosProp }) {
+function DatosTecnicosServicio({ cif, servicios: serviciosProp, groupByMoto = false }) {
   const [servicios, setServicios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
+  const [expandedMoto, setExpandedMoto] = useState(null);
 
   useEffect(() => {
     // Si nos pasan los servicios directamente, usarlos sin fetch
@@ -256,6 +257,26 @@ function DatosTecnicosServicio({ cif, servicios: serviciosProp }) {
       .finally(() => setLoading(false));
   }, [cif, serviciosProp]);
 
+  // Agrupar servicios por moto cuando se solicita
+  const motoGroups = useMemo(() => {
+    if (!groupByMoto || servicios.length === 0) return null;
+    const groups = {};
+    servicios.forEach((s) => {
+      const key = s.matricula_moto || "sin-matricula";
+      if (!groups[key]) {
+        groups[key] = {
+          key,
+          matricula: s.matricula_moto || "—",
+          marca: s.marca || "",
+          modelo: s.modelo || "",
+          items: [],
+        };
+      }
+      groups[key].items.push(s);
+    });
+    return Object.values(groups);
+  }, [servicios, groupByMoto]);
+
   const formatDate = (dateStr) => {
     if (!dateStr) return "—";
     const d = new Date(dateStr);
@@ -265,26 +286,124 @@ function DatosTecnicosServicio({ cif, servicios: serviciosProp }) {
 
   if (loading) {
     return (
-      <div className="datos-tecnicos-servicio">
-        <div className="datos-tecnicos-servicio__header">
-          <Wrench className="datos-tecnicos-servicio__icon" />
-          <h3>Datos tecnicos servicio de suspensiones</h3>
-        </div>
-        <div className="datos-tecnicos-servicio__loading">
-          <Loader className="spinner" />
-          <span>Cargando datos tecnicos...</span>
+      <div className={`datos-tecnicos-servicio${groupByMoto ? " datos-tecnicos-servicio--nested" : ""}`}>
+        {!groupByMoto && (
+          <div className="datos-tecnicos-servicio__header">
+            <Wrench className="datos-tecnicos-servicio__icon" />
+            <h3>Datos técnicos de servicios de suspensiones</h3>
+          </div>
+        )}
+        <div className="datos-tecnicos-servicio__loading-card">
+          <div className="datos-tecnicos-servicio__loading-icon">
+            <Loader className="spinner" />
+          </div>
+          <p className="datos-tecnicos-servicio__loading-text">Cargando datos técnicos...</p>
         </div>
       </div>
     );
   }
 
-  if (servicios.length === 0) return null;
+  if (servicios.length === 0) {
+    return (
+      <div className={`datos-tecnicos-servicio${groupByMoto ? " datos-tecnicos-servicio--nested" : ""}`}>
+        {!groupByMoto && (
+          <div className="datos-tecnicos-servicio__header">
+            <Wrench className="datos-tecnicos-servicio__icon" />
+            <h3>Datos técnicos de servicios de suspensiones</h3>
+          </div>
+        )}
+        <div className="datos-tecnicos-servicio__empty">
+          <Wrench className="datos-tecnicos-servicio__empty-icon" />
+          <p>Aún no hay datos técnicos registrados para tus suspensiones.</p>
+        </div>
+      </div>
+    );
+  }
 
+  // Vista agrupada por moto
+  if (groupByMoto && motoGroups) {
+    return (
+      <div className="datos-tecnicos-servicio datos-tecnicos-servicio--nested">
+        {motoGroups.map((group) => {
+          const isOpen = expandedMoto === group.key;
+          return (
+            <div key={group.key} className={`datos-tecnicos__moto-group${isOpen ? " datos-tecnicos__moto-group--open" : ""}`}>
+              <button
+                className="datos-tecnicos__moto-group-header"
+                onClick={() => setExpandedMoto(isOpen ? null : group.key)}
+              >
+                <div className="datos-tecnicos__moto-group-info">
+                  <Bike className="datos-tecnicos__moto-group-icon" />
+                  <div>
+                    <span className="datos-tecnicos__moto-group-nombre">
+                      {[group.marca, group.modelo].filter(Boolean).join(" ") || group.matricula}
+                    </span>
+                    <span className="datos-tecnicos__moto-group-matricula">{group.matricula}</span>
+                  </div>
+                </div>
+                <div className="datos-tecnicos__moto-group-right">
+                  <span className="datos-tecnicos__moto-group-count">
+                    {group.items.length} {group.items.length === 1 ? "servicio" : "servicios"}
+                  </span>
+                  {isOpen ? <ChevronUp /> : <ChevronDown />}
+                </div>
+              </button>
+
+              {isOpen && (
+                <div className="datos-tecnicos__moto-group-body">
+                  {group.items.map((servicio) => {
+                    const isExpanded = expandedId === servicio.id;
+                    const datos = servicio.datos_tecnicos_json || {};
+                    const tipoLabel = servicio.tipo_suspension === "FF" ? "Horquilla delantera" : "Amortiguador trasero";
+                    return (
+                      <div
+                        key={servicio.id}
+                        className={`datos-tecnicos__card${isExpanded ? " datos-tecnicos__card--expanded" : ""}`}
+                      >
+                        <button
+                          className="datos-tecnicos__card-header"
+                          onClick={() => setExpandedId(isExpanded ? null : servicio.id)}
+                        >
+                          <div className="datos-tecnicos__card-info">
+                            <Calendar className="datos-tecnicos__card-icon" />
+                            <div className="datos-tecnicos__card-meta">
+                              <span className={`datos-tecnicos__tipo datos-tecnicos__tipo--${(servicio.tipo_suspension || "").toLowerCase()}`}>
+                                {tipoLabel}
+                              </span>
+                              <span className="datos-tecnicos__fecha">{formatDate(servicio.fecha_servicio)}</span>
+                            </div>
+                          </div>
+                          <div className="datos-tecnicos__card-right">
+                            {isExpanded ? <ChevronUp /> : <ChevronDown />}
+                          </div>
+                        </button>
+                        {isExpanded && (
+                          <div className="datos-tecnicos__card-body">
+                            {servicio.tipo_suspension === "FF" ? (
+                              <DatosTecnicosFF datos={datos} />
+                            ) : (
+                              <DatosTecnicosRR datos={datos} />
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Vista plana (por defecto)
   return (
     <div className="datos-tecnicos-servicio">
       <div className="datos-tecnicos-servicio__header">
         <Wrench className="datos-tecnicos-servicio__icon" />
-        <h3>Datos tecnicos servicio de suspensiones</h3>
+        <h3>Datos técnicos de servicios de suspensiones</h3>
         <span className="datos-tecnicos-servicio__count">
           {servicios.length} {servicios.length === 1 ? "servicio" : "servicios"}
         </span>
@@ -299,7 +418,7 @@ function DatosTecnicosServicio({ cif, servicios: serviciosProp }) {
           return (
             <div
               key={servicio.id}
-              className={`datos-tecnicos__card ${isExpanded ? "datos-tecnicos__card--expanded" : ""}`}
+              className={`datos-tecnicos__card${isExpanded ? " datos-tecnicos__card--expanded" : ""}`}
             >
               <button
                 className="datos-tecnicos__card-header"

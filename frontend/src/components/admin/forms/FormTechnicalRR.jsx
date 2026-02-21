@@ -14,6 +14,7 @@ import {
   Zap,
 } from "lucide-react";
 import api from "../../../../services/Api";
+import NotificationModal from "../../common/NotificationModal";
 
 const FormTechnicalRR = () => {
   const { motoId } = useParams();
@@ -24,6 +25,8 @@ const FormTechnicalRR = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
+  const [notif, setNotif] = useState({ open: false, type: "success", message: "" });
+  const showNotif = (type, message) => setNotif({ open: true, type, message });
   const [motoData, setMotoData] = useState(null);
   const [clienteData, setClienteData] = useState(null);
   const [needsQuestionnaire, setNeedsQuestionnaire] = useState(false);
@@ -319,8 +322,8 @@ const FormTechnicalRR = () => {
         }
       }
 
-      alert("Datos técnicos RR guardados correctamente");
-      navigate(-1);
+      showNotif("success", "Datos técnicos RR guardados correctamente");
+      setTimeout(() => navigate(-1), 1200);
     } catch (error) {
       console.error("Error guardando datos técnicos:", error);
       setErrors({ general: "Error al guardar los datos técnicos: " + (error.message || "Error desconocido") });
@@ -1433,6 +1436,12 @@ const FormTechnicalRR = () => {
           }
         }
       `}</style>
+      <NotificationModal
+        isOpen={notif.open}
+        type={notif.type}
+        message={notif.message}
+        onClose={() => setNotif((prev) => ({ ...prev, open: false }))}
+      />
     </div>
   );
 };

@@ -11,6 +11,10 @@ import ResetPassword from "./Page.Custom/ResetPassword";
 import TechnicalDataCustomer from "./user/TechnicalDataCustomer";
 
 import Cliente from "./user/Cliente";
+import ClienteGarage from "./user/sections/ClienteGarage";
+import ClienteHistorial from "./user/sections/ClienteHistorial";
+import ClienteSettings from "./user/sections/ClienteSettings";
+import ClienteTribu from "./user/sections/ClienteTribu";
 import ListBike from "./Page.Bike/ListBike";
 import ListBikeadmin from "./Page.Bike/ListBikeadmin";
 import TechnicalDataAdmin from "./admin/forms/TechnicalDataAdmin";
@@ -253,6 +257,12 @@ function App() {
           path="/admin/datos-tecnicos-admin/:id"
           element={<TechnicalDataAdmin listTechnical={listTechnical} />}
         />
+
+        {/* 📱 SECCIONES DEL ÁREA DE CLIENTE */}
+        <Route path="/cliente/garage" element={<ClienteGarage />} />
+        <Route path="/cliente/historial" element={<ClienteHistorial />} />
+        <Route path="/cliente/settings" element={<ClienteSettings />} />
+        <Route path="/cliente/tribu" element={<ClienteTribu />} />
 
         {/* 🔑 RECUPERACION DE CONTRASEÑA */}
         <Route path="/forgot-password" element={<ForgotPassword />} />

@@ -73,7 +73,7 @@ function LandingPage(props) {
       </section>
 
       <div className="sectmedium">
-        <h3>Accede a tu historial técnico exclusivo con EmRider Garage</h3>
+        <h3>Tu área personal como cliente EmRider. Todo lo que necesitas, siempre a mano.</h3>
 
         <div className="brand-list">
           <div className="wrapper">
@@ -90,16 +90,7 @@ function LandingPage(props) {
           </div>
         </div>
         <div className="contenedor-text">
-          <p className="parra">
-            Consulta de forma exclusiva tu historial técnico de suspensiones{" "}
-            <br />
-            Solo para clientes EmRider.
-            <br />
-            <br />
-            <span className="highlight-text">
-              Regístrate y llévala siempre contigo.
-            </span>
-          </p>
+          <p className="parra parra--sub">Solo para clientes EmRider.</p>
         </div>
       </div>
 

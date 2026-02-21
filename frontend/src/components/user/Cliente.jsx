@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import UleachCustomUser from "./UleachCustomUser";
 import ClienteQuestionario from "./ClienteQuestionario";
+import NotificationModal from "../common/NotificationModal";
 // ✅ CORREGIDO: Ruta de importación del API
 import api from "../../../services/Api";
 
@@ -12,6 +13,8 @@ function Cliente({ listCustom, listBikes }) {
   const [customToRender, setCustomToRender] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notif, setNotif] = useState({ open: false, type: "success", message: "" });
+  const showNotif = (type, message) => setNotif({ open: true, type, message });
 
   // Obtener DNI/CIF del usuario autenticado
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -193,7 +196,7 @@ function Cliente({ listCustom, listBikes }) {
       if (result && result.success) {
         console.log("✅ Cuestionario guardado exitosamente");
         setShowQuestionnaire(false);
-        alert("✅ ¡Datos guardados correctamente!");
+        showNotif("success", "¡Datos guardados correctamente!");
 
         // Actualizar datos locales del cliente (solo si se guardaron datos del cliente)
         if (!formData.skipClientSave) {
@@ -214,7 +217,7 @@ function Cliente({ listCustom, listBikes }) {
       }
     } catch (error) {
       console.error("❌ Error guardando cuestionario:", error);
-      alert("❌ Error al guardar: " + error.message);
+      showNotif("error", "Error al guardar: " + error.message);
     }
   };
 
@@ -359,6 +362,12 @@ function Cliente({ listCustom, listBikes }) {
   // ✅ MOSTRAR CLIENTE NORMAL
   return (
     <div className="cliente-container">
+      <NotificationModal
+        isOpen={notif.open}
+        type={notif.type}
+        message={notif.message}
+        onClose={() => setNotif((prev) => ({ ...prev, open: false }))}
+      />
       <UleachCustomUser
         key={customToRender.id}
         Custom={customToRender}

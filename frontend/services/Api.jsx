@@ -56,6 +56,13 @@ class ApiService {
     });
   }
 
+  async enviarSugerencia(mensaje, cif, nombre) {
+    return this.makeRequest("/sugerencias", {
+      method: "POST",
+      body: JSON.stringify({ mensaje, cif, nombre }),
+    });
+  }
+
   async forgotPassword(emailOrDni) {
     const isEmail = emailOrDni.includes("@");
     return this.makeRequest("/auth/forgot-password", {

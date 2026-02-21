@@ -1,5 +1,6 @@
 // frontend/src/components/admin/forms/CuestionarioParaTecnico.jsx
 import React, { useState } from "react";
+import NotificationModal from "../../common/NotificationModal";
 import {
   User,
   Bike,
@@ -31,6 +32,8 @@ const CuestionarioParaTecnico = ({
   });
 
   const [errores, setErrores] = useState({});
+  const [notif, setNotif] = useState({ open: false, type: "success", message: "" });
+  const showNotif = (type, message) => setNotif({ open: true, type, message });
   const [guardando, setGuardando] = useState(false);
 
   const handleInputChange = (field, value) => {
@@ -105,7 +108,7 @@ const CuestionarioParaTecnico = ({
       await onComplete(datosParaGuardar);
     } catch (error) {
       console.error("Error guardando datos del cuestionario:", error);
-      alert("Error al guardar los datos. Inténtalo de nuevo.");
+      showNotif("error", "Error al guardar los datos. Inténtalo de nuevo.");
     } finally {
       setGuardando(false);
     }
@@ -520,6 +523,12 @@ const CuestionarioParaTecnico = ({
           }
         }
       `}</style>
+      <NotificationModal
+        isOpen={notif.open}
+        type={notif.type}
+        message={notif.message}
+        onClose={() => setNotif((prev) => ({ ...prev, open: false }))}
+      />
     </div>
   );
 };

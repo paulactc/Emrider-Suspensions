@@ -20,5 +20,9 @@ app.use("/api/motos", motosRoutes);
 const gdtallerRoutes = require("./routes/gdtaller");
 app.use("/api/gdtaller", gdtallerRoutes);
 
+// Sugerencias e incidencias de clientes
+const sugerenciasRoutes = require("./routes/sugerencias");
+app.use("/api/sugerencias", sugerenciasRoutes);
+
 // CRUCIAL: Exportar la app
 module.exports = app;

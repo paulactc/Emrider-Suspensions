@@ -15,6 +15,7 @@ import {
   Plus,
 } from "lucide-react";
 import api from "../../../../services/Api";
+import NotificationModal from "../../common/NotificationModal";
 
 const FormBike = () => {
   const { id } = useParams();
@@ -44,6 +45,8 @@ const FormBike = () => {
   const [loading, setLoading] = useState(isEditMode); // Solo loading si es edición
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
+  const [notif, setNotif] = useState({ open: false, type: "success", message: "" });
+  const showNotif = (type, message) => setNotif({ open: true, type, message });
   const [originalData, setOriginalData] = useState({});
 
   // Cargar datos de la moto al montar el componente (solo en modo edición)
@@ -223,7 +226,7 @@ const FormBike = () => {
       console.log("📤 Datos normalizados a enviar:", motoNormalizada);
 
       // Las motos se gestionan desde GDTaller (solo lectura)
-      alert("Las motocicletas se gestionan desde GDTaller. No se pueden crear/editar desde aqui.");
+      showNotif("error", "Las motocicletas se gestionan desde GDTaller. No se pueden crear/editar desde aqui.");
 
 
       navigate(-1);
@@ -244,9 +247,7 @@ const FormBike = () => {
       }
 
       setErrors({ general: mensajeError });
-      alert(
-        `❌ Error al ${isEditMode ? "actualizar" : "crear"}: ${mensajeError}`
-      );
+      showNotif("error", `Error al ${isEditMode ? "actualizar" : "crear"}: ${mensajeError}`);
     } finally {
       setSaving(false);
     }
@@ -523,6 +524,12 @@ const FormBike = () => {
           )}
         </fieldset>
       </div>
+      <NotificationModal
+        isOpen={notif.open}
+        type={notif.type}
+        message={notif.message}
+        onClose={() => setNotif((prev) => ({ ...prev, open: false }))}
+      />
     </div>
   );
 };

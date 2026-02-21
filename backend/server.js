@@ -44,6 +44,9 @@ app.use("/api/datos-tecnicos", require("./src/routes/datosTecnicos"));
 // 🆕 NUEVA RUTA: Sincronización con GDTaller API externa
 app.use("/api/gdtaller", require("./src/routes/gdtaller"));
 
+// Sugerencias e incidencias de clientes
+app.use("/api/sugerencias", require("./src/routes/sugerencias"));
+
 console.log("✅ Rutas registradas:");
 console.log("  - /api/clientes");
 console.log("  - /api/motos");
