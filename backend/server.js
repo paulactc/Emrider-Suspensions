@@ -47,6 +47,12 @@ app.use("/api/gdtaller", require("./src/routes/gdtaller"));
 // Sugerencias e incidencias de clientes
 app.use("/api/sugerencias", require("./src/routes/sugerencias"));
 
+// Solicitudes de recogida de moto
+app.use("/api/recogidas", require("./src/routes/recogidas"));
+
+// Citas previas
+app.use("/api/citas", require("./src/routes/citas"));
+
 console.log("✅ Rutas registradas:");
 console.log("  - /api/clientes");
 console.log("  - /api/motos");

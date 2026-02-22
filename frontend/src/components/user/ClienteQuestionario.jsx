@@ -13,6 +13,7 @@ import {
   Settings,
   Save,
   SkipForward,
+  Bell,
 } from "lucide-react";
 
 const ClienteQuestionario = ({
@@ -28,6 +29,7 @@ const ClienteQuestionario = ({
   const [clienteData, setClienteData] = useState({
     peso: cliente?.peso || "",
     nivelPilotaje: cliente?.nivelPilotaje || "",
+    aceptaNotificaciones: cliente?.aceptaNotificaciones ?? true,
   });
   const [selectedMoto, setSelectedMoto] = useState(null);
   const [motosData, setMotosData] = useState({});
@@ -234,12 +236,24 @@ const ClienteQuestionario = ({
     });
   });
 
-  // Filtrar pasos según el modo
+  // Paso final: consentimiento de notificaciones (siempre al final)
+  steps.push({
+    id: "notificaciones",
+    type: "notificaciones",
+    title: "Comunicaciones y avisos",
+    subtitle: "Queremos mantenerte informado sobre tu moto",
+    icon: Bell,
+    question: "¿Nos permites enviarte notificaciones sobre revisiones de suspensión y datos relevantes de tu moto?",
+    field: "aceptaNotificaciones",
+    inputType: "toggle",
+  });
+
+  // Filtrar pasos según el modo (notificaciones siempre incluido)
   const activeSteps =
     mode === "moto-only"
       ? steps.filter((s) => s.type !== "cliente")
       : mode === "cliente-only"
-      ? steps.filter((s) => s.type === "cliente")
+      ? steps.filter((s) => s.type === "cliente" || s.type === "notificaciones")
       : steps;
 
   const totalSteps = activeSteps.length;
@@ -247,8 +261,9 @@ const ClienteQuestionario = ({
   const isLastStep = currentStep === totalSteps - 1;
 
   const getCurrentValue = () => {
-    if (currentStepData.type === "cliente") {
-      return clienteData[currentStepData.field] || "";
+    if (currentStepData.type === "cliente" || currentStepData.type === "notificaciones") {
+      const v = clienteData[currentStepData.field];
+      return v === undefined ? "" : v;
     }
     if (
       currentStepData.inputType === "moto-select" ||
@@ -260,7 +275,7 @@ const ClienteQuestionario = ({
   };
 
   const updateValue = (value) => {
-    if (currentStepData.type === "cliente") {
+    if (currentStepData.type === "cliente" || currentStepData.type === "notificaciones") {
       setClienteData((prev) => ({ ...prev, [currentStepData.field]: value }));
       return;
     }
@@ -281,8 +296,9 @@ const ClienteQuestionario = ({
   };
 
   const validateCurrentStep = () => {
+    if (currentStepData.type === "notificaciones") return null;
     const value = getCurrentValue();
-    if (!value) {
+    if (!value && value !== false) {
       return currentStepData.inputType === "moto-select"
         ? "Selecciona una motocicleta"
         : "Este campo es obligatorio";
@@ -305,7 +321,7 @@ const ClienteQuestionario = ({
   const handleComplete = async () => {
     setIsCompleting(true);
     const dataToSend = {
-      cliente: { id: cliente.id, ...clienteData },
+      cliente: { id: cliente.id, ...clienteData, aceptaNotificaciones: clienteData.aceptaNotificaciones },
       motocicletas:
         mode !== "cliente-only"
           ? Object.keys(motosData).map((motoId) => ({
@@ -420,6 +436,36 @@ const ClienteQuestionario = ({
               <span>{error}</span>
             </div>
           )}
+        </div>
+      );
+    }
+
+    if (currentStepData.inputType === "toggle") {
+      const val = getCurrentValue();
+      const checked = val === true || val === "true";
+      return (
+        <div className="options-grid">
+          <button
+            onClick={() => updateValue(true)}
+            className={`option-card ${checked ? "selected" : ""}`}
+          >
+            <div className="option-header">
+              <Bell size={24} />
+              <h4>Sí, acepto</h4>
+            </div>
+            <p>Me gustaría recibir avisos sobre revisiones y novedades de mi moto</p>
+            {checked && <div className="selected-indicator"><Check size={20} /></div>}
+          </button>
+          <button
+            onClick={() => updateValue(false)}
+            className={`option-card ${!checked ? "selected" : ""}`}
+          >
+            <div className="option-header">
+              <h4>No, gracias</h4>
+            </div>
+            <p>Prefiero no recibir comunicaciones</p>
+            {!checked && <div className="selected-indicator"><Check size={20} /></div>}
+          </button>
         </div>
       );
     }

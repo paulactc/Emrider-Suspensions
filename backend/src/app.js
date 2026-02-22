@@ -24,5 +24,9 @@ app.use("/api/gdtaller", gdtallerRoutes);
 const sugerenciasRoutes = require("./routes/sugerencias");
 app.use("/api/sugerencias", sugerenciasRoutes);
 
+// Solicitudes de recogida de moto
+const recogidasRoutes = require("./routes/recogidas");
+app.use("/api/recogidas", recogidasRoutes);
+
 // CRUCIAL: Exportar la app
 module.exports = app;

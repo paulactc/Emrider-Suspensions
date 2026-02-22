@@ -143,7 +143,27 @@ router.get("/by-moto/:identifier", async (req, res) => {
   try {
     const { identifier } = req.params;
 
-    // Buscar por moto_id (legacy) O matricula_moto (nuevo)
+    // Intentar también resolver la matrícula al ID de GDTaller (por si el servicio
+    // fue guardado con moto_id numérico y matricula_moto NULL)
+    let vehiculoId = null;
+    try {
+      const rawVehicles = await gdtallerService.getVehicles();
+      const vehicles = rawVehicles.map(gdtallerService.mapVehicleFromGDTaller);
+      const norm = (s) => (s || "").replace(/\s+/g, "").toUpperCase();
+      const found = vehicles.find(
+        (v) => norm(v.matricula) === norm(identifier) || String(v.id) === String(identifier)
+      );
+      if (found) vehiculoId = String(found.id);
+    } catch (_) {}
+
+    // Buscar por moto_id (legacy numérico o texto), matricula_moto, o vehiculoId resuelto
+    const params = [identifier, identifier];
+    let extra = "";
+    if (vehiculoId && vehiculoId !== identifier) {
+      extra = " OR moto_id = ?";
+      params.push(vehiculoId);
+    }
+
     const [rows] = await pool.execute(
       `SELECT
         id, moto_id, cliente_id, cif_cliente, matricula_moto,
@@ -152,9 +172,9 @@ router.get("/by-moto/:identifier", async (req, res) => {
         observaciones_servicio, peso_piloto, disciplina, marca, modelo, año, referencia,
         status, tipo_suspension, datos_tecnicos_json, created_at, updated_at
        FROM servicios_info
-       WHERE moto_id = ? OR matricula_moto = ?
+       WHERE moto_id = ? OR matricula_moto = ?${extra}
        ORDER BY created_at DESC`,
-      [identifier, identifier]
+      params
     );
 
     const data = rows.map((row) => ({

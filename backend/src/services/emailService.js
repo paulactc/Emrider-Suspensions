@@ -79,4 +79,62 @@ async function sendSugerenciaEmail({ cif, nombre, mensaje }) {
   console.log("Email de sugerencia enviado al admin");
 }
 
-module.exports = { sendPasswordResetEmail, sendSugerenciaEmail };
+async function sendCitaEmail({ cif, nombre, fecha, motivo }) {
+  const remitente = nombre || cif || "Cliente desconocido";
+
+  const mailOptions = {
+    from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    to: "info@emrider.es",
+    subject: `[EmRider] Solicitud de cita previa - ${remitente}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h1 style="color: #fbbf24; margin: 0;">EmRider Garage</h1>
+          <p style="color: #888; margin: 4px 0 0;">Nueva solicitud de cita previa</p>
+        </div>
+        <div style="background: #1f2937; border-radius: 10px; padding: 24px; border: 1px solid #374151;">
+          <p style="color: #9ca3af; margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em;">Cliente</p>
+          <p style="color: #f9fafb; margin: 0 0 20px; font-weight: 600;">${remitente}${cif ? ` &middot; <span style="color:#9ca3af">${cif}</span>` : ""}</p>
+          <p style="color: #9ca3af; margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em;">Fecha solicitada</p>
+          <p style="color: #f9fafb; margin: 0 0 20px; font-weight: 600;">${fecha}</p>
+          <p style="color: #9ca3af; margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em;">Motivo</p>
+          <p style="color: #f9fafb; margin: 0; line-height: 1.65; white-space: pre-wrap;">${motivo}</p>
+        </div>
+      </div>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+  console.log("Email de cita previa enviado al admin");
+}
+
+async function sendRecogidaEmail({ cif, nombre, fecha, lugar }) {
+  const remitente = nombre || cif || "Cliente desconocido";
+
+  const mailOptions = {
+    from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    to: "info@emrider.es",
+    subject: `[EmRider] Solicitud de recogida de moto - ${remitente}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h1 style="color: #fbbf24; margin: 0;">EmRider Garage</h1>
+          <p style="color: #888; margin: 4px 0 0;">Nueva solicitud de recogida de moto</p>
+        </div>
+        <div style="background: #1f2937; border-radius: 10px; padding: 24px; border: 1px solid #374151;">
+          <p style="color: #9ca3af; margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em;">Cliente</p>
+          <p style="color: #f9fafb; margin: 0 0 20px; font-weight: 600;">${remitente}${cif ? ` &middot; <span style="color:#9ca3af">${cif}</span>` : ""}</p>
+          <p style="color: #9ca3af; margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em;">Fecha de recogida</p>
+          <p style="color: #f9fafb; margin: 0 0 20px; font-weight: 600;">${fecha}</p>
+          <p style="color: #9ca3af; margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em;">Lugar de recogida</p>
+          <p style="color: #f9fafb; margin: 0; line-height: 1.65;">${lugar}</p>
+        </div>
+      </div>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+  console.log("Email de recogida enviado al admin");
+}
+
+module.exports = { sendPasswordResetEmail, sendSugerenciaEmail, sendRecogidaEmail, sendCitaEmail };

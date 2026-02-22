@@ -63,6 +63,20 @@ class ApiService {
     });
   }
 
+  async solicitarRecogida(cif, nombre, fecha, lugar) {
+    return this.makeRequest("/recogidas", {
+      method: "POST",
+      body: JSON.stringify({ cif, nombre, fecha, lugar }),
+    });
+  }
+
+  async solicitarCita(cif, nombre, fecha, motivo) {
+    return this.makeRequest("/citas", {
+      method: "POST",
+      body: JSON.stringify({ cif, nombre, fecha, motivo }),
+    });
+  }
+
   async forgotPassword(emailOrDni) {
     const isEmail = emailOrDni.includes("@");
     return this.makeRequest("/auth/forgot-password", {
@@ -187,6 +201,10 @@ class ApiService {
 
   async getOrderLinesByClient(clientId) {
     return this.makeRequest(`/gdtaller/order-lines/${encodeURIComponent(clientId)}`);
+  }
+
+  async getMaintenanceAlerts(clientId) {
+    return this.makeRequest(`/gdtaller/maintenance-alerts/${encodeURIComponent(clientId)}`);
   }
 
   // ===== DATOS TÉCNICOS =====

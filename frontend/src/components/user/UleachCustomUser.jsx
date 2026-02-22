@@ -5,7 +5,8 @@ import {
   Phone, FileUser, MapPin, Bike,
   Crown, ChevronDown, ChevronUp,
   ClipboardCheck, HeartHandshake, History,
-  MessageSquarePlus, Send,
+  MessageSquarePlus, Send, AlertTriangle,
+  Truck, X, CalendarDays, LocateFixed, ClipboardList,
 } from "lucide-react";
 import NotificationModal from "../common/NotificationModal";
 import api from "../../../services/Api";
@@ -40,11 +41,58 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
   const [showDetails, setShowDetails] = useState(false);
   const [facturacionAnual, setFacturacionAnual] = useState(0);
   const [loadingNivel, setLoadingNivel] = useState(true);
+  const [garageAlerta, setGarageAlerta] = useState(false);
   const [showSugerencia, setShowSugerencia] = useState(false);
   const [mensajeSugerencia, setMensajeSugerencia] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [showRecogida, setShowRecogida] = useState(false);
+  const [recogidaFecha, setRecogidaFecha] = useState("");
+  const [recogidaLugar, setRecogidaLugar] = useState("");
+  const [enviandoRecogida, setEnviandoRecogida] = useState(false);
+  const [showCita, setShowCita] = useState(false);
+  const [citaFecha, setCitaFecha] = useState("");
+  const [citaMotivo, setCitaMotivo] = useState("");
+  const [enviandoCita, setEnviandoCita] = useState(false);
   const [notif, setNotif] = useState({ open: false, type: "success", message: "" });
   const showNotif = (type, message) => setNotif({ open: true, type, message });
+
+  useEffect(() => {
+    if (!Custom?.cif) return;
+    (async () => {
+      try {
+        const clientId = Custom.gdtaller_id || Custom.id;
+        const [motos, alertasRes] = await Promise.all([
+          api.getMotosByCif(Custom.cif),
+          clientId ? api.getMaintenanceAlerts(clientId).catch(() => ({ data: {} })) : Promise.resolve({ data: {} }),
+        ]);
+
+        // Comprobar alertas de motor (aceite, frenos, refrigerante)
+        const alertasMotor = alertasRes?.data || {};
+        const hayAlertaMotor = Object.values(alertasMotor).some(
+          (mat) => mat && (mat.aceite?.alerta || mat.frenos?.alerta || mat.refrigerante?.alerta)
+        );
+        if (hayAlertaMotor) { setGarageAlerta(true); return; }
+
+        if (!motos || motos.length === 0) return;
+        for (const moto of motos) {
+          const key = moto.matricula || moto.id;
+          if (!key) continue;
+          try {
+            const res = await api.getServiciosByMoto(key);
+            const servicios = res.data || [];
+            if (servicios.length === 0) continue;
+            const conFecha = servicios.filter((s) => s.fecha_proximo_mantenimiento);
+            if (conFecha.length === 0) continue;
+            const prox = conFecha.sort(
+              (a, b) => new Date(b.fecha_servicio || 0) - new Date(a.fecha_servicio || 0)
+            )[0].fecha_proximo_mantenimiento;
+            const diffDias = Math.ceil((new Date(prox) - new Date()) / (1000 * 60 * 60 * 24));
+            if (diffDias < 0) { setGarageAlerta(true); return; }
+          } catch {}
+        }
+      } catch {}
+    })();
+  }, [Custom?.cif, Custom?.gdtaller_id, Custom?.id]);
 
   useEffect(() => {
     const clientId = Custom?.gdtaller_id || Custom?.id;
@@ -69,8 +117,8 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
   const safeDisplay = (value) => value || "—";
 
   const nombreCompleto =
-    Custom.nombre_completo ||
     `${Custom.nombre || ""} ${Custom.apellidos || ""}`.trim() ||
+    Custom.nombre_completo ||
     "Cliente";
   const ubicacion = `${Custom.direccion || ""} ${Custom.poblacion || ""}`
     .replace(/\s+/g, " ")
@@ -83,6 +131,7 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
       label: "Mi Garage",
       sub: "Mis motocicletas",
       color: "blue",
+      alerta: garageAlerta,
     },
     {
       to: "/cliente/settings",
@@ -125,7 +174,7 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
               </span>
             )}
             <span className="badge badge--facturacion">
-              🍌 {Math.round(facturacionAnual).toLocaleString("es-ES")} BananaPoints
+              🍌 {loadingNivel ? "Cargando BananaPoints..." : `${Math.round(facturacionAnual).toLocaleString("es-ES")} BananaPoints`}
             </span>
           </div>
         </div>
@@ -185,12 +234,19 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
       {/* ── NAVEGACIÓN EN CÍRCULOS ── */}
       <nav className="client-circle-nav">
         {NAV_ITEMS.map((item) => (
-          <Link key={item.to} to={item.to} className={`circle-nav-item circle-nav-item--${item.color}`}>
+          <Link key={item.to} to={item.to} className={`circle-nav-item circle-nav-item--${item.color}${item.alerta ? " circle-nav-item--alerta" : ""}`}>
             <div className="circle-nav-item__circle">
               {item.icon}
+              {item.alerta && (
+                <span className="circle-nav-item__alert-badge">
+                  <AlertTriangle />
+                </span>
+              )}
             </div>
             <span className="circle-nav-item__label">{item.label}</span>
-            <span className="circle-nav-item__sub">{item.sub}</span>
+            <span className="circle-nav-item__sub">
+              {item.alerta ? "¡Revisión pendiente!" : item.sub}
+            </span>
           </Link>
         ))}
       </nav>
@@ -260,6 +316,181 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
         message={notif.message}
         onClose={() => setNotif((prev) => ({ ...prev, open: false }))}
       />
+
+      {/* ── BOTÓN CITA PREVIA ── */}
+      <div className="cita-fab-wrap">
+        <span className="cita-fab-wrap__text">Cita previa</span>
+        <button
+          className="cita-fab"
+          onClick={() => setShowCita(true)}
+          title="Cita previa"
+        >
+          <ClipboardList className="cita-fab__icon" />
+        </button>
+      </div>
+
+      {/* ── MODAL CITA PREVIA ── */}
+      {showCita && (
+        <div className="recogida-overlay" onClick={() => setShowCita(false)}>
+          <div className="recogida-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="recogida-modal__header">
+              <div className="recogida-modal__header-left">
+                <ClipboardList className="recogida-modal__icon" />
+                <div>
+                  <h3 className="recogida-modal__title">Cita previa</h3>
+                  <p className="recogida-modal__sub">Reserva tu visita al taller</p>
+                </div>
+              </div>
+              <button className="recogida-modal__close" onClick={() => setShowCita(false)}>
+                <X />
+              </button>
+            </div>
+            <div className="recogida-modal__body">
+              <label className="recogida-modal__label">
+                <CalendarDays size={15} />
+                Día de la cita
+              </label>
+              <input
+                className="recogida-modal__input"
+                type="date"
+                value={citaFecha}
+                min={new Date().toISOString().split("T")[0]}
+                onChange={(e) => setCitaFecha(e.target.value)}
+              />
+              <label className="recogida-modal__label">
+                <ClipboardList size={15} />
+                Motivo de la visita
+              </label>
+              <textarea
+                className="recogida-modal__input"
+                rows={3}
+                placeholder="Describe el motivo de tu visita..."
+                value={citaMotivo}
+                onChange={(e) => setCitaMotivo(e.target.value)}
+                maxLength={500}
+                style={{ resize: "none" }}
+              />
+            </div>
+            <div className="recogida-modal__footer">
+              <button className="recogida-modal__btn-cancel" onClick={() => setShowCita(false)}>
+                Cancelar
+              </button>
+              <button
+                className="recogida-modal__btn-send"
+                disabled={!citaFecha || !citaMotivo.trim() || enviandoCita}
+                onClick={async () => {
+                  setEnviandoCita(true);
+                  try {
+                    await api.solicitarCita(Custom.cif, nombreCompleto, citaFecha, citaMotivo);
+                    setShowCita(false);
+                    setCitaFecha("");
+                    setCitaMotivo("");
+                    showNotif("success", "¡Cita solicitada! Nos pondremos en contacto contigo.");
+                  } catch {
+                    showNotif("error", "Error al enviar. Inténtalo de nuevo.");
+                  } finally {
+                    setEnviandoCita(false);
+                  }
+                }}
+              >
+                <Send size={14} />
+                {enviandoCita ? "Enviando..." : "Solicitar cita"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── BOTÓN RECOGIDA ── */}
+      <div className="recogida-fab-wrap">
+        <span className="recogida-fab-wrap__text">¿Recogemos tu moto?</span>
+        <button
+          className="recogida-fab"
+          onClick={() => setShowRecogida(true)}
+          title="¿Recogemos tu moto?"
+        >
+          <Truck className="recogida-fab__icon" />
+        </button>
+      </div>
+
+      {/* ── MODAL RECOGIDA ── */}
+      {showRecogida && (
+        <div className="recogida-overlay" onClick={() => setShowRecogida(false)}>
+          <div className="recogida-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="recogida-modal__header">
+              <div className="recogida-modal__header-left">
+                <Truck className="recogida-modal__icon" />
+                <div>
+                  <h3 className="recogida-modal__title">¿Recogemos tu moto?</h3>
+                  <p className="recogida-modal__sub">Dinos cuándo y dónde</p>
+                </div>
+              </div>
+              <button className="recogida-modal__close" onClick={() => setShowRecogida(false)}>
+                <X />
+              </button>
+            </div>
+            <div className="recogida-modal__body">
+              <label className="recogida-modal__label">
+                <CalendarDays size={15} />
+                Día de recogida
+              </label>
+              <input
+                className="recogida-modal__input"
+                type="date"
+                value={recogidaFecha}
+                min={new Date().toISOString().split("T")[0]}
+                onChange={(e) => setRecogidaFecha(e.target.value)}
+              />
+              <label className="recogida-modal__label">
+                <LocateFixed size={15} />
+                Lugar de recogida
+              </label>
+              <input
+                className="recogida-modal__input"
+                type="text"
+                placeholder="Dirección completa..."
+                value={recogidaLugar}
+                onChange={(e) => setRecogidaLugar(e.target.value)}
+                maxLength={200}
+              />
+            </div>
+            <div className="recogida-modal__footer">
+              <button
+                className="recogida-modal__btn-cancel"
+                onClick={() => setShowRecogida(false)}
+              >
+                Cancelar
+              </button>
+              <button
+                className="recogida-modal__btn-send"
+                disabled={!recogidaFecha || !recogidaLugar.trim() || enviandoRecogida}
+                onClick={async () => {
+                  setEnviandoRecogida(true);
+                  try {
+                    await api.solicitarRecogida(
+                      Custom.cif,
+                      nombreCompleto,
+                      recogidaFecha,
+                      recogidaLugar
+                    );
+                    setShowRecogida(false);
+                    setRecogidaFecha("");
+                    setRecogidaLugar("");
+                    showNotif("success", "¡Solicitud enviada! Nos pondremos en contacto contigo.");
+                  } catch {
+                    showNotif("error", "Error al enviar. Inténtalo de nuevo.");
+                  } finally {
+                    setEnviandoRecogida(false);
+                  }
+                }}
+              >
+                <Send size={14} />
+                {enviandoRecogida ? "Enviando..." : "Solicitar recogida"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

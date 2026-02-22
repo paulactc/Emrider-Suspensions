@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import UleachCustomUser from "./UleachCustomUser";
 import ClienteQuestionario from "./ClienteQuestionario";
 import NotificationModal from "../common/NotificationModal";
+import LoadingModal from "../common/LoadingModal";
 // ✅ CORREGIDO: Ruta de importación del API
 import api from "../../../services/Api";
 
@@ -227,86 +228,30 @@ function Cliente({ listCustom, listBikes }) {
 
   // 🔄 ESTADO DE CARGA
   if (loading) {
-    return (
-      <div className="cliente-container">
-        <div
-          style={{
-            textAlign: "center",
-            padding: "2rem",
-            background: "#f0f0f0",
-            borderRadius: "8px",
-            margin: "2rem",
-          }}
-        >
-          <h2>🔄 Cargando datos del cliente...</h2>
-          <p>Por favor espera mientras cargamos tu información.</p>
-        </div>
-      </div>
-    );
+    return <LoadingModal message="Cargando datos del cliente..." />;
   }
 
   // ❌ ESTADO DE ERROR
   if (error) {
     return (
-      <div className="cliente-container">
-        <div
-          style={{
-            textAlign: "center",
-            padding: "2rem",
-            background: "#ffebee",
-            borderRadius: "8px",
-            margin: "2rem",
-            border: "1px solid #f44336",
-          }}
-        >
-          <h2>❌ Error al cargar datos</h2>
-          <p>{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              background: "#f44336",
-              color: "white",
-              border: "none",
-              padding: "0.5rem 1rem",
-              borderRadius: "4px",
-              cursor: "pointer",
-              marginTop: "1rem",
-            }}
-          >
-            🔄 Recargar página
-          </button>
-        </div>
-      </div>
+      <NotificationModal
+        isOpen={true}
+        type="error"
+        message={error}
+        onClose={() => window.location.reload()}
+      />
     );
   }
 
   // ❌ SIN DATOS DE CLIENTE
   if (!customToRender) {
     return (
-      <div className="cliente-container">
-        <div
-          style={{
-            textAlign: "center",
-            padding: "2rem",
-            background: "#fff3e0",
-            borderRadius: "8px",
-            margin: "2rem",
-            border: "1px solid #ff9800",
-          }}
-        >
-          <h2>⚠️ No se encontraron datos del cliente</h2>
-          <p>No pudimos cargar la información del cliente.</p>
-          <p>
-            <strong>Posibles soluciones:</strong>
-          </p>
-          <ul style={{ textAlign: "left", display: "inline-block" }}>
-            <li>Verifica que hay clientes en la base de datos</li>
-            <li>Cambia el valor de CLIENTE_INDEX en el código (línea 14)</li>
-            <li>Revisa la consola del navegador para más detalles</li>
-            <li>Verifica que el servicio API está funcionando</li>
-          </ul>
-        </div>
-      </div>
+      <NotificationModal
+        isOpen={true}
+        type="error"
+        message="No se pudieron cargar los datos del cliente. Inténtalo de nuevo."
+        onClose={() => window.location.reload()}
+      />
     );
   }
 

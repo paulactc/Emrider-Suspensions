@@ -56,11 +56,17 @@ router.post("/", async (req, res) => {
 
     // UPSERT datos del cliente (omitir si skipClientSave es true)
     if (!skipClientSave) {
+      const aceptaNotif = cliente.aceptaNotificaciones === false ? 0 : 1;
+
       await pool.execute(
-        `INSERT INTO cuestionario_clientes (cif, peso, nivel_pilotaje, fecha_ultima_confirmacion)
-         VALUES (?, ?, ?, NOW())
-         ON DUPLICATE KEY UPDATE peso = VALUES(peso), nivel_pilotaje = VALUES(nivel_pilotaje), fecha_ultima_confirmacion = NOW()`,
-        [cif, cliente.peso, cliente.nivelPilotaje]
+        `INSERT INTO cuestionario_clientes (cif, peso, nivel_pilotaje, acepta_notificaciones, fecha_ultima_confirmacion)
+         VALUES (?, ?, ?, ?, NOW())
+         ON DUPLICATE KEY UPDATE
+           peso = VALUES(peso),
+           nivel_pilotaje = VALUES(nivel_pilotaje),
+           acepta_notificaciones = VALUES(acepta_notificaciones),
+           fecha_ultima_confirmacion = NOW()`,
+        [cif, cliente.peso, cliente.nivelPilotaje, aceptaNotif]
       );
     }
 
@@ -116,7 +122,7 @@ router.get("/status/:id", async (req, res) => {
     let cliente = { peso: null, nivelPilotaje: null, fechaUltimaConfirmacion: null };
     try {
       const [rows] = await pool.execute(
-        `SELECT peso, nivel_pilotaje AS nivelPilotaje, fecha_ultima_confirmacion AS fechaUltimaConfirmacion
+        `SELECT peso, nivel_pilotaje AS nivelPilotaje, acepta_notificaciones AS aceptaNotificaciones, fecha_ultima_confirmacion AS fechaUltimaConfirmacion
          FROM cuestionario_clientes WHERE cif = ?`,
         [cif]
       );

@@ -205,6 +205,105 @@ router.get("/test-vehicules", async (_req, res) => {
   }
 });
 
+// Normaliza matrícula: sin espacios, mayúsculas
+function normMat(m) {
+  return (m || "").replace(/\s+/g, "").toUpperCase();
+}
+
+// GET - Alertas de mantenimiento de motor por cliente (aceite, frenos, refrigerante)
+router.get("/maintenance-alerts/:clientId", async (req, res) => {
+  const { clientId } = req.params;
+
+  const RULES = [
+    {
+      id: "aceite",
+      label: "Cambio de aceite de motor",
+      keywords: ["motul", "aceite motor", "aceite de motor"],
+      meses: 12,
+    },
+    {
+      id: "frenos",
+      label: "Cambio de líquido de frenos",
+      keywords: ["liquido de frenos", "líquido de frenos", "liquid frenos", "frenos motul", "dot 4", "dot4", "dot 5", "dot5"],
+      meses: 24,
+    },
+    {
+      id: "refrigerante",
+      label: "Cambio de líquido refrigerante",
+      keywords: ["refrigerante", "anticongelante", "liquido refrigerante", "líquido refrigerante"],
+      meses: 24,
+    },
+  ];
+
+  try {
+    // Cargar líneas y vehículos en paralelo
+    const [lines, rawVehicles] = await Promise.all([
+      gdtallerService.getOrderLines(),
+      gdtallerService.getVehicles().catch(() => []),
+    ]);
+
+    // Mapa vehiculoID → matrícula normalizada (para líneas sin matrícula)
+    const vehiculoMatMap = {};
+    for (const v of rawVehicles) {
+      const vid = v.vehiculoID || v.id;
+      const mat = normMat(v.matricula);
+      if (vid && mat) vehiculoMatMap[String(vid)] = mat;
+    }
+
+    const clientLines = lines.filter((l) => String(l.clienteID) === String(clientId));
+
+    console.log(`[maintenance-alerts] clientId=${clientId} → ${clientLines.length} líneas encontradas`);
+
+    // Agrupar líneas por matrícula NORMALIZADA (con fallback a vehiculoID)
+    const byMatricula = {};
+    for (const line of clientLines) {
+      const mat = normMat(line.matricula) || vehiculoMatMap[String(line.vehiculoID)] || "";
+      if (!mat) continue;
+      if (!byMatricula[mat]) byMatricula[mat] = [];
+      byMatricula[mat].push(line);
+    }
+
+    console.log(`[maintenance-alerts] matrículas encontradas: ${Object.keys(byMatricula).join(", ")}`);
+
+    const resultado = {};
+
+    for (const [mat, motoLines] of Object.entries(byMatricula)) {
+      resultado[mat] = {};
+
+      for (const rule of RULES) {
+        let ultimaFecha = null;
+
+        for (const line of motoLines) {
+          const texto = `${line.desc || ""} ${line.ref || ""} ${line.obs || ""}`.toLowerCase();
+          const coincide = rule.keywords.some((kw) => texto.includes(kw.toLowerCase()));
+          if (!coincide || !line.orFecha) continue;
+
+          const fecha = new Date(line.orFecha);
+          if (!ultimaFecha || fecha > ultimaFecha) ultimaFecha = fecha;
+        }
+
+        if (ultimaFecha) {
+          const mesesTranscurridos = (Date.now() - ultimaFecha.getTime()) / (1000 * 60 * 60 * 24 * 30.44);
+          resultado[mat][rule.id] = {
+            ultimaFecha: ultimaFecha.toISOString().split("T")[0],
+            alerta: mesesTranscurridos >= rule.meses,
+            label: rule.label,
+            meses: rule.meses,
+            mesesDesde: Math.floor(mesesTranscurridos),
+          };
+        } else {
+          resultado[mat][rule.id] = null;
+        }
+      }
+    }
+
+    res.json({ success: true, data: resultado });
+  } catch (error) {
+    console.error("Error calculando alertas de mantenimiento:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // POST - Limpiar cache de GDTaller
 router.post("/clear-cache", async (req, res) => {
   gdtallerService.clearCache();
