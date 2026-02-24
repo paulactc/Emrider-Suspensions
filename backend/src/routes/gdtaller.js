@@ -24,6 +24,46 @@ router.get("/test-connection", async (req, res) => {
   }
 });
 
+// GET - Debug: ver vehículos RAW de GDTaller para un cliente por CIF
+router.get("/debug-vehicles/:cif", async (req, res) => {
+  try {
+    const { cif } = req.params;
+    gdtallerService.clearCache();
+    const cifNorm = cif.replace(/\s+/g, "").toLowerCase();
+
+    // Buscar clienteID del cliente
+    const rawClients = await gdtallerService.getClients();
+    const client = rawClients.find(
+      (c) => c.cif && c.cif.replace(/\s+/g, "").toLowerCase() === cifNorm
+    );
+
+    // Obtener todos los vehículos raw
+    const rawVehicles = await gdtallerService.getVehicles();
+
+    // Filtrar por clienteID (si lo encontramos)
+    const byClienteID = client
+      ? rawVehicles.filter((v) => String(v.clienteID) === String(client.clienteID))
+      : [];
+
+    // Filtrar por cliCif
+    const byCliCif = rawVehicles.filter(
+      (v) => v.cliCif && v.cliCif.replace(/\s+/g, "").toLowerCase() === cifNorm
+    );
+
+    res.json({
+      cif_buscado: cif,
+      cif_normalizado: cifNorm,
+      cliente_encontrado: client || null,
+      total_vehiculos_gdtaller: rawVehicles.length,
+      muestra_raw_primer_vehiculo: rawVehicles[0] || null,
+      vehiculos_por_clienteID: byClienteID,
+      vehiculos_por_cliCif: byCliCif,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // GET - Debug: ver datos RAW de GDTaller para un cliente por CIF
 router.get("/debug-client/:cif", async (req, res) => {
   try {
@@ -118,10 +158,11 @@ router.get("/order-lines/:clientId", async (req, res) => {
       (l) => String(l.clienteID) === String(clientId)
     );
 
-    // Agrupar por numero de orden
+    // Agrupar por numero de orden (solo ordenes OR..., excluir EC... entregas a cuenta y similares)
     const ordersMap = {};
     for (const line of clientLines) {
       const key = line.orNum;
+      if (!key || !key.toUpperCase().startsWith("OR")) continue;
       if (!ordersMap[key]) {
         const vehicle = vehiclesMap[line.vehiculoID] || null;
         ordersMap[key] = {

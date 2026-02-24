@@ -88,9 +88,13 @@ async function getClients(options = {}) {
     return cache.clients.data;
   }
 
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
   const params = {};
   params.startDate = options.startDate || "2020-01-01";
-  params.endDate = options.endDate || new Date().toISOString().split("T")[0];
+  params.endDate = options.endDate || tomorrowStr;
 
   const response = await callGDTallerAPI("GetClients", params);
 
@@ -131,9 +135,15 @@ async function getVehicles(options = {}) {
     return cache.vehicles.data;
   }
 
+  // endDate con +1 día para que la API de GDTaller incluya registros del día de hoy
+  // (el filtro de GDTaller es exclusivo en el extremo superior)
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
   const params = {};
   params.startDate = options.startDate || "2021-01-01";
-  params.endDate = options.endDate || new Date().toISOString().split("T")[0];
+  params.endDate = options.endDate || tomorrowStr;
 
   if (options.clientId) {
     params.clientId = options.clientId;
