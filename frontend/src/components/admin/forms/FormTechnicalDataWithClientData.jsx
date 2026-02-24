@@ -315,8 +315,9 @@ const FormTechnicalDataWithClientData = React.memo(
         try {
           const servicios = await api.getServiciosByMoto(motoId);
           if (servicios.success && servicios.data.length > 0) {
+            // Solo cargar servicios pendientes: los completados ya están archivados
             const serviciosFiltrados = servicios.data.filter(
-              (s) => s.tipo_suspension === tipoSuspension
+              (s) => s.tipo_suspension === tipoSuspension && s.status === "pending"
             );
 
             if (serviciosFiltrados.length > 0) {

@@ -66,10 +66,16 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
           clientId ? api.getMaintenanceAlerts(clientId).catch(() => ({ data: {} })) : Promise.resolve({ data: {} }),
         ]);
 
-        // Comprobar alertas de motor (aceite, frenos, refrigerante)
+        // Comprobar alertas de motor y suspensiones (aceite, frenos, refrigerante, FF, RR)
         const alertasMotor = alertasRes?.data || {};
         const hayAlertaMotor = Object.values(alertasMotor).some(
-          (mat) => mat && (mat.aceite?.alerta || mat.frenos?.alerta || mat.refrigerante?.alerta)
+          (mat) =>
+            mat &&
+            (mat.aceite?.alerta ||
+              mat.frenos?.alerta ||
+              mat.refrigerante?.alerta ||
+              mat.ff?.alerta ||
+              mat.rr?.alerta)
         );
         if (hayAlertaMotor) { setGarageAlerta(true); return; }
 
@@ -161,6 +167,16 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
 
       {/* ── CABECERA ── */}
       <div className="client-summary">
+        {/* Botones de acción en esquinas superiores */}
+        <button className="summary-corner-btn summary-corner-btn--left" onClick={() => setShowCita(true)}>
+          <span className="summary-corner-btn__circle"><ClipboardList size={20} /></span>
+          <span className="summary-corner-btn__label">Cita previa</span>
+        </button>
+        <button className="summary-corner-btn summary-corner-btn--right" onClick={() => setShowRecogida(true)}>
+          <span className="summary-corner-btn__circle"><Truck size={20} /></span>
+          <span className="summary-corner-btn__label">Recogida</span>
+        </button>
+
         <div className="client-summary__center">
           <div className="client-summary__avatar">
             <img src="/images/Logomonoemrider.jpeg" alt="EmRider" className="client-summary__avatar-img" />
@@ -317,17 +333,6 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
         onClose={() => setNotif((prev) => ({ ...prev, open: false }))}
       />
 
-      {/* ── BOTÓN CITA PREVIA ── */}
-      <div className="cita-fab-wrap">
-        <span className="cita-fab-wrap__text">Cita previa</span>
-        <button
-          className="cita-fab"
-          onClick={() => setShowCita(true)}
-          title="Cita previa"
-        >
-          <ClipboardList className="cita-fab__icon" />
-        </button>
-      </div>
 
       {/* ── MODAL CITA PREVIA ── */}
       {showCita && (
@@ -401,17 +406,6 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
         </div>
       )}
 
-      {/* ── BOTÓN RECOGIDA ── */}
-      <div className="recogida-fab-wrap">
-        <span className="recogida-fab-wrap__text">¿Recogemos tu moto?</span>
-        <button
-          className="recogida-fab"
-          onClick={() => setShowRecogida(true)}
-          title="¿Recogemos tu moto?"
-        >
-          <Truck className="recogida-fab__icon" />
-        </button>
-      </div>
 
       {/* ── MODAL RECOGIDA ── */}
       {showRecogida && (

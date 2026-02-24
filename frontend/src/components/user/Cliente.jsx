@@ -82,14 +82,6 @@ function Cliente({ listCustom, listBikes }) {
           }
         }
 
-        // Si GDTaller no tiene nombre, usar el nombre del usuario local (si no es el DNI)
-        if (!cliente.nombre) {
-          const dniRegex = /^[0-9]{8}[A-Za-z]$/;
-          if (user.nombre && !dniRegex.test(user.nombre)) {
-            cliente = { ...cliente, nombre: user.nombre };
-          }
-        }
-
         // Si no se encontró cliente en GDTaller, crear uno básico desde los datos del usuario registrado
         if (!cliente && userCif) {
           console.log("⚠️ Cliente no encontrado en GDTaller, usando datos locales del usuario");
@@ -101,6 +93,14 @@ function Cliente({ listCustom, listBikes }) {
             email: user.email || "",
             telefono: user.telefono || "",
           };
+        }
+
+        // Si GDTaller no tiene nombre, usar el nombre del usuario local (si no es el DNI)
+        if (cliente && !cliente.nombre) {
+          const dniRegex = /^[A-Za-z0-9]{7,12}$/;
+          if (user.nombre && !dniRegex.test(user.nombre)) {
+            cliente = { ...cliente, nombre: user.nombre };
+          }
         }
 
         // ✅ VALIDACIÓN: Verificar que tenemos un cliente válido

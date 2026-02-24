@@ -4,6 +4,75 @@ const router = express.Router();
 const { pool } = require("../config/database");
 const gdtallerService = require("../services/gdtallerService");
 
+// Helper: enriquecer servicios con nombre de cliente y marca/modelo de moto desde GDTaller
+async function enrichWithGDTallerData(rows) {
+  try {
+    // Obtener datos de GDTaller y nombres registrados localmente en paralelo
+    const [rawClients, rawVehicles, usuariosRows] = await Promise.all([
+      gdtallerService.getClients(),
+      gdtallerService.getVehicles(),
+      pool.execute(
+        `SELECT dni, nombre FROM usuarios WHERE dni IS NOT NULL AND dni != ''`
+      ).then(([r]) => r).catch(() => []),
+    ]);
+
+    // Mapa de nombres locales: dni (normalizado) → nombre registrado
+    const nombreLocalPorDni = {};
+    for (const u of usuariosRows) {
+      if (u.dni) nombreLocalPorDni[u.dni.replace(/\s+/g, "").toLowerCase()] = u.nombre;
+    }
+
+    const clients  = rawClients.map(gdtallerService.mapClientFromGDTaller);
+    const vehicles = rawVehicles.map(gdtallerService.mapVehicleFromGDTaller);
+
+    const clientByCif = {};
+    const clientById  = {};
+    clients.forEach((c) => {
+      if (c.cif) clientByCif[c.cif.replace(/\s+/g, "").toLowerCase()] = c;
+      if (c.id)  clientById[String(c.id)] = c;
+    });
+
+    const vehicleById        = {};
+    const vehicleByMatricula = {};
+    vehicles.forEach((v) => {
+      if (v.id)        vehicleById[String(v.id)] = v;
+      if (v.matricula) {
+        vehicleByMatricula[v.matricula.replace(/\s+/g, "").toUpperCase()] = v;
+      }
+    });
+
+    return rows.map((row) => {
+      // Buscar cliente en GDTaller
+      let client = null;
+      const cifNorm = row.cif_cliente ? row.cif_cliente.replace(/\s+/g, "").toLowerCase() : null;
+      if (cifNorm) client = clientByCif[cifNorm] || null;
+      if (!client && row.cliente_id) client = clientById[String(row.cliente_id)] || null;
+
+      // Prioridad: nombre registrado en la app → nombre GDTaller completo → nombre GDTaller parcial
+      const nombreLocal = cifNorm ? (nombreLocalPorDni[cifNorm] || null) : null;
+      const nombreGDTaller = client?.nombre_completo || client?.nombre || null;
+      const nombre_cliente = nombreLocal || nombreGDTaller || null;
+
+      // Buscar vehículo
+      let vehicle = null;
+      if (row.moto_id) vehicle = vehicleById[String(row.moto_id)] || null;
+      if (!vehicle && row.matricula_moto) {
+        vehicle = vehicleByMatricula[row.matricula_moto.replace(/\s+/g, "").toUpperCase()] || null;
+      }
+
+      return {
+        ...row,
+        nombre_cliente,
+        moto_marca_gdtaller:  vehicle?.marca  || null,
+        moto_modelo_gdtaller: vehicle?.modelo || null,
+      };
+    });
+  } catch (err) {
+    console.warn("No se pudo enriquecer con datos de GDTaller:", err.message);
+    return rows;
+  }
+}
+
 // Helper: resolver GDTaller IDs a CIF/matricula
 async function resolveIdentifiers({ motoId, clienteId, cif, matricula }) {
   let resolvedCif = cif || null;
@@ -56,6 +125,48 @@ router.get("/stats/dashboard", async (req, res) => {
       message: "Error al obtener estadisticas",
       error: error.message,
     });
+  }
+});
+
+// GET - Obtener todos los servicios pendientes (sin datos técnicos aún)
+router.get("/pending", async (req, res) => {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT
+        id, moto_id, cliente_id, cif_cliente, matricula_moto,
+        numero_orden, fecha_servicio, km_moto,
+        servicio_suspension, observaciones, marca, modelo, año,
+        tipo_suspension, status, created_at
+       FROM servicios_info
+       WHERE status = 'pending'
+       ORDER BY created_at DESC`
+    );
+    const enriched = await enrichWithGDTallerData(rows);
+    res.json({ success: true, data: enriched });
+  } catch (error) {
+    console.error("Error obteniendo servicios pendientes:", error);
+    res.status(500).json({ success: false, message: "Error al obtener servicios pendientes", error: error.message });
+  }
+});
+
+// GET - Obtener todos los servicios finalizados (con datos técnicos guardados)
+router.get("/completed", async (req, res) => {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT
+        id, moto_id, cliente_id, cif_cliente, matricula_moto,
+        numero_orden, fecha_servicio, km_moto,
+        servicio_suspension, observaciones, marca, modelo, año,
+        tipo_suspension, status, created_at, updated_at
+       FROM servicios_info
+       WHERE status = 'completed'
+       ORDER BY updated_at DESC`
+    );
+    const enriched = await enrichWithGDTallerData(rows);
+    res.json({ success: true, data: enriched });
+  } catch (error) {
+    console.error("Error obteniendo servicios completados:", error);
+    res.status(500).json({ success: false, message: "Error al obtener servicios completados", error: error.message });
   }
 });
 

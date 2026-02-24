@@ -328,6 +328,16 @@ class ApiService {
     return this.makeRequest("/servicios-info/stats/dashboard");
   }
 
+  // Obtener todos los servicios pendientes (para técnico)
+  async getPendingServicios() {
+    return this.makeRequest("/servicios-info/pending");
+  }
+
+  // Obtener todos los servicios finalizados (para técnico)
+  async getCompletedServicios() {
+    return this.makeRequest("/servicios-info/completed");
+  }
+
   // Verificar si existe información de servicio para una moto
   async checkServicioExists(motoId) {
     try {

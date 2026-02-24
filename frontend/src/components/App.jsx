@@ -21,6 +21,8 @@ import TechnicalDataAdmin from "./admin/forms/TechnicalDataAdmin";
 import FormTechnicalFF from "./admin/forms/FormTechnicalFF.jsx";
 import FormTechnicalRR from "./admin/forms/FormTechnicalRR.jsx";
 import FormTechnicalDataWithClientData from "./admin/forms/FormTechnicalDataWithClientData";
+import TrabajosAdmin from "./admin/TrabajosAdmin";
+import ServicioDetalleAdmin from "./admin/ServicioDetalleAdmin";
 
 // Importar el servicio API
 import apiService from "../../services/Api.jsx";
@@ -267,6 +269,11 @@ function App() {
         {/* 🔑 RECUPERACION DE CONTRASEÑA */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+        {/* 🔧 TRABAJOS PENDIENTES / FINALIZADOS (TÉCNICO) */}
+        <Route path="/admin/trabajos-pendientes" element={<TrabajosAdmin modo="pendientes" />} />
+        <Route path="/admin/trabajos-finalizados" element={<TrabajosAdmin modo="finalizados" />} />
+        <Route path="/admin/servicio/:id" element={<ServicioDetalleAdmin />} />
 
         {/* 📝 FORMULARIOS */}
         <Route path="/nuevo-usuario" element={<FormNewUser />} />

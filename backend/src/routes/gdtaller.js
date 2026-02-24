@@ -233,6 +233,28 @@ router.get("/maintenance-alerts/:clientId", async (req, res) => {
       keywords: ["refrigerante", "anticongelante", "liquido refrigerante", "líquido refrigerante"],
       meses: 24,
     },
+    {
+      id: "ff",
+      label: "Mantenimiento horquilla delantera (FF)",
+      // Ambas palabras de cada grupo deben aparecer en la misma línea de OR
+      keywordGroups: [
+        ["mantenimiento", "ff"],
+        ["modificacion", "ff"],
+        ["modificación", "ff"],
+      ],
+      meses: 12,
+    },
+    {
+      id: "rr",
+      label: "Mantenimiento amortiguador trasero (RR)",
+      keywordGroups: [
+        ["mantenimiento", "rr"],
+        ["mantenimiento", "amortiguador trasero"],
+        ["mantenimiento", "cambio de retenes"],
+        ["mantenimiento", "cambio retenes"],
+      ],
+      meses: 12,
+    },
   ];
 
   try {
@@ -275,7 +297,11 @@ router.get("/maintenance-alerts/:clientId", async (req, res) => {
 
         for (const line of motoLines) {
           const texto = `${line.desc || ""} ${line.ref || ""} ${line.obs || ""}`.toLowerCase();
-          const coincide = rule.keywords.some((kw) => texto.includes(kw.toLowerCase()));
+          const coincide = rule.keywords
+            ? rule.keywords.some((kw) => texto.includes(kw.toLowerCase()))
+            : rule.keywordGroups.some((group) =>
+                group.every((kw) => texto.includes(kw.toLowerCase()))
+              );
           if (!coincide || !line.orFecha) continue;
 
           const fecha = new Date(line.orFecha);

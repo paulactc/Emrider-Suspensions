@@ -98,7 +98,13 @@ function ClienteGarage() {
     if (mant.status === "caducado") return true;
     const alertas = alertasMotor[normMat(moto.matricula)];
     if (!alertas) return false;
-    return !!(alertas.aceite?.alerta || alertas.frenos?.alerta || alertas.refrigerante?.alerta);
+    return !!(
+      alertas.aceite?.alerta ||
+      alertas.frenos?.alerta ||
+      alertas.refrigerante?.alerta ||
+      alertas.ff?.alerta ||
+      alertas.rr?.alerta
+    );
   };
 
   if (loading || loadingMotos) {
@@ -147,7 +153,6 @@ function ClienteGarage() {
         <div className="client-motos-list">
           {motos.map((moto) => {
             const motoKey = moto.matricula || moto.id;
-            const mantenimiento = getMantenimientoStatus(moto);
             const hayAlerta = tieneCualquierAlerta(moto);
             const isOpen = motoExpandida === motoKey;
             return (
@@ -168,9 +173,10 @@ function ClienteGarage() {
                   </div>
                   <div className="moto-card__toggle-right">
                     {hayAlerta && (
-                      <AlertTriangle className="moto-card__alert-icon" />
+                      <span className="moto-card__alert-wrap">
+                        <AlertTriangle className="moto-card__alert-icon" />
+                      </span>
                     )}
-                    <div className={`moto-card__status-dot moto-card__status-dot--${hayAlerta ? "caducado" : mantenimiento.status}`} />
                     {isOpen ? <ChevronUp /> : <ChevronDown />}
                   </div>
                 </button>
@@ -231,7 +237,21 @@ function ClienteGarage() {
                       const af = alertasMat.frenos;
                       const ar = alertasMat.refrigerante;
 
-                      const stSusp = mantenimiento;
+                      const ffData = alertasMat.ff;
+                      const rrData = alertasMat.rr;
+
+                      const stFF = !ffData
+                        ? { status: "sin-datos", texto: "Sin servicio de horquilla delantera en historial de OR" }
+                        : ffData.alerta
+                        ? { status: "caducado", texto: `Mantenimiento caducado · último servicio hace ${ffData.mesesDesde} meses (${formatDate(ffData.ultimaFecha)})` }
+                        : { status: "ok", texto: `Último servicio: ${formatDate(ffData.ultimaFecha)} · hace ${ffData.mesesDesde} meses` };
+
+                      const stRR = !rrData
+                        ? { status: "sin-datos", texto: "Sin servicio de amortiguador trasero en historial de OR" }
+                        : rrData.alerta
+                        ? { status: "caducado", texto: `Mantenimiento caducado · último servicio hace ${rrData.mesesDesde} meses (${formatDate(rrData.ultimaFecha)})` }
+                        : { status: "ok", texto: `Último servicio: ${formatDate(rrData.ultimaFecha)} · hace ${rrData.mesesDesde} meses` };
+
                       const stAceite = !a
                         ? { status: "sin-datos", texto: "Sin registro de cambio de aceite" }
                         : a.alerta
@@ -249,7 +269,8 @@ function ClienteGarage() {
                         : { status: "ok", texto: `Último cambio: ${formatDate(ar.ultimaFecha)} · hace ${ar.mesesDesde} meses` };
 
                       const hayAviso =
-                        stSusp.status === "caducado" ||
+                        stFF.status === "caducado" ||
+                        stRR.status === "caducado" ||
                         stAceite.status === "caducado" ||
                         stFreno.status === "caducado" ||
                         stRefri.status === "caducado";
@@ -265,12 +286,21 @@ function ClienteGarage() {
                             )}
                           </div>
 
-                          {/* Suspensiones */}
+                          {/* Horquilla Delantera (FF) */}
                           <div className="moto-avisos__item">
-                            <span className="moto-avisos__item-label"><Wrench size={13} /> Suspensiones</span>
-                            <div className={`moto-card__mantenimiento moto-card__mantenimiento--${stSusp.status}`}>
+                            <span className="moto-avisos__item-label"><Wrench size={13} /> Horquilla delantera (FF)</span>
+                            <div className={`moto-card__mantenimiento moto-card__mantenimiento--${stFF.status}`}>
                               <Wrench className="moto-card__mantenimiento-icon" />
-                              <span>{stSusp.texto}</span>
+                              <span>{stFF.texto}</span>
+                            </div>
+                          </div>
+
+                          {/* Amortiguador Trasero (RR) */}
+                          <div className="moto-avisos__item">
+                            <span className="moto-avisos__item-label"><Wrench size={13} /> Amortiguador trasero (RR)</span>
+                            <div className={`moto-card__mantenimiento moto-card__mantenimiento--${stRR.status}`}>
+                              <Wrench className="moto-card__mantenimiento-icon" />
+                              <span>{stRR.texto}</span>
                             </div>
                           </div>
 

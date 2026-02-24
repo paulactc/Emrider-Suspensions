@@ -369,8 +369,8 @@ const CuestionarioParaTecnico = ({
 
         .estado-item.completo {
           background: rgba(16, 185, 129, 0.1);
-          border: 1px solid #dce4e1ff;
-          color: #74837eff;
+          border: 1px solid rgba(16, 185, 129, 0.35);
+          color: #4ade80;
         }
 
         .estado-item.incompleto {

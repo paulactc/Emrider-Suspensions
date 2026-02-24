@@ -38,8 +38,9 @@ function LandingPage(props) {
     }
 
     try {
-      // Detectar si el usuario introduce un DNI/NIF o un email
-      const isDni = /^[0-9]{7,8}[a-zA-Z]$/.test(login.user.trim());
+      // Detectar si el usuario introduce un DNI/NIE/CIF o un email
+      // DNI: 12345678A | NIE: X1234567A / Y1234567A / Z1234567A | CIF: A12345678
+      const isDni = !login.user.trim().includes("@");
       const result = isDni
         ? await api.loginWithDni(login.user.trim(), login.pass)
         : await api.login(login.user.trim(), login.pass);

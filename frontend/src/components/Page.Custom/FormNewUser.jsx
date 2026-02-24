@@ -8,7 +8,8 @@ function FormNewUser() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const dniRegex = /^[0-9]{8}[A-Z]$/;
+  // Acepta DNI (12345678A), NIE (X1234567A / Y1234567A / Z1234567A) y CIF (A12345678)
+  const dniRegex = /^[A-Z0-9]{7,12}$/;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -41,7 +42,7 @@ function FormNewUser() {
       return;
     }
     if (!dniRegex.test(dni)) {
-      setError("El DNI debe tener 8 dígitos seguidos de una letra mayúscula.");
+      setError("El DNI/NIE/CIF no es válido. Ejemplos: 12345678A, Y2829888M, A12345678");
       return;
     }
     if (password === "") {
@@ -73,9 +74,9 @@ function FormNewUser() {
       });
 
       if (result && result.success) {
-        setSuccess("Usuario creado correctamente. Redirigiendo al login...");
+        setSuccess("Usuario creado correctamente. Redirigiendo...");
         setTimeout(() => {
-          navigate("/login");
+          navigate("/");
         }, 2000);
       } else {
         setError(result?.message || "Error al registrar el usuario.");
@@ -138,7 +139,7 @@ function FormNewUser() {
               type="text"
               name="nombre"
               id="nombre"
-              placeholder="Antonio Ruiz Cifuentes"
+              placeholder="Nombre y apellidos"
             />
           </div>
 

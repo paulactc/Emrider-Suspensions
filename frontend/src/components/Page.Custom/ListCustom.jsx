@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router";
+import { Wrench, CheckCircle } from "lucide-react";
 import InputSearchCustom from "../admin/forms/InputSearchCustom";
 import UleachCustom from "../Page.Custom/UleachCustom";
+import api from "../../../services/Api";
 
 function ListCustom({
   listCustom,
@@ -10,6 +13,18 @@ function ListCustom({
   listBikes,
   loading = false,
 }) {
+
+  const [pendingCount, setPendingCount] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
+
+  useEffect(() => {
+    api.getPendingServicios()
+      .then((res) => setPendingCount((res.data || []).length))
+      .catch(() => {});
+    api.getCompletedServicios()
+      .then((res) => setCompletedCount((res.data || []).length))
+      .catch(() => {});
+  }, []);
 
   // --- PAGINACIÓN ---
   const [paginaActual, setPaginaActual] = useState(1);
@@ -78,6 +93,35 @@ function ListCustom({
       <div>
         <div>
           <h2>LISTA DE CLIENTES</h2>
+        </div>
+
+        {/* ── ACCESOS TRABAJOS ── */}
+        <div className="admin-trabajos-accesos">
+          <Link to="/admin/trabajos-pendientes" className="admin-trabajo-acceso admin-trabajo-acceso--pendientes">
+            <div className="admin-trabajo-acceso__icon">
+              <Wrench size={20} />
+            </div>
+            <div className="admin-trabajo-acceso__text">
+              <span className="admin-trabajo-acceso__title">Pendientes</span>
+              <span className="admin-trabajo-acceso__sub">Sin datos técnicos</span>
+            </div>
+            <span className={`admin-trabajo-acceso__badge${pendingCount > 0 ? " admin-trabajo-acceso__badge--alert" : ""}`}>
+              {pendingCount}
+            </span>
+          </Link>
+
+          <Link to="/admin/trabajos-finalizados" className="admin-trabajo-acceso admin-trabajo-acceso--finalizados">
+            <div className="admin-trabajo-acceso__icon">
+              <CheckCircle size={20} />
+            </div>
+            <div className="admin-trabajo-acceso__text">
+              <span className="admin-trabajo-acceso__title">Finalizados</span>
+              <span className="admin-trabajo-acceso__sub">Datos técnicos guardados</span>
+            </div>
+            <span className="admin-trabajo-acceso__badge">
+              {completedCount}
+            </span>
+          </Link>
         </div>
 
         <InputSearchCustom
