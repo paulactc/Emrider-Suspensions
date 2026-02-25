@@ -259,13 +259,27 @@ router.get("/maintenance-alerts/:clientId", async (req, res) => {
     {
       id: "aceite",
       label: "Cambio de aceite de motor",
-      keywords: ["motul", "aceite motor", "aceite de motor"],
+      keywordGroups: [
+        ["aceite", "motul"],
+        ["aceite motor"],
+        ["aceite de motor"],
+      ],
       meses: 12,
     },
     {
       id: "frenos",
       label: "Cambio de líquido de frenos",
-      keywords: ["liquido de frenos", "líquido de frenos", "liquid frenos", "frenos motul", "dot 4", "dot4", "dot 5", "dot5"],
+      keywordGroups: [
+        ["liquido", "motul"],
+        ["líquido", "motul"],
+        ["liquido de frenos"],
+        ["líquido de frenos"],
+        ["liquid frenos"],
+        ["dot 4"],
+        ["dot4"],
+        ["dot 5"],
+        ["dot5"],
+      ],
       meses: 24,
     },
     {
