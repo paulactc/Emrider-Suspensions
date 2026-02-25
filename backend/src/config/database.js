@@ -185,6 +185,21 @@ async function runMigrations() {
     `)
   );
 
+  await runSafeMigration("Tabla push_subscriptions verificada", () =>
+    pool.execute(`
+      CREATE TABLE IF NOT EXISTS push_subscriptions (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        endpoint TEXT NOT NULL,
+        endpoint_hash VARCHAR(64) NOT NULL UNIQUE,
+        keys_auth VARCHAR(255) NOT NULL,
+        keys_p256dh VARCHAR(255) NOT NULL,
+        expiration_time BIGINT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )
+    `)
+  );
+
   // Crear usuario admin por defecto si no existe
   await runSafeMigration("Usuario admin verificado", async () => {
     const [adminExists] = await pool.execute(

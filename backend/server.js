@@ -17,7 +17,15 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Permitir sin origen (Postman, curl, etc.)
+      if (!origin) return callback(null, true);
+      // Permitir orígenes en la lista
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      // Permitir cualquier subdominio de ngrok
+      if (/\.ngrok[-\w]*\.(io|app|dev)$/.test(origin)) return callback(null, true);
+      callback(new Error("CORS: origen no permitido " + origin));
+    },
     credentials: true,
   })
 );
@@ -52,6 +60,9 @@ app.use("/api/recogidas", require("./src/routes/recogidas"));
 
 // Citas previas
 app.use("/api/citas", require("./src/routes/citas"));
+
+// Push notifications
+app.use("/api/push", require("./src/routes/push"));
 
 console.log("✅ Rutas registradas:");
 console.log("  - /api/clientes");

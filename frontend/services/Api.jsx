@@ -363,6 +363,30 @@ class ApiService {
       };
     }
   }
+
+  // ===== PUSH NOTIFICATIONS =====
+
+  async getPushVapidKey() {
+    return this.makeRequest("/push/vapid-public-key");
+  }
+
+  async pushSubscribe(subscription) {
+    return this.makeRequest("/push/subscribe", {
+      method: "POST",
+      body: JSON.stringify(subscription),
+    });
+  }
+
+  async pushSendTest(title, body, url) {
+    return this.makeRequest("/push/send-test", {
+      method: "POST",
+      body: JSON.stringify({ title, body, url }),
+    });
+  }
+
+  async pushStatus() {
+    return this.makeRequest("/push/status");
+  }
 }
 
 // Crear instancia única del servicio
