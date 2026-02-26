@@ -105,6 +105,7 @@ const FormTechnicalDataWithClientData = React.memo(
 
     const qs = new URLSearchParams(location.search);
     const clienteId = qs.get("clienteId") ?? qs.get("clientId");
+    const cifClienteParam = qs.get("cifCliente");
 
     const [clienteData, setClienteData] = useState(null);
     const [motoData, setMotoData] = useState(null);
@@ -491,14 +492,17 @@ const FormTechnicalDataWithClientData = React.memo(
                 setTimeout(() => reject(new Error("Timeout al cargar cliente")), 5000)
               ),
             ]);
-          } else if (moto.cifPropietario) {
-            const clientes = await Promise.race([
-              api.getClientes(),
-              new Promise((_, reject) =>
-                setTimeout(() => reject(new Error("Timeout al cargar clientes")), 5000)
-              ),
-            ]);
-            cliente = clientes.find((c) => (c.cif || "").toLowerCase() === (moto.cifPropietario || "").toLowerCase());
+          } else {
+            const cifBusqueda = moto.cifPropietario || cifClienteParam || null;
+            if (cifBusqueda) {
+              const clientes = await Promise.race([
+                api.getClientes(),
+                new Promise((_, reject) =>
+                  setTimeout(() => reject(new Error("Timeout al cargar clientes")), 5000)
+                ),
+              ]);
+              cliente = clientes.find((c) => (c.cif || "").toLowerCase() === cifBusqueda.toLowerCase());
+            }
           }
         } catch (clienteError) {
           console.warn("Error cargando cliente:", clienteError.message);
@@ -523,7 +527,7 @@ const FormTechnicalDataWithClientData = React.memo(
       } finally {
         setLoading(false);
       }
-    }, [motoId, clienteId]);
+    }, [motoId, clienteId, cifClienteParam]);
 
     const obtenerDisciplinaFromMoto = (moto) => {
       if (!moto) return "";
@@ -660,6 +664,7 @@ const FormTechnicalDataWithClientData = React.memo(
         const servicioData = {
           motoId: parseInt(motoId),
           clienteId: clienteId ? parseInt(clienteId) : null,
+          cif: clienteData?.cif || cifClienteParam || null,
           tipoSuspension: tipoSuspension,
           numeroOrden: formDataLocal.numeroOrden,
           fechaServicio: formDataLocal.fechaServicio,

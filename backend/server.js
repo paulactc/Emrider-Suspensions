@@ -81,3 +81,19 @@ app.use((err, req, res, next) => {
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });
+
+// ─── Cron job: notificaciones de mantenimiento ───────────────────────────────
+// Se ejecuta cada 10 minutos — solo envía si no se ha notificado antes hoy
+const cron = require("node-cron");
+const { checkAndNotify } = require("./src/routes/push");
+
+cron.schedule("*/10 * * * *", async () => {
+  console.log("[cron] Ejecutando check de mantenimiento...");
+  try {
+    const { log, enviadas } = await checkAndNotify();
+    log.forEach((l) => console.log("[cron]", l));
+    console.log(`[cron] Fin. Notificaciones enviadas: ${enviadas}`);
+  } catch (err) {
+    console.error("[cron] Error:", err.message);
+  }
+}, { timezone: "Europe/Madrid" });

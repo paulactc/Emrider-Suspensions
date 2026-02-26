@@ -21,6 +21,15 @@ export default function PushBanner() {
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState(null);
 
+  // CIF del usuario autenticado (guardado en localStorage al hacer login)
+  const userCif = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "{}").dni || null;
+    } catch {
+      return null;
+    }
+  })();
+
   useEffect(() => {
     try {
       if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)) {
@@ -36,8 +45,8 @@ export default function PushBanner() {
         .then(async (sub) => {
           if (sub) {
             setEstado("suscrito");
-            // Re-registrar silenciosamente en backend por si lo perdió (ej. reinicio)
-            try { await api.pushSubscribe(sub); } catch { /* silenciar */ }
+            // Re-registrar silenciosamente (actualiza CIF si el usuario ya está logado)
+            try { await api.pushSubscribe(sub, userCif); } catch { /* silenciar */ }
           }
         })
         .catch(() => {});
@@ -70,8 +79,8 @@ export default function PushBanner() {
         applicationServerKey: urlBase64ToUint8Array(publicKey.trim()),
       }));
 
-      // 6. Guardar en backend
-      await timeout(5000, api.pushSubscribe(sub));
+      // 6. Guardar en backend (con CIF si el usuario está autenticado)
+      await timeout(5000, api.pushSubscribe(sub, userCif));
       setEstado("suscrito");
     } catch (err) {
       console.error("[push]", err.name, err.message, err);

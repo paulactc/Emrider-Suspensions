@@ -1,6 +1,149 @@
 // admin-technical-data.scss
 // Estilos para la funcionalidad de crear datos técnicos en admin
 
+// ======= PANEL DE AVISOS =======
+.avisos-admin {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1rem;
+
+  &__filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0 1.5rem;
+  }
+
+  &__filtro-btn {
+    padding: 0.35rem 0.9rem;
+    border-radius: 20px;
+    border: 1px solid $ohlins-gray-600;
+    background: transparent;
+    color: $ohlins-gray-400;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover { border-color: $ohlins-gray-400; color: $ohlins-white; }
+
+    &--activo {
+      background: rgba($ohlins-yellow, 0.1);
+      border-color: $ohlins-yellow;
+      color: $ohlins-yellow;
+    }
+  }
+
+  &__grupo {
+    margin-bottom: 1.5rem;
+  }
+
+  &__grupo-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    color: $ohlins-gray-400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid $ohlins-gray-700;
+  }
+
+  &__grupo-count {
+    background: $ohlins-gray-700;
+    color: $ohlins-gray-300;
+    border-radius: 10px;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.72rem;
+  }
+
+  &__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+}
+
+.aviso-card {
+  background: $ohlins-gray-900;
+  border: 1px solid $ohlins-gray-700;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+
+  &__tipo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 72px;
+    padding: 0.5rem 0.4rem;
+    border: 1px solid;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.3);
+  }
+
+  &__tipo-icon { font-size: 1.3rem; }
+
+  &__tipo-label {
+    font-size: 0.62rem;
+    font-weight: 600;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  &__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  &__cliente {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: $ohlins-white;
+  }
+
+  &__dato {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: $ohlins-gray-400;
+  }
+
+  &__cif {
+    font-size: 0.7rem;
+    color: $ohlins-gray-600;
+    margin-top: 0.2rem;
+
+    em { font-style: normal; color: $ohlins-gray-500; }
+  }
+}
+
+// Acceso avisos en ListCustom
+.admin-trabajo-acceso--avisos {
+  border-color: rgba(245, 248, 50, 0.3);
+
+  .admin-trabajo-acceso__icon {
+    background: rgba(245, 248, 50, 0.1);
+    color: $ohlins-yellow;
+  }
+
+  &:hover {
+    border-color: $ohlins-yellow;
+    background: rgba(245, 248, 50, 0.05);
+  }
+}
+
 
 
 // ======= ACCIONES DE ADMINISTRADOR =======

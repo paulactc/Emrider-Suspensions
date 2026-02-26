@@ -370,10 +370,13 @@ class ApiService {
     return this.makeRequest("/push/vapid-public-key");
   }
 
-  async pushSubscribe(subscription) {
+  async pushSubscribe(subscription, cif = null) {
+    const payload = cif
+      ? { ...subscription.toJSON?.() ?? subscription, cif }
+      : subscription;
     return this.makeRequest("/push/subscribe", {
       method: "POST",
-      body: JSON.stringify(subscription),
+      body: JSON.stringify(payload),
     });
   }
 
@@ -386,6 +389,10 @@ class ApiService {
 
   async pushStatus() {
     return this.makeRequest("/push/status");
+  }
+
+  async pushNotifLog() {
+    return this.makeRequest("/push/notif-log");
   }
 }
 

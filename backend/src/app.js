@@ -28,5 +28,9 @@ app.use("/api/sugerencias", sugerenciasRoutes);
 const recogidasRoutes = require("./routes/recogidas");
 app.use("/api/recogidas", recogidasRoutes);
 
+// Push notifications
+const pushRoutes = require("./routes/push");
+app.use("/api/push", pushRoutes);
+
 // CRUCIAL: Exportar la app
 module.exports = app;

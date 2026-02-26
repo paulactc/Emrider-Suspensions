@@ -275,7 +275,7 @@ function Cliente({ listCustom, listBikes }) {
         ? `¡Bienvenido ${customToRender.nombre || "Cliente"}!`
         : manualConfig.mode === "moto"
         ? "Configuración de suspensión"
-        : "Cuestionario de pilotaje";
+        : "Perfil de piloto";
 
     const introText =
       questionnaireType === "first-time"

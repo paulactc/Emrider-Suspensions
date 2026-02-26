@@ -103,10 +103,15 @@ function TrabajosAdmin({ modo = "pendientes" }) {
     const tipo = (trabajo.tipo_suspension || "FF").toUpperCase();
     const motoId = trabajo.moto_id || trabajo.matricula_moto || "0";
     const clientId = trabajo.cliente_id || "";
+    const cifCliente = trabajo.cif_cliente || "";
+    const params = new URLSearchParams();
+    if (clientId) params.set("clientId", clientId);
+    if (cifCliente) params.set("cifCliente", cifCliente);
+    const qs = params.toString() ? `?${params.toString()}` : "";
     const ruta =
       tipo === "RR"
-        ? `/admin/form-technical-rr/${motoId}?clientId=${clientId}`
-        : `/admin/form-technical-ff/${motoId}?clientId=${clientId}`;
+        ? `/admin/form-technical-rr/${motoId}${qs}`
+        : `/admin/form-technical-ff/${motoId}${qs}`;
     navigate(ruta);
   };
 

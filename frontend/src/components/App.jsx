@@ -23,6 +23,7 @@ import FormTechnicalRR from "./admin/forms/FormTechnicalRR.jsx";
 import FormTechnicalDataWithClientData from "./admin/forms/FormTechnicalDataWithClientData";
 import TrabajosAdmin from "./admin/TrabajosAdmin";
 import ServicioDetalleAdmin from "./admin/ServicioDetalleAdmin";
+import AvisosAdmin from "./admin/AvisosAdmin";
 
 // Importar el servicio API
 import apiService from "../../services/Api.jsx";
@@ -274,6 +275,7 @@ function App() {
         <Route path="/admin/trabajos-pendientes" element={<TrabajosAdmin modo="pendientes" />} />
         <Route path="/admin/trabajos-finalizados" element={<TrabajosAdmin modo="finalizados" />} />
         <Route path="/admin/servicio/:id" element={<ServicioDetalleAdmin />} />
+        <Route path="/admin/avisos" element={<AvisosAdmin />} />
 
         {/* 📝 FORMULARIOS */}
         <Route path="/nuevo-usuario" element={<FormNewUser />} />

@@ -43,7 +43,7 @@ self.addEventListener("push", (event) => {
   const title = data.title || "EmRider Garage";
   const options = {
     body: data.body || "Tienes un nuevo aviso",
-    icon: "/pwa-192x192.png",
+    icon: "/images/Logomonoemrider.jpeg",
     badge: "/pwa-64x64.png",
     data: { url: data.url || "/" },
     vibrate: [200, 100, 200],

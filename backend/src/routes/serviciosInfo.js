@@ -170,49 +170,6 @@ router.get("/completed", async (req, res) => {
   }
 });
 
-// GET - Obtener información de servicio por ID
-router.get("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const [rows] = await pool.execute(
-      `SELECT
-        id, moto_id, cliente_id, cif_cliente, matricula_moto,
-        numero_orden, fecha_servicio, km_moto,
-        fecha_proximo_mantenimiento, servicio_suspension, observaciones,
-        observaciones_servicio, peso_piloto, disciplina, marca, modelo, año, referencia,
-        status, tipo_suspension, datos_tecnicos_json, created_at, updated_at
-       FROM servicios_info
-       WHERE id = ?`,
-      [id]
-    );
-
-    if (rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Servicio no encontrado",
-      });
-    }
-
-    const row = rows[0];
-    if (row.datos_tecnicos_json && typeof row.datos_tecnicos_json === "string") {
-      row.datos_tecnicos_json = JSON.parse(row.datos_tecnicos_json);
-    }
-
-    res.json({
-      success: true,
-      data: row,
-    });
-  } catch (error) {
-    console.error("Error obteniendo servicio:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error al obtener el servicio",
-      error: error.message,
-    });
-  }
-});
-
 // GET - Obtener servicios por CIF de cliente (con datos técnicos)
 router.get("/by-cif/:cif", async (req, res) => {
   try {
@@ -305,6 +262,49 @@ router.get("/by-moto/:identifier", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error al obtener los servicios",
+      error: error.message,
+    });
+  }
+});
+
+// GET - Obtener información de servicio por ID
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [rows] = await pool.execute(
+      `SELECT
+        id, moto_id, cliente_id, cif_cliente, matricula_moto,
+        numero_orden, fecha_servicio, km_moto,
+        fecha_proximo_mantenimiento, servicio_suspension, observaciones,
+        observaciones_servicio, peso_piloto, disciplina, marca, modelo, año, referencia,
+        status, tipo_suspension, datos_tecnicos_json, created_at, updated_at
+       FROM servicios_info
+       WHERE id = ?`,
+      [id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Servicio no encontrado",
+      });
+    }
+
+    const row = rows[0];
+    if (row.datos_tecnicos_json && typeof row.datos_tecnicos_json === "string") {
+      row.datos_tecnicos_json = JSON.parse(row.datos_tecnicos_json);
+    }
+
+    res.json({
+      success: true,
+      data: row,
+    });
+  } catch (error) {
+    console.error("Error obteniendo servicio:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener el servicio",
       error: error.message,
     });
   }

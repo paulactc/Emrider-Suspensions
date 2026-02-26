@@ -12,16 +12,41 @@ import {
   Mountain,
   Settings,
   Save,
-  SkipForward,
   Bell,
 } from "lucide-react";
+import api from "../../../services/Api";
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = window.atob(base64);
+  return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
+}
+
+async function activarPushAutomatico(cif) {
+  try {
+    if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)) return;
+    const permiso = await Notification.requestPermission();
+    if (permiso !== "granted") return;
+    const reg = await navigator.serviceWorker.ready;
+    const existing = await reg.pushManager.getSubscription();
+    if (existing) await existing.unsubscribe();
+    const { publicKey } = await api.getPushVapidKey();
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(publicKey.trim()),
+    });
+    await api.pushSubscribe(sub, cif);
+  } catch (e) {
+    console.warn("[push] No se pudo activar automáticamente:", e.message);
+  }
+}
 
 const ClienteQuestionario = ({
   cliente,
   motos: motosProp, // ← nombre que envía el padre
   motocicletas = [], // ← compat. por si aún llega con este nombre
   onComplete,
-  onSkip,
   esConfirmacion = false,
   mode = "all", // 'all' | 'cliente-only' | 'moto-only'
 }) => {
@@ -236,12 +261,12 @@ const ClienteQuestionario = ({
     });
   });
 
-  // Paso final: consentimiento de notificaciones (siempre al final)
+  // Paso final: consentimiento de notificaciones (siempre al final, obligatorio)
   steps.push({
     id: "notificaciones",
     type: "notificaciones",
     title: "Comunicaciones y avisos",
-    subtitle: "Queremos mantenerte informado sobre tu moto",
+    subtitle: "Necesitamos tu autorización para enviarte avisos de revisión y datos relevantes de tu moto",
     icon: Bell,
     question: "¿Nos permites enviarte notificaciones sobre revisiones de suspensión y datos relevantes de tu moto?",
     field: "aceptaNotificaciones",
@@ -296,7 +321,9 @@ const ClienteQuestionario = ({
   };
 
   const validateCurrentStep = () => {
-    if (currentStepData.type === "notificaciones") return null;
+    if (currentStepData.type === "notificaciones") {
+      return getCurrentValue() === true ? null : "Necesitas aceptar para continuar usando la app";
+    }
     const value = getCurrentValue();
     if (!value && value !== false) {
       return currentStepData.inputType === "moto-select"
@@ -333,6 +360,10 @@ const ClienteQuestionario = ({
     };
     try {
       await onComplete(dataToSend);
+      if (clienteData.aceptaNotificaciones) {
+        const cif = cliente?.dni || null;
+        await activarPushAutomatico(cif);
+      }
     } catch (error) {
       console.error("Error al guardar:", error);
     } finally {
@@ -456,16 +487,9 @@ const ClienteQuestionario = ({
             <p>Me gustaría recibir avisos sobre revisiones y novedades de mi moto</p>
             {checked && <div className="selected-indicator"><Check size={20} /></div>}
           </button>
-          <button
-            onClick={() => updateValue(false)}
-            className={`option-card ${!checked ? "selected" : ""}`}
-          >
-            <div className="option-header">
-              <h4>No, gracias</h4>
-            </div>
-            <p>Prefiero no recibir comunicaciones</p>
-            {!checked && <div className="selected-indicator"><Check size={20} /></div>}
-          </button>
+          <p className="notif-required-note">
+            * Imprescindible para el correcto funcionamiento de la app
+          </p>
         </div>
       );
     }
@@ -524,11 +548,6 @@ const ClienteQuestionario = ({
             </button>
           )}
 
-          {!esConfirmacion && (
-            <button onClick={onSkip} className="btn-skip">
-              <SkipForward size={20} /> Omitir por ahora
-            </button>
-          )}
 
           <button
             onClick={handleNext}

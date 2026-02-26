@@ -1,5 +1,6 @@
 import ClienteDataDisplay from "./ClienteDataDisplay";
 import { useEffect, useState, useMemo } from "react";
+import PushBanner from "./PushBanner";
 import { Link } from "react-router";
 import {
   Phone, FileUser, MapPin, Bike,
@@ -230,11 +231,14 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
           </div>
           <ClienteDataDisplay cliente={Custom} />
 
+          {/* Notificaciones push */}
+          <PushBanner />
+
           {onOpenQuestionnaire && (
             <div className="client-questionnaire-access">
               <div className="client-questionnaire-access__info">
                 <ClipboardCheck size={16} className="client-questionnaire-access__icon" />
-                <span className="client-questionnaire-access__label">Cuestionario de pilotaje</span>
+                <span className="client-questionnaire-access__label">Perfil de piloto</span>
                 <span className={`client-questionnaire-access__badge ${questionnaireClienteFilled ? "done" : "pending"}`}>
                   {questionnaireClienteFilled ? "Realizado" : "Pendiente"}
                 </span>

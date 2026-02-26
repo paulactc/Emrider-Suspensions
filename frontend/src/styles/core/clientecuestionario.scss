@@ -696,6 +696,18 @@
 }
 
 // ==============================================
+// NOTA REQUERIDA EN NOTIFICACIONES
+// ==============================================
+.notif-required-note {
+  grid-column: 1 / -1;
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  color: $ohlins-gray-400;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+// ==============================================
 // FOOTER DEL CUESTIONARIO
 // ==============================================
 .questionnaire-footer {

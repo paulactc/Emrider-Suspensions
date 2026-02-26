@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
-import { Wrench, CheckCircle } from "lucide-react";
+import { Wrench, CheckCircle, Bell } from "lucide-react";
 import InputSearchCustom from "../admin/forms/InputSearchCustom";
 import UleachCustom from "../Page.Custom/UleachCustom";
 import api from "../../../services/Api";
@@ -16,6 +16,7 @@ function ListCustom({
 
   const [pendingCount, setPendingCount] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
+  const [avisosCount, setAvisosCount] = useState(0);
 
   useEffect(() => {
     api.getPendingServicios()
@@ -23,6 +24,13 @@ function ListCustom({
       .catch(() => {});
     api.getCompletedServicios()
       .then((res) => setCompletedCount((res.data || []).length))
+      .catch(() => {});
+    api.pushNotifLog()
+      .then((res) => {
+        const hoy = new Date().toISOString().split("T")[0];
+        const deHoy = (res.data || []).filter((a) => a.fecha === hoy);
+        setAvisosCount(deHoy.length);
+      })
       .catch(() => {});
   }, []);
 
@@ -121,6 +129,21 @@ function ListCustom({
             <span className="admin-trabajo-acceso__badge">
               {completedCount}
             </span>
+          </Link>
+
+          <Link to="/admin/avisos" className="admin-trabajo-acceso admin-trabajo-acceso--avisos">
+            <div className="admin-trabajo-acceso__icon">
+              <Bell size={20} />
+            </div>
+            <div className="admin-trabajo-acceso__text">
+              <span className="admin-trabajo-acceso__title">Avisos</span>
+              <span className="admin-trabajo-acceso__sub">Notificaciones enviadas</span>
+            </div>
+            {avisosCount > 0 && (
+              <span className="admin-trabajo-acceso__badge admin-trabajo-acceso__badge--alert">
+                {avisosCount} hoy
+              </span>
+            )}
           </Link>
         </div>
 

@@ -90,7 +90,7 @@ const ClienteDataDisplay = ({ cliente }) => {
         return (
           <div key={index} className="info-item">
             <IconComponent className="info-icon" />
-            <span className="info-text">{item.value}</span>
+            <span className="info-text">{item.label}: {item.value}</span>
           </div>
         );
       })}
