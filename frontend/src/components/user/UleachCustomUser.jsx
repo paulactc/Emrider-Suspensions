@@ -231,9 +231,6 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
           </div>
           <ClienteDataDisplay cliente={Custom} />
 
-          {/* Notificaciones push */}
-          <PushBanner />
-
           {onOpenQuestionnaire && (
             <div className="client-questionnaire-access">
               <div className="client-questionnaire-access__info">
@@ -250,6 +247,9 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
           )}
         </div>
       )}
+
+      {/* ── NOTIFICACIONES PUSH (siempre montado para registrar CIF) ── */}
+      <PushBanner />
 
       {/* ── NAVEGACIÓN EN CÍRCULOS ── */}
       <nav className="client-circle-nav">

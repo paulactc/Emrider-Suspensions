@@ -197,6 +197,14 @@ class ApiService {
     }
   }
 
+  // Ocultar moto del garage (vendida)
+  async ocultarMoto(vehiculoId, cif) {
+    return this.makeRequest("/motos/ocultar", {
+      method: "POST",
+      body: JSON.stringify({ vehiculoId: String(vehiculoId), cif }),
+    });
+  }
+
   // ===== ORDENES DE TRABAJO (GDTaller) =====
 
   async getOrderLinesByClient(clientId) {

@@ -29,6 +29,10 @@ function FormNewUser() {
       setError("El nombre no puede estar vacío.");
       return;
     }
+    if (nombre.length > 50) {
+      setError("El nombre es demasiado largo.");
+      return;
+    }
     if (email === "") {
       setError("El correo electrónico no puede estar vacío.");
       return;
@@ -132,14 +136,14 @@ function FormNewUser() {
 
           <div className="input-group">
             <label htmlFor="nombre" className="input-label">
-              Nombre y Apellidos
+              Nombre
             </label>
             <input
               className="input-field"
               type="text"
               name="nombre"
               id="nombre"
-              placeholder="Nombre y apellidos"
+              placeholder="Tu nombre"
             />
           </div>
 

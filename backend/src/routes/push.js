@@ -95,6 +95,24 @@ const MAINTENANCE_RULES = [
   },
 ];
 
+// Compara keyword contra texto donde '?' es comodín de un carácter
+// (GDTaller almacena tildes y ñ como '?' en algunos registros)
+function textoContieneKeyword(texto, keyword) {
+  const norm = (s) => (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const t = norm(texto);
+  const k = norm(keyword);
+  if (!t.includes("?")) return t.includes(k);
+  const n = t.length, m = k.length;
+  for (let i = 0; i <= n - m; i++) {
+    let ok = true;
+    for (let j = 0; j < m; j++) {
+      if (t[i + j] !== "?" && t[i + j] !== k[j]) { ok = false; break; }
+    }
+    if (ok) return true;
+  }
+  return false;
+}
+
 // Calcula alertas caducadas para un conjunto de líneas de ordenes de trabajo
 function calcularAlertasCaducadas(lines) {
   const alertas = [];
@@ -103,11 +121,11 @@ function calcularAlertasCaducadas(lines) {
     let ultimaFecha = null;
 
     for (const line of lines) {
-      const texto = `${line.desc || ""} ${line.ref || ""} ${line.obs || ""}`.toLowerCase();
+      const texto = `${line.desc || ""} ${line.ref || ""} ${line.obs || ""}`;
       const coincide = rule.keywords
-        ? rule.keywords.some((kw) => texto.includes(kw.toLowerCase()))
+        ? rule.keywords.some((kw) => textoContieneKeyword(texto, kw))
         : rule.keywordGroups.some((group) =>
-            group.every((kw) => texto.includes(kw.toLowerCase()))
+            group.every((kw) => textoContieneKeyword(texto, kw))
           );
       if (!coincide || !line.orFecha) continue;
       const fecha = new Date(line.orFecha);
@@ -152,9 +170,15 @@ async function checkAndNotify({ dryRun = false } = {}) {
   ]);
 
   const cifToClienteId = {};
+  const cifToNombre = {};
   for (const c of rawClients) {
-    if (c.cif && c.clienteID) {
-      cifToClienteId[c.cif.replace(/\s+/g, "").toLowerCase()] = String(c.clienteID);
+    const cifNorm = (c.cif || "").replace(/\s+/g, "").toLowerCase();
+    if (cifNorm && c.clienteID) {
+      cifToClienteId[cifNorm] = String(c.clienteID);
+    }
+    if (cifNorm) {
+      const mapped = gdtallerService.mapClientFromGDTaller(c);
+      cifToNombre[cifNorm] = mapped.nombre || mapped.nombre_completo?.split(" ")[0] || null;
     }
   }
 
@@ -196,9 +220,14 @@ async function checkAndNotify({ dryRun = false } = {}) {
         ? `hace ${alerta.mesesDesde} meses`
         : `con ${mesesExtra} ${mesesExtra === 1 ? "mes" : "meses"} de retraso`;
 
+      const nombre = cifToNombre[cifNorm];
+      const saludo = nombre ? `Hola ${nombre}, ` : "";
+
       const payload = JSON.stringify({
-        title: "EmRider Garage · Revisión recomendada",
-        body: `${alerta.label} — Último servicio ${tiempoTexto}. Contacta con nosotros para programar una cita.`,
+        title: "Taller Emrider · Revisión pendiente",
+        body: `${saludo}${alerta.label} — Último servicio ${tiempoTexto}. Contacta con nosotros para programar una cita.`,
+        icon: "/images/moto.png",
+        badge: "/pwa-64x64.png",
         url: "/cliente",
       });
 
@@ -284,7 +313,7 @@ router.post("/notify-maintenance", async (req, res) => {
 router.post("/send-test", async (req, res) => {
   const { title, body, url } = req.body;
   const payload = JSON.stringify({
-    title: title || "EmRider Garage",
+    title: title || "Taller Emrider",
     body: body || "¡Las notificaciones push funcionan!",
     url: url || "/",
   });

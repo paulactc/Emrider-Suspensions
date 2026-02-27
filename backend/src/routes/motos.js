@@ -87,6 +87,20 @@ async function getMotosFromLocalDB(cif) {
   }
 }
 
+// Helper: IDs de motos ocultas para un CIF
+async function getMotosOcultasSet(cif) {
+  try {
+    const [rows] = await pool.execute(
+      "SELECT vehiculo_id FROM motos_ocultas WHERE LOWER(cif) = LOWER(?)",
+      [cif]
+    );
+    return new Set(rows.map((r) => String(r.vehiculo_id)));
+  } catch (err) {
+    console.warn("Error leyendo motos_ocultas:", err.message);
+    return new Set();
+  }
+}
+
 // GET - Obtener motos por CIF (GDTaller + merge cuestionario local, con fallback a BD local)
 router.get("/by-cif/:cif", async (req, res) => {
   try {
@@ -112,13 +126,20 @@ router.get("/by-cif/:cif", async (req, res) => {
       }
     }
 
+    // Filtrar motos que el cliente ha marcado como vendidas/ocultas
+    const ocultas = await getMotosOcultasSet(cif);
+    if (ocultas.size > 0) {
+      vehicles = vehicles.filter(
+        (v) => !ocultas.has(String(v.id)) && !ocultas.has(String(v.matricula))
+      );
+    }
+
     const cuestionarioMap = await getCuestionarioMotosMap();
     const merged = vehicles.map((v) => mergeVehicleWithCuestionario(v, cuestionarioMap));
 
     res.json(merged);
   } catch (error) {
     console.error("Error obteniendo motos por CIF:", error);
-    // Último intento: datos locales
     try {
       const localMotos = await getMotosFromLocalDB(req.params.cif);
       return res.json(localMotos);
@@ -126,6 +147,25 @@ router.get("/by-cif/:cif", async (req, res) => {
       console.error("Error también en fallback local:", localErr);
     }
     res.status(500).json({ error: "Error obteniendo motos" });
+  }
+});
+
+// POST - Ocultar moto del garage (el cliente la ha vendido)
+router.post("/ocultar", async (req, res) => {
+  try {
+    const { cif, vehiculoId } = req.body;
+    if (!cif || !vehiculoId) {
+      return res.status(400).json({ success: false, message: "cif y vehiculoId son obligatorios" });
+    }
+    await pool.execute(
+      `INSERT INTO motos_ocultas (cif, vehiculo_id) VALUES (?, ?)
+       ON DUPLICATE KEY UPDATE oculto_at = CURRENT_TIMESTAMP`,
+      [cif.toLowerCase(), String(vehiculoId)]
+    );
+    res.json({ success: true, message: "Moto eliminada del garage" });
+  } catch (error) {
+    console.error("Error ocultando moto:", error);
+    res.status(500).json({ success: false, message: "Error al eliminar la moto" });
   }
 });
 

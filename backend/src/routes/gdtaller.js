@@ -134,6 +134,27 @@ router.get("/vehicles", async (req, res) => {
 router.get("/order-lines/:clientId", async (req, res) => {
   try {
     const { clientId } = req.params;
+
+    // Resolver clientId: si no es puramente numérico, puede ser un CIF → buscar clienteID en GDTaller
+    let resolvedClientId = clientId;
+    if (!/^\d+$/.test(clientId)) {
+      try {
+        const rawClients = await gdtallerService.getClients();
+        const cifNorm = clientId.replace(/\s+/g, "").toLowerCase();
+        const found = rawClients.find(
+          (c) => c.cif && c.cif.replace(/\s+/g, "").toLowerCase() === cifNorm
+        );
+        if (found && found.clienteID) {
+          resolvedClientId = found.clienteID;
+          console.log(`[order-lines] CIF ${clientId} → clienteID ${resolvedClientId}`);
+        } else {
+          console.warn(`[order-lines] CIF ${clientId} no encontrado en GDTaller`);
+        }
+      } catch (err) {
+        console.warn("[order-lines] Error resolviendo CIF a clienteID:", err.message);
+      }
+    }
+
     // No pasar clientId a la API de GDTaller (el filtro server-side no funciona correctamente)
     // Obtenemos todas las lineas y filtramos nosotros
     // Cargar order lines y vehiculos en paralelo para mayor velocidad
@@ -153,9 +174,9 @@ router.get("/order-lines/:clientId", async (req, res) => {
         }),
     ]);
 
-    // Filtrar lineas de este cliente
+    // Filtrar lineas de este cliente (usando clienteID resuelto)
     const clientLines = lines.filter(
-      (l) => String(l.clienteID) === String(clientId)
+      (l) => String(l.clienteID) === String(resolvedClientId)
     );
 
     // Agrupar por numero de orden (solo ordenes OR..., excluir EC... entregas a cuenta y similares)
@@ -251,9 +272,44 @@ function normMat(m) {
   return (m || "").replace(/\s+/g, "").toUpperCase();
 }
 
+// Compara keyword contra texto donde '?' es comodín de un carácter
+// (GDTaller almacena tildes y ñ como '?' en algunos registros)
+function textoContieneKeyword(texto, keyword) {
+  const norm = (s) => (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const t = norm(texto);
+  const k = norm(keyword);
+  if (!t.includes("?")) return t.includes(k);
+  const n = t.length, m = k.length;
+  for (let i = 0; i <= n - m; i++) {
+    let ok = true;
+    for (let j = 0; j < m; j++) {
+      if (t[i + j] !== "?" && t[i + j] !== k[j]) { ok = false; break; }
+    }
+    if (ok) return true;
+  }
+  return false;
+}
+
 // GET - Alertas de mantenimiento de motor por cliente (aceite, frenos, refrigerante)
 router.get("/maintenance-alerts/:clientId", async (req, res) => {
-  const { clientId } = req.params;
+  let { clientId } = req.params;
+
+  // Resolver CIF → clienteID numérico si es necesario
+  if (!/^\d+$/.test(clientId)) {
+    try {
+      const rawClients = await gdtallerService.getClients();
+      const cifNorm = clientId.replace(/\s+/g, "").toLowerCase();
+      const found = rawClients.find(
+        (c) => c.cif && c.cif.replace(/\s+/g, "").toLowerCase() === cifNorm
+      );
+      if (found && found.clienteID) {
+        clientId = found.clienteID;
+        console.log(`[maintenance-alerts] CIF → clienteID ${clientId}`);
+      }
+    } catch (err) {
+      console.warn("[maintenance-alerts] Error resolviendo CIF:", err.message);
+    }
+  }
 
   const RULES = [
     {
@@ -351,11 +407,11 @@ router.get("/maintenance-alerts/:clientId", async (req, res) => {
         let ultimaFecha = null;
 
         for (const line of motoLines) {
-          const texto = `${line.desc || ""} ${line.ref || ""} ${line.obs || ""}`.toLowerCase();
+          const texto = `${line.desc || ""} ${line.ref || ""} ${line.obs || ""}`;
           const coincide = rule.keywords
-            ? rule.keywords.some((kw) => texto.includes(kw.toLowerCase()))
+            ? rule.keywords.some((kw) => textoContieneKeyword(texto, kw))
             : rule.keywordGroups.some((group) =>
-                group.every((kw) => texto.includes(kw.toLowerCase()))
+                group.every((kw) => textoContieneKeyword(texto, kw))
               );
           if (!coincide || !line.orFecha) continue;
 

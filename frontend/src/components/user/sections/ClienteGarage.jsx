@@ -3,10 +3,12 @@ import { Link } from "react-router";
 import {
   Bike, ChevronLeft, ChevronDown, ChevronUp,
   Wrench, Calendar, Hash, FileUser, Gauge, AlertTriangle,
-  Droplets, Flame, Wind,
+  Droplets, Flame, Wind, Settings, Pencil, Trash2,
 } from "lucide-react";
 import { useClienteData } from "../../../hooks/useClienteData";
 import api from "../../../../services/Api";
+import ClienteQuestionario from "../ClienteQuestionario";
+import NotificationModal from "../../common/NotificationModal";
 
 const normMat = (m) => (m || "").replace(/\s+/g, "").toUpperCase();
 
@@ -17,6 +19,10 @@ function ClienteGarage() {
   const [alertasMotor, setAlertasMotor] = useState({});
   const [motoExpandida, setMotoExpandida] = useState(null);
   const [loadingMotos, setLoadingMotos] = useState(false);
+  const [motoEditando, setMotoEditando] = useState(null);
+  const [motoABorrar, setMotoABorrar] = useState(null);
+  const [borrando, setBorrando] = useState(false);
+  const [notif, setNotif] = useState({ open: false, type: "success", message: "" });
 
   useEffect(() => {
     if (!cliente?.cif) return;
@@ -51,6 +57,40 @@ function ClienteGarage() {
         .catch(() => {});
     }
   }, [cliente?.cif, cliente?.gdtaller_id, cliente?.id]);
+
+  const handleConfirmarBorrar = async () => {
+    if (!motoABorrar || !cliente?.cif) return;
+    setBorrando(true);
+    try {
+      await api.ocultarMoto(motoABorrar.id || motoABorrar.matricula, cliente.cif);
+      setMotos((prev) => prev.filter((m) => m.id !== motoABorrar.id));
+      setMotoABorrar(null);
+      setMotoExpandida(null);
+      setNotif({ open: true, type: "success", message: "Moto eliminada de tu garage" });
+    } catch (err) {
+      setNotif({ open: true, type: "error", message: "Error al eliminar: " + err.message });
+    } finally {
+      setBorrando(false);
+    }
+  };
+
+  const handleQuestionnaireComplete = async (formData) => {
+    try {
+      const result = await api.saveQuestionnaire(formData);
+      if (!result?.success) throw new Error(result?.message || "Error al guardar");
+      // Actualizar datos locales de la moto sin recargar
+      setMotos((prev) =>
+        prev.map((m) => {
+          const updated = formData.motocicletas?.find((md) => String(md.id) === String(m.id));
+          return updated ? { ...m, ...updated } : m;
+        })
+      );
+      setMotoEditando(null);
+      setNotif({ open: true, type: "success", message: "Configuración de suspensión guardada" });
+    } catch (err) {
+      setNotif({ open: true, type: "error", message: "Error al guardar: " + err.message });
+    }
+  };
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
@@ -107,6 +147,75 @@ function ClienteGarage() {
     );
   };
 
+  // ── Diálogo confirmación borrar ──
+  if (motoABorrar) {
+    return (
+      <div className="cliente-section-page">
+        <div className="moto-delete-confirm">
+          <div className="moto-delete-confirm__box">
+            <div className="moto-delete-confirm__icon">🗑️</div>
+            <h3 className="moto-delete-confirm__title">¿Eliminar del garage?</h3>
+            <p className="moto-delete-confirm__desc">
+              Vas a eliminar <strong>{motoABorrar.marca} {motoABorrar.modelo}</strong>
+              {motoABorrar.matricula ? ` (${motoABorrar.matricula})` : ""} de tu garage.
+              <br />Esta acción es permanente. Si la moto vuelve a estar activa en el taller, reaparecerá.
+            </p>
+            <div className="moto-delete-confirm__actions">
+              <button
+                className="moto-delete-confirm__cancel"
+                onClick={() => setMotoABorrar(null)}
+                disabled={borrando}
+              >
+                Cancelar
+              </button>
+              <button
+                className="moto-delete-confirm__ok"
+                onClick={handleConfirmarBorrar}
+                disabled={borrando}
+              >
+                {borrando ? "Eliminando..." : "Sí, eliminar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Vista cuestionario para una moto concreta ──
+  if (motoEditando) {
+    return (
+      <div className="cliente-section-page">
+        <NotificationModal
+          isOpen={notif.open}
+          type={notif.type}
+          message={notif.message}
+          onClose={() => setNotif((p) => ({ ...p, open: false }))}
+        />
+        <div className="cliente-section-page__topbar">
+          <button className="cliente-section-page__back" onClick={() => setMotoEditando(null)}>
+            <ChevronLeft /> Volver al garage
+          </button>
+          <div className="cliente-section-page__title-wrap">
+            <div className="cliente-section-page__title-icon"><Settings /></div>
+            <h2 className="cliente-section-page__title">
+              {motoEditando.marca} {motoEditando.modelo}
+            </h2>
+          </div>
+        </div>
+        <div className="questionnaire-wrapper">
+          <ClienteQuestionario
+            cliente={cliente}
+            motos={[motoEditando]}
+            onComplete={handleQuestionnaireComplete}
+            onSkip={() => setMotoEditando(null)}
+            mode="moto-only"
+          />
+        </div>
+      </div>
+    );
+  }
+
   if (loading || loadingMotos) {
     return (
       <div className="cliente-section-page">
@@ -131,6 +240,12 @@ function ClienteGarage() {
 
   return (
     <div className="cliente-section-page">
+      <NotificationModal
+        isOpen={notif.open}
+        type={notif.type}
+        message={notif.message}
+        onClose={() => setNotif((p) => ({ ...p, open: false }))}
+      />
       <div className="cliente-section-page__topbar">
         <Link to="/cliente" className="cliente-section-page__back">
           <ChevronLeft /> Volver
@@ -160,26 +275,38 @@ function ClienteGarage() {
                 key={moto.id || moto.matricula}
                 className={`moto-card${isOpen ? " moto-card--open" : ""}${hayAlerta ? " moto-card--alert" : ""}`}
               >
-                <button
-                  className="moto-card__toggle"
-                  onClick={() => setMotoExpandida(isOpen ? null : motoKey)}
-                >
-                  <div className="moto-card__toggle-left">
-                    <div className="moto-card__icon"><Bike /></div>
-                    <div className="moto-card__info">
-                      <span className="moto-card__nombre">{moto.marca} {moto.modelo}</span>
-                      <span className="moto-card__matricula">{moto.matricula || "Sin matrícula"}</span>
+                <div className="moto-card__header">
+                  <div
+                    className="moto-card__toggle"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setMotoExpandida(isOpen ? null : motoKey)}
+                    onKeyDown={(e) => e.key === "Enter" && setMotoExpandida(isOpen ? null : motoKey)}
+                  >
+                    <div className="moto-card__toggle-left">
+                      <div className="moto-card__icon"><Bike /></div>
+                      <div className="moto-card__info">
+                        <span className="moto-card__nombre">{moto.marca} {moto.modelo}</span>
+                        <span className="moto-card__matricula">{moto.matricula || "Sin matrícula"}</span>
+                      </div>
+                    </div>
+                    <div className="moto-card__toggle-right">
+                      {hayAlerta && (
+                        <span className="moto-card__alert-wrap">
+                          <AlertTriangle className="moto-card__alert-icon" />
+                        </span>
+                      )}
+                      {isOpen ? <ChevronUp /> : <ChevronDown />}
                     </div>
                   </div>
-                  <div className="moto-card__toggle-right">
-                    {hayAlerta && (
-                      <span className="moto-card__alert-wrap">
-                        <AlertTriangle className="moto-card__alert-icon" />
-                      </span>
-                    )}
-                    {isOpen ? <ChevronUp /> : <ChevronDown />}
-                  </div>
-                </button>
+                  <button
+                    className="moto-card__delete-btn"
+                    title="Eliminar moto del garage"
+                    onClick={() => setMotoABorrar(moto)}
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
 
                 {isOpen && (
                   <div className="moto-card__detail">
@@ -334,19 +461,40 @@ function ClienteGarage() {
                       );
                     })()}
 
-                    {moto.especialidad && (
-                      <div className="moto-card__section">
-                        <h4 className="moto-card__section-title">Preferencias de suspensión</h4>
+                    <div className="moto-card__section">
+                      <h4 className="moto-card__section-title">Preferencias de suspensión</h4>
+                      {moto.especialidad ? (
                         <div className="moto-card__questionnaire-row">
                           <div className="moto-card__questionnaire-left">
-                            <span className="moto-card__questionnaire-badge done">Realizado</span>
+                            <span className="moto-card__questionnaire-badge done">Configurado</span>
                             <span className="moto-card__questionnaire-status">
                               {moto.especialidad} · {moto.tipoConduccion} · {moto.preferenciaRigidez}
                             </span>
                           </div>
+                          <button
+                            className="moto-config-btn moto-config-btn--edit"
+                            onClick={() => setMotoEditando(moto)}
+                          >
+                            <Pencil size={14} /> Editar
+                          </button>
                         </div>
-                      </div>
-                    )}
+                      ) : (
+                        <div className="moto-card__questionnaire-row">
+                          <div className="moto-card__questionnaire-left">
+                            <span className="moto-card__questionnaire-badge pending">Pendiente</span>
+                            <span className="moto-card__questionnaire-status">
+                              Sin configurar — añade tus preferencias de suspensión
+                            </span>
+                          </div>
+                          <button
+                            className="moto-config-btn moto-config-btn--setup"
+                            onClick={() => setMotoEditando(moto)}
+                          >
+                            <Settings size={14} /> Configurar
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>

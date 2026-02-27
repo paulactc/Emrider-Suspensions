@@ -40,11 +40,11 @@ registerRoute(
 // ── PUSH NOTIFICATIONS ──────────────────────────────────────────
 self.addEventListener("push", (event) => {
   const data = event.data?.json() ?? {};
-  const title = data.title || "EmRider Garage";
+  const title = data.title || "Taller Emrider";
   const options = {
     body: data.body || "Tienes un nuevo aviso",
-    icon: "/images/Logomonoemrider.jpeg",
-    badge: "/pwa-64x64.png",
+    icon: data.icon || "/images/moto.png",
+    badge: data.badge || "/pwa-64x64.png",
     data: { url: data.url || "/" },
     vibrate: [200, 100, 200],
   };

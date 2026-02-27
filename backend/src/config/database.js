@@ -194,8 +194,51 @@ async function runMigrations() {
         keys_auth VARCHAR(255) NOT NULL,
         keys_p256dh VARCHAR(255) NOT NULL,
         expiration_time BIGINT NULL,
+        cif VARCHAR(100) NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_push_subscriptions_cif (cif)
+      )
+    `)
+  );
+
+  await runSafeMigration("Columna cif en push_subscriptions", async () => {
+    const [[{ cnt }]] = await pool.execute(
+      `SELECT COUNT(*) as cnt FROM INFORMATION_SCHEMA.COLUMNS
+       WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'push_subscriptions'
+       AND COLUMN_NAME = 'cif'`
+    );
+    if (cnt === 0) {
+      await pool.execute(
+        `ALTER TABLE push_subscriptions ADD COLUMN cif VARCHAR(100) NULL,
+         ADD INDEX idx_push_subscriptions_cif (cif)`
+      );
+    }
+  });
+
+  await runSafeMigration("Tabla push_notif_log verificada", () =>
+    pool.execute(`
+      CREATE TABLE IF NOT EXISTS push_notif_log (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        cif VARCHAR(100) NOT NULL,
+        tipo VARCHAR(50) NOT NULL,
+        sent_date DATE NOT NULL DEFAULT (CURDATE()),
+        enviado_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE KEY uq_push_notif_log (cif, tipo, sent_date),
+        INDEX idx_push_notif_log_cif (cif)
+      )
+    `)
+  );
+
+  await runSafeMigration("Tabla motos_ocultas verificada", () =>
+    pool.execute(`
+      CREATE TABLE IF NOT EXISTS motos_ocultas (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        cif VARCHAR(50) NOT NULL,
+        vehiculo_id VARCHAR(50) NOT NULL,
+        oculto_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE KEY uq_moto_oculta (cif, vehiculo_id),
+        INDEX idx_motos_ocultas_cif (cif)
       )
     `)
   );
