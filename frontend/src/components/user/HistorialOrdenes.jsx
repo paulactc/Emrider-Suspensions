@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ChevronDown, ChevronUp, Loader, Bike } from "lucide-react";
+import { CaretDownIcon, CaretUpIcon, SpinnerGapIcon, MotorcycleIcon } from "@phosphor-icons/react";
 import api from "../../../services/Api";
 
 function HistorialOrdenes({ clientId }) {
@@ -61,7 +61,7 @@ function HistorialOrdenes({ clientId }) {
   if (loading) return (
     <div className="historial-ordenes">
       <div className="historial-ordenes__loading">
-        <Loader className="spinner" />
+        <SpinnerGapIcon weight="fill" className="spinner" />
         <span>Cargando historial...</span>
       </div>
     </div>
@@ -84,7 +84,7 @@ function HistorialOrdenes({ clientId }) {
       <div className="historial-ordenes__motos">
         {gruposList.map((grupo) => {
           const isOpen = motoAbierta === grupo.key;
-          const nombreMoto = [grupo.marca, grupo.modelo].filter(Boolean).join(" ") || grupo.matricula || "Moto";
+          const nombreMoto = ([grupo.marca, grupo.modelo].filter(Boolean).join(" ") || grupo.matricula || "Moto").toUpperCase();
 
           return (
             <div key={grupo.key} className={`historial-moto ${isOpen ? "historial-moto--open" : ""}`}>
@@ -92,7 +92,7 @@ function HistorialOrdenes({ clientId }) {
               {/* Cabecera de moto — clic para desplegar */}
               <button className="historial-moto__header" onClick={() => toggleMoto(grupo.key)}>
                 <div className="historial-moto__icon-wrap">
-                  <Bike size={20} />
+                  <MotorcycleIcon weight="fill" size={20} />
                 </div>
                 <div className="historial-moto__info">
                   <span className="historial-moto__nombre">{nombreMoto}</span>
@@ -103,7 +103,7 @@ function HistorialOrdenes({ clientId }) {
                 <span className="historial-moto__count">
                   {grupo.ordenes.length} {grupo.ordenes.length === 1 ? "trabajo" : "trabajos"}
                 </span>
-                {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                {isOpen ? <CaretUpIcon weight="fill" size={18} /> : <CaretDownIcon weight="fill" size={18} />}
               </button>
 
               {/* Listado de órdenes */}
@@ -119,7 +119,7 @@ function HistorialOrdenes({ clientId }) {
                           </div>
                           <div className="historial-ordenes__card-total">
                             <span className="historial-ordenes__importe">{formatCurrency(orden.totalImporte)}</span>
-                            {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            {isExpanded ? <CaretUpIcon weight="fill" size={16} /> : <CaretDownIcon weight="fill" size={16} />}
                           </div>
                         </button>
 

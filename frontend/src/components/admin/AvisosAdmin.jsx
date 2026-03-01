@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { Bell, ChevronLeft, RefreshCw, User, Phone, Calendar, AlertTriangle, Inbox } from "lucide-react";
+import { BellIcon, CaretLeftIcon, ArrowClockwiseIcon, UserIcon, PhoneIcon, CalendarIcon, WarningIcon, TrayIcon } from "@phosphor-icons/react";
 import api from "../../../services/Api";
 
 const TIPO_COLOR = {
@@ -39,19 +39,19 @@ function AvisoCard({ aviso }) {
 
       <div className="aviso-card__body">
         <div className="aviso-card__cliente">
-          <User size={13} />
+          <UserIcon size={13} />
           <span>{aviso.cliente.nombre}</span>
         </div>
 
         {aviso.cliente.telefono && (
           <div className="aviso-card__dato">
-            <Phone size={13} />
+            <PhoneIcon size={13} />
             <span>{aviso.cliente.telefono}</span>
           </div>
         )}
 
         <div className="aviso-card__dato">
-          <Calendar size={13} />
+          <CalendarIcon size={13} />
           <span>Enviado el {formatFecha(aviso.fecha)}</span>
         </div>
 
@@ -105,14 +105,14 @@ function AvisosAdmin() {
       {/* Topbar */}
       <div className="trabajos-admin__topbar">
         <Link to="/admin/clientes" className="trabajos-admin__back">
-          <ChevronLeft size={18} /> Volver
+          <CaretLeftIcon size={18} /> Volver
         </Link>
         <div className="trabajos-admin__title-wrap">
-          <Bell size={18} className="trabajos-admin__title-icon" />
+          <BellIcon size={18} className="trabajos-admin__title-icon" />
           <h2 className="trabajos-admin__title">Avisos enviados</h2>
         </div>
         <button className="trabajos-admin__refresh" onClick={cargar} title="Actualizar">
-          <RefreshCw size={16} />
+          <ArrowClockwiseIcon size={16} />
         </button>
       </div>
 
@@ -139,14 +139,14 @@ function AvisosAdmin() {
         <div className="trabajos-admin__loading">Cargando avisos...</div>
       ) : avisosFiltrados.length === 0 ? (
         <div className="trabajos-admin__empty">
-          <Inbox size={40} />
+          <TrayIcon size={40} />
           <p>{avisos.length === 0 ? "Aún no se han enviado avisos" : "No hay avisos de este tipo"}</p>
         </div>
       ) : (
         Object.entries(porFecha).map(([fecha, items]) => (
           <div key={fecha} className="avisos-admin__grupo">
             <div className="avisos-admin__grupo-header">
-              <AlertTriangle size={14} />
+              <WarningIcon size={14} />
               <span>{formatFecha(fecha)}</span>
               <span className="avisos-admin__grupo-count">{items.length}</span>
             </div>

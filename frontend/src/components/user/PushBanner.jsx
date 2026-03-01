@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bell } from "lucide-react";
+import { BellIcon } from "@phosphor-icons/react";
 import api from "../../../services/Api";
 
 function urlBase64ToUint8Array(base64String) {
@@ -94,7 +94,7 @@ export default function PushBanner() {
 
   if (estado === "suscrito") return (
     <div className="client-push-banner client-push-banner--ok">
-      <Bell size={15} className="client-push-banner__icon" />
+      <BellIcon size={15} className="client-push-banner__icon" />
       <span className="client-push-banner__text">Notificaciones activas en este dispositivo</span>
       <button
         className="client-push-banner__btn"
@@ -110,14 +110,14 @@ export default function PushBanner() {
 
   if (estado === "denegado") return (
     <div className="client-push-banner client-push-banner--blocked">
-      <Bell size={15} className="client-push-banner__icon" />
+      <BellIcon size={15} className="client-push-banner__icon" />
       <span className="client-push-banner__text">Notificaciones bloqueadas — actívalas en ajustes del navegador</span>
     </div>
   );
 
   return (
     <div className="client-push-banner">
-      <Bell size={15} className="client-push-banner__icon" />
+      <BellIcon size={15} className="client-push-banner__icon" />
       <div style={{ flex: 1 }}>
         <span className="client-push-banner__text">Activa los avisos de revisión en tu móvil</span>
         {error && <div style={{ fontSize: "0.7rem", color: "#f87171", marginTop: "0.2rem" }}>{error}</div>}

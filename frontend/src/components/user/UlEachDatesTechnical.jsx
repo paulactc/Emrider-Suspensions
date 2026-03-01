@@ -1,17 +1,16 @@
 // UlEachDatesTechnical.js
 import {
-  FileText,
-  Gauge,
-  Calendar,
-  Wrench,
-  Target,
-  Settings,
-  Info,
-  Zap,
-  MessageSquare,
-  Cog,
-  AlertTriangle,
-} from "lucide-react";
+  FileTextIcon,
+  GaugeIcon,
+  CalendarIcon,
+  WrenchIcon,
+  TargetIcon,
+  GearIcon,
+  InfoIcon,
+  LightningIcon,
+  ChatDotsIcon,
+  WarningIcon,
+} from "@phosphor-icons/react";
 
 function UlEachDatesTechnical({ datetechnicalArray, motoId, onFichaCaducada }) {
   const bikeDatesTechnical = datetechnicalArray.filter(
@@ -59,13 +58,13 @@ function UlEachDatesTechnical({ datetechnicalArray, motoId, onFichaCaducada }) {
           <section className="body-list-client">
             <section className="subsection">
               <h3 className="subtitles">
-                <Info size={16} /> INFORMACIÓN
+                <InfoIcon size={16} /> INFORMACIÓN
               </h3>
               <ul className="Sublists">
                 <li>
                   <div className="sizeli">
                     <span className="field-label">
-                      <Calendar size={14} /> Fecha del servicio
+                      <CalendarIcon size={14} /> Fecha del servicio
                     </span>
                     <span className="field-value">
                       {new Date(
@@ -75,13 +74,13 @@ function UlEachDatesTechnical({ datetechnicalArray, motoId, onFichaCaducada }) {
                   </div>
                   <div className="sizeli">
                     <span className="field-label">
-                      <Gauge size={14} /> Km de la motocicleta:
+                      <GaugeIcon size={14} /> Km de la motocicleta:
                     </span>
                     <span className="field-value">{datesTechnical.kmmoto}</span>
                   </div>
                   <div className="sizeli">
                     <span className="field-label">
-                      <Calendar size={14} /> Fecha próximo mantenimiento:
+                      <CalendarIcon size={14} /> Fecha próximo mantenimiento:
                     </span>
                     <span className="field-value">
                       {datesTechnical.fechaProximoMantenimiento}
@@ -89,7 +88,7 @@ function UlEachDatesTechnical({ datetechnicalArray, motoId, onFichaCaducada }) {
                   </div>
                   <div className="sizeli">
                     <span className="field-label">
-                      <Wrench size={14} /> Servicio de la suspensión:
+                      <WrenchIcon size={14} /> Servicio de la suspensión:
                     </span>
                     <span className="field-value">
                       {datesTechnical.servicioSuspension}
@@ -97,7 +96,7 @@ function UlEachDatesTechnical({ datetechnicalArray, motoId, onFichaCaducada }) {
                   </div>
                   <div className="sizeli">
                     <span className="field-label">
-                      <Target size={14} /> Disciplina piloto:
+                      <TargetIcon size={14} /> Disciplina piloto:
                     </span>
                     <span className="field-value">
                       {datesTechnical.disciplina}
@@ -109,25 +108,25 @@ function UlEachDatesTechnical({ datetechnicalArray, motoId, onFichaCaducada }) {
 
             <section className="subsection">
               <h3 className="subtitles">
-                <Settings size={16} /> SUSPENSIÓN
+                <GearIcon size={16} /> SUSPENSIÓN
               </h3>
               <ul className="Sublists">
                 <li>
                   <div className="sizeli">
                     <span className="field-label">
-                      <FileText size={14} /> Marca:
+                      <FileTextIcon size={14} /> Marca:
                     </span>
                     <span className="field-value">{datesTechnical.marca}</span>
                   </div>
                   <div className="sizeli">
                     <span className="field-label">
-                      <Settings size={14} /> Modelo:
+                      <GearIcon size={14} /> Modelo:
                     </span>
                     <span className="field-value">{datesTechnical.modelo}</span>
                   </div>
                   <div className="sizeli">
                     <span className="field-label">
-                      <Calendar size={14} /> Año:
+                      <CalendarIcon size={14} /> Año:
                     </span>
                     <span className="field-value">{datesTechnical.ano}</span>
                   </div>
@@ -137,7 +136,7 @@ function UlEachDatesTechnical({ datetechnicalArray, motoId, onFichaCaducada }) {
 
             <section className="subsection">
               <h4 className="subtitles">
-                <MessageSquare size={16} /> OBSERVACIONES
+                <ChatDotsIcon size={16} /> OBSERVACIONES
               </h4>
               <ul className="Sublists">
                 <li>
@@ -151,44 +150,44 @@ function UlEachDatesTechnical({ datetechnicalArray, motoId, onFichaCaducada }) {
             </section>
 
             <h1 className="title-Shock">
-              <Cog size={32} style={{ marginRight: "1rem" }} />
+              <GearIcon size={32} style={{ marginRight: "1rem" }} />
               DATOS TÉCNICOS
-              <Cog size={32} style={{ marginLeft: "1rem" }} />
+              <GearIcon size={32} style={{ marginLeft: "1rem" }} />
             </h1>
 
             <section className="subsection">
               <h3 className="subtitles">
-                <Zap size={16} /> SETTING
+                <LightningIcon size={16} /> SETTING
               </h3>
               <ul className="Sublists">
                 <li>
                   <div className="sizeli field-important">
                     <span className="field-label">
-                      <Settings size={14} /> Spring:
+                      <GearIcon size={14} /> Spring:
                     </span>
                     <span className="field-value">16 N/mm</span>
                   </div>
                   <div className="sizeli">
                     <span className="field-label">
-                      <Target size={14} /> Initial:
+                      <TargetIcon size={14} /> Initial:
                     </span>
                     <span className="field-value">45</span>
                   </div>
                   <div className="sizeli field-important">
                     <span className="field-label">
-                      <Wrench size={14} /> Oil:
+                      <WrenchIcon size={14} /> Oil:
                     </span>
                     <span className="field-value">{datesTechnical.oil}</span>
                   </div>
                   <div className="sizeli field-important">
                     <span className="field-label">
-                      <Zap size={14} /> Gas:
+                      <LightningIcon size={14} /> Gas:
                     </span>
                     <span className="field-value">{datesTechnical.gas}</span>
                   </div>
                   <div className="sizeli field-important">
                     <span className="field-label">
-                      <Settings size={14} /> Rebound:
+                      <GearIcon size={14} /> Rebound:
                     </span>
                     <span className="field-value">
                       {datesTechnical.reboundSpring}
@@ -196,31 +195,31 @@ function UlEachDatesTechnical({ datetechnicalArray, motoId, onFichaCaducada }) {
                   </div>
                   <div className="sizeli">
                     <span className="field-label">
-                      <Gauge size={14} /> Comp.Low:
+                      <GaugeIcon size={14} /> Comp.Low:
                     </span>
                     <span className="field-value">15</span>
                   </div>
                   <div className="sizeli">
                     <span className="field-label">
-                      <Gauge size={14} /> Comp.High:
+                      <GaugeIcon size={14} /> Comp.High:
                     </span>
                     <span className="field-value">25</span>
                   </div>
                   <div className="sizeli">
                     <span className="field-label">
-                      <Settings size={14} /> Rebound spring:
+                      <GearIcon size={14} /> Rebound spring:
                     </span>
                     <span className="field-value">58 N/mm</span>
                   </div>
                   <div className="sizeli">
                     <span className="field-label">
-                      <Target size={14} /> Stroke:
+                      <TargetIcon size={14} /> Stroke:
                     </span>
                     <span className="field-value">63mm</span>
                   </div>
                   <div className="sizeli">
                     <span className="field-label">
-                      <Gauge size={14} /> Height RR:
+                      <GaugeIcon size={14} /> Height RR:
                     </span>
                     <span className="field-value">
                       {datesTechnical.height}mm

@@ -1,17 +1,17 @@
 import { NavLink } from "react-router"; // ✅ CORREGIDO: react-router-dom en lugar de react-router
 import { useState } from "react";
 import {
-  Tag,
-  Bike,
-  Calendar,
-  Hash,
-  Settings,
-  AlertTriangle,
-  BookAlert,
-  Plus,
-  Wrench,
-  X,
-} from "lucide-react";
+  TagIcon,
+  MotorcycleIcon,
+  CalendarIcon,
+  HashIcon,
+  GearIcon,
+  WarningIcon,
+  IdentificationCardIcon,
+  PlusIcon,
+  WrenchIcon,
+  XIcon,
+} from "@phosphor-icons/react";
 
 // Modal para seleccionar tipo de suspensión
 const SuspensionTypeModal = ({ isOpen, onClose, onSelect, motoData }) => {
@@ -23,7 +23,7 @@ const SuspensionTypeModal = ({ isOpen, onClose, onSelect, motoData }) => {
         <div className="modal-header">
           <h3>Crear Datos Técnicos</h3>
           <button onClick={onClose} className="modal-close">
-            <X size={20} />
+            <XIcon size={20} />
           </button>
         </div>
 
@@ -155,7 +155,7 @@ function UleachBikeAdmin({ listBikes, clientId, listTechnical }) {
               <div className="listMotocicle__content">
                 <div className="listMotocicle__specs">
                   <div className="listMotocicle__spec-item">
-                    <Tag className="listMotocicle__spec-item-icon" />
+                    <TagIcon className="listMotocicle__spec-item-icon" />
                     <span className="listMotocicle__spec-item-label">
                       Marca:
                     </span>
@@ -165,7 +165,7 @@ function UleachBikeAdmin({ listBikes, clientId, listTechnical }) {
                   </div>
 
                   <div className="listMotocicle__spec-item">
-                    <Bike className="listMotocicle__spec-item-icon" />
+                    <MotorcycleIcon className="listMotocicle__spec-item-icon" />
                     <span className="listMotocicle__spec-item-label">
                       Modelo:
                     </span>
@@ -175,7 +175,7 @@ function UleachBikeAdmin({ listBikes, clientId, listTechnical }) {
                   </div>
 
                   <div className="listMotocicle__spec-item">
-                    <Calendar className="listMotocicle__spec-item-icon" />
+                    <CalendarIcon className="listMotocicle__spec-item-icon" />
                     <span className="listMotocicle__spec-item-label">Año:</span>
                     <span className="listMotocicle__spec-item-value">
                       {bike.anio || bike.anoFabricacion || "No disponible"}
@@ -183,7 +183,7 @@ function UleachBikeAdmin({ listBikes, clientId, listTechnical }) {
                   </div>
 
                   <div className="listMotocicle__spec-item">
-                    <Hash className="listMotocicle__spec-item-icon" />
+                    <HashIcon className="listMotocicle__spec-item-icon" />
                     <span className="listMotocicle__spec-item-label">
                       Matrícula:
                     </span>
@@ -193,7 +193,7 @@ function UleachBikeAdmin({ listBikes, clientId, listTechnical }) {
                   </div>
 
                   <div className="listMotocicle__spec-item">
-                    <BookAlert className="listMotocicle__spec-item-icon" />
+                    <IdentificationCardIcon className="listMotocicle__spec-item-icon" />
                     <span className="listMotocicle__spec-item-label">
                       Bastidor:
                     </span>
@@ -209,14 +209,14 @@ function UleachBikeAdmin({ listBikes, clientId, listTechnical }) {
                     to={`/admin/datos-tecnicos-admin/${bike.id}`}
                     state={{ listTechnical }}
                   >
-                    <Settings /> Ver datos técnicos
+                    <GearIcon /> Ver datos técnicos
                   </NavLink>
 
                   <button
                     onClick={() => handleCreateTechnicalData(bike)}
                     className="Newcustombike create-technical-btn"
                   >
-                    <Plus /> Crear datos técnicos
+                    <PlusIcon /> Crear datos técnicos
                   </button>
                 </div>
               </div>

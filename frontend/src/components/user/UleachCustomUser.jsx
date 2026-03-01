@@ -3,12 +3,13 @@ import { useEffect, useState, useMemo } from "react";
 import PushBanner from "./PushBanner";
 import { Link } from "react-router";
 import {
-  Phone, FileUser, MapPin, Bike,
-  Crown, ChevronDown, ChevronUp,
-  ClipboardCheck, HeartHandshake, History,
-  MessageSquarePlus, Send, AlertTriangle,
-  Truck, X, CalendarDays, LocateFixed, ClipboardList,
-} from "lucide-react";
+  MotorcycleIcon, ClockCounterClockwiseIcon, HandHeartIcon, WarningIcon,
+  TruckIcon, CalendarDotsIcon, MapTrifoldIcon, ClipboardTextIcon,
+  PhoneIcon, IdentificationCardIcon, MapPinIcon,
+  CrownIcon, CaretDownIcon, CaretUpIcon,
+  CheckCircleIcon, ChatTeardropTextIcon, PaperPlaneRightIcon,
+  XIcon,
+} from "@phosphor-icons/react";
 import NotificationModal from "../common/NotificationModal";
 import api from "../../../services/Api";
 
@@ -22,11 +23,13 @@ const NIVELES_EMRIDER = [
 function SpringIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="2" x2="12" y2="4.5" />
-      <polyline points="7,4.5 17,7 7,9.5 17,12 7,14.5 17,17" />
-      <line x1="7" y1="17" x2="17" y2="17" />
-      <line x1="12" y1="17" x2="12" y2="22" />
+      fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="1" x2="12" y2="3" />
+      <line x1="9.5" y1="3" x2="14.5" y2="3" />
+      <polyline points="9.5,3 14.5,5 9.5,7 14.5,9 9.5,11 14.5,13 9.5,15 14.5,17" />
+      <line x1="9.5" y1="17" x2="14.5" y2="17" />
+      <line x1="12" y1="17" x2="12" y2="19" />
+      <circle cx="12" cy="21" r="1.5" />
     </svg>
   );
 }
@@ -67,7 +70,6 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
           clientId ? api.getMaintenanceAlerts(clientId).catch(() => ({ data: {} })) : Promise.resolve({ data: {} }),
         ]);
 
-        // Comprobar alertas de motor y suspensiones (aceite, frenos, refrigerante, FF, RR)
         const alertasMotor = alertasRes?.data || {};
         const hayAlertaMotor = Object.values(alertasMotor).some(
           (mat) =>
@@ -134,7 +136,7 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
   const NAV_ITEMS = [
     {
       to: "/cliente/garage",
-      icon: <Bike />,
+      icon: <MotorcycleIcon size={30} weight="fill" />,
       label: "Mi Garage",
       sub: "Mis motocicletas",
       color: "blue",
@@ -149,14 +151,14 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
     },
     {
       to: "/cliente/historial",
-      icon: <History />,
+      icon: <ClockCounterClockwiseIcon size={30} weight="fill" />,
       label: "Historial",
       sub: "Órdenes de trabajo",
       color: "green",
     },
     {
       to: "/cliente/tribu",
-      icon: <HeartHandshake />,
+      icon: <HandHeartIcon size={30} weight="fill" />,
       label: "Mi Tribu",
       sub: !loadingNivel ? nivelActual.nombre : "Cargando...",
       color: "yellow",
@@ -166,54 +168,59 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
   return (
     <div className="uleach-customer-compact">
 
-      {/* ── CABECERA ── */}
+      {/* ── CABECERA CON HERO ── */}
       <div className="client-summary">
+        {/* Imagen de piloto de fondo */}
+        <div className="client-summary__hero">
+          <img src="/images/motorista.jpg" alt="" className="client-summary__hero-img" />
+          <div className="client-summary__hero-fade" />
+        </div>
+
         {/* Botones de acción en esquinas superiores */}
         <button className="summary-corner-btn summary-corner-btn--left" onClick={() => setShowCita(true)}>
-          <span className="summary-corner-btn__circle"><ClipboardList size={20} /></span>
+          <span className="summary-corner-btn__circle"><ClipboardTextIcon size={18} weight="fill" /></span>
           <span className="summary-corner-btn__label">Cita previa</span>
         </button>
         <button className="summary-corner-btn summary-corner-btn--right" onClick={() => setShowRecogida(true)}>
-          <span className="summary-corner-btn__circle"><Truck size={20} /></span>
+          <span className="summary-corner-btn__circle"><TruckIcon size={18} weight="fill" /></span>
           <span className="summary-corner-btn__label">Recogida</span>
         </button>
 
         <div className="client-summary__center">
-          <div className="client-summary__avatar">
-            <img src="/images/Logomonoemrider.jpeg" alt="EmRider" className="client-summary__avatar-img" />
-          </div>
           <h2 className="client-summary__nombre">{safeDisplay(nombreCompleto)}</h2>
           <div className="client-summary__badges">
             {!loadingNivel && (
               <span className={`badge badge--${nivelActual.color}`}>
-                <Crown className="badge__icon" />
+                <CrownIcon weight="fill" className="badge__icon" />
                 {nivelActual.nombre}
               </span>
             )}
             <span className="badge badge--facturacion">
-              🍌 {loadingNivel ? "Cargando BananaPoints..." : `${Math.round(facturacionAnual).toLocaleString("es-ES")} BananaPoints`}
+              🍌 {loadingNivel ? "..." : `${Math.round(facturacionAnual).toLocaleString("es-ES")} BP`}
             </span>
           </div>
         </div>
-        <button className="client-summary__toggle" onClick={() => setShowDetails(!showDetails)}>
-          <span>Mis datos</span>
-          {showDetails ? <ChevronUp /> : <ChevronDown />}
-        </button>
       </div>
+
+      {/* ── BOTÓN MIS DATOS ── */}
+      <button className="client-summary__toggle" onClick={() => setShowDetails(!showDetails)}>
+        <span>Mis datos</span>
+        {showDetails ? <CaretUpIcon size={16} /> : <CaretDownIcon size={16} />}
+      </button>
 
       {/* ── MIS DATOS (colapsable) ── */}
       {showDetails && (
         <div className="client-details">
           <div className="client-details__grid">
             <div className="client-details__item">
-              <Phone className="client-details__icon" />
+              <PhoneIcon weight="fill" className="client-details__icon" />
               <div>
                 <span className="client-details__label">Teléfono</span>
                 <span className="client-details__value">{safeDisplay(Custom.telefono)}</span>
               </div>
             </div>
             <div className="client-details__item">
-              <FileUser className="client-details__icon" />
+              <IdentificationCardIcon weight="fill" className="client-details__icon" />
               <div>
                 <span className="client-details__label">CIF / DNI</span>
                 <span className="client-details__value">{safeDisplay(Custom.cif)}</span>
@@ -221,7 +228,7 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
             </div>
             {ubicacion && (
               <div className="client-details__item">
-                <MapPin className="client-details__icon" />
+                <MapPinIcon weight="fill" className="client-details__icon" />
                 <div>
                   <span className="client-details__label">Ubicación</span>
                   <span className="client-details__value">{ubicacion}</span>
@@ -234,7 +241,7 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
           {onOpenQuestionnaire && (
             <div className="client-questionnaire-access">
               <div className="client-questionnaire-access__info">
-                <ClipboardCheck size={16} className="client-questionnaire-access__icon" />
+                <CheckCircleIcon size={16} weight="fill" className="client-questionnaire-access__icon" />
                 <span className="client-questionnaire-access__label">Perfil de piloto</span>
                 <span className={`client-questionnaire-access__badge ${questionnaireClienteFilled ? "done" : "pending"}`}>
                   {questionnaireClienteFilled ? "Realizado" : "Pendiente"}
@@ -259,7 +266,7 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
               {item.icon}
               {item.alerta && (
                 <span className="circle-nav-item__alert-badge">
-                  <AlertTriangle />
+                  <WarningIcon size={14} weight="fill" />
                 </span>
               )}
             </div>
@@ -278,13 +285,13 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
           onClick={() => setShowSugerencia(!showSugerencia)}
         >
           <div className="sugerencia-card__icon-wrap">
-            <MessageSquarePlus />
+            <ChatTeardropTextIcon size={22} weight="fill" />
           </div>
           <div className="sugerencia-card__text">
             <span className="sugerencia-card__title">Ayudanos a mejorar</span>
             <span className="sugerencia-card__sub">¿Tienes algo que decirnos? Escríbenos.</span>
           </div>
-          <ChevronDown className={`client-section__chevron${showSugerencia ? " client-section__chevron--open" : ""}`} />
+          <CaretDownIcon className={`client-section__chevron${showSugerencia ? " client-section__chevron--open" : ""}`} />
         </button>
 
         {showSugerencia && (
@@ -322,7 +329,7 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
                   }
                 }}
               >
-                <Send size={15} />
+                <PaperPlaneRightIcon size={15} weight="fill" />
                 {enviando ? "Enviando..." : "Enviar"}
               </button>
             </div>
@@ -344,19 +351,19 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
           <div className="recogida-modal" onClick={(e) => e.stopPropagation()}>
             <div className="recogida-modal__header">
               <div className="recogida-modal__header-left">
-                <ClipboardList className="recogida-modal__icon" />
+                <ClipboardTextIcon size={22} weight="fill" className="recogida-modal__icon" />
                 <div>
                   <h3 className="recogida-modal__title">Cita previa</h3>
                   <p className="recogida-modal__sub">Reserva tu visita al taller</p>
                 </div>
               </div>
               <button className="recogida-modal__close" onClick={() => setShowCita(false)}>
-                <X />
+                <XIcon size={20} />
               </button>
             </div>
             <div className="recogida-modal__body">
               <label className="recogida-modal__label">
-                <CalendarDays size={15} />
+                <CalendarDotsIcon size={15} weight="fill" />
                 Día de la cita
               </label>
               <input
@@ -367,7 +374,7 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
                 onChange={(e) => setCitaFecha(e.target.value)}
               />
               <label className="recogida-modal__label">
-                <ClipboardList size={15} />
+                <ClipboardTextIcon size={15} weight="fill" />
                 Motivo de la visita
               </label>
               <textarea
@@ -402,7 +409,7 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
                   }
                 }}
               >
-                <Send size={14} />
+                <PaperPlaneRightIcon size={14} weight="fill" />
                 {enviandoCita ? "Enviando..." : "Solicitar cita"}
               </button>
             </div>
@@ -417,19 +424,19 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
           <div className="recogida-modal" onClick={(e) => e.stopPropagation()}>
             <div className="recogida-modal__header">
               <div className="recogida-modal__header-left">
-                <Truck className="recogida-modal__icon" />
+                <TruckIcon size={22} weight="fill" className="recogida-modal__icon" />
                 <div>
                   <h3 className="recogida-modal__title">¿Recogemos tu moto?</h3>
                   <p className="recogida-modal__sub">Dinos cuándo y dónde</p>
                 </div>
               </div>
               <button className="recogida-modal__close" onClick={() => setShowRecogida(false)}>
-                <X />
+                <XIcon size={20} />
               </button>
             </div>
             <div className="recogida-modal__body">
               <label className="recogida-modal__label">
-                <CalendarDays size={15} />
+                <CalendarDotsIcon size={15} weight="fill" />
                 Día de recogida
               </label>
               <input
@@ -440,7 +447,7 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
                 onChange={(e) => setRecogidaFecha(e.target.value)}
               />
               <label className="recogida-modal__label">
-                <LocateFixed size={15} />
+                <MapTrifoldIcon size={15} weight="fill" />
                 Lugar de recogida
               </label>
               <input
@@ -482,7 +489,7 @@ function UleachCustomUser({ Custom, onOpenQuestionnaire, questionnaireClienteFil
                   }
                 }}
               >
-                <Send size={14} />
+                <PaperPlaneRightIcon size={14} weight="fill" />
                 {enviandoRecogida ? "Enviando..." : "Solicitar recogida"}
               </button>
             </div>

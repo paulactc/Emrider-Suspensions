@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router";
 import {
-  Save,
-  ArrowLeft,
-  AlertCircle,
-  User,
-  Bike,
-  Settings,
-  FileText,
-  Wrench,
-  Gauge,
-  Zap,
-} from "lucide-react";
+  FloppyDiskIcon,
+  ArrowLeftIcon,
+  WarningCircleIcon,
+  UserIcon,
+  MotorcycleIcon,
+  GearIcon,
+  FileTextIcon,
+  WrenchIcon,
+  GaugeIcon,
+  LightningIcon,
+} from "@phosphor-icons/react";
 import api from "../../../../services/Api";
 import NotificationModal from "../../common/NotificationModal";
 
@@ -323,7 +323,7 @@ const FormTechnicalFF = () => {
         {/* Header */}
         <div className="form-header">
           <button onClick={() => navigate(-1)} className="btn-back">
-            <ArrowLeft size={20} />
+            <ArrowLeftIcon size={20} />
             Volver
           </button>
           <div className="header-title">
@@ -338,7 +338,7 @@ const FormTechnicalFF = () => {
 
         {errors.general && (
           <div className="error-banner">
-            <AlertCircle size={20} />
+            <WarningCircleIcon size={20} />
             {errors.general}
           </div>
         )}
@@ -348,7 +348,7 @@ const FormTechnicalFF = () => {
           {needsQuestionnaire && (
             <div className="form-section questionnaire-section">
               <div className="section-header">
-                <User size={24} />
+                <UserIcon size={24} />
                 <h2>Datos del Cliente</h2>
                 <p>Complete los datos del cuestionario del cliente</p>
               </div>
@@ -470,7 +470,7 @@ const FormTechnicalFF = () => {
           {/* Información del servicio */}
           <div className="form-section">
             <div className="section-header">
-              <FileText size={24} />
+              <FileTextIcon size={24} />
               <h2>Información del Servicio</h2>
             </div>
 
@@ -568,7 +568,7 @@ const FormTechnicalFF = () => {
           {/* Datos de suspensión */}
           <div className="form-section">
             <div className="section-header">
-              <Settings size={24} />
+              <GearIcon size={24} />
               <h2>Datos de Suspensión</h2>
             </div>
 
@@ -656,7 +656,7 @@ const FormTechnicalFF = () => {
           {/* Spring Data */}
           <div className="form-section">
             <div className="section-header">
-              <Zap size={24} />
+              <LightningIcon size={24} />
               <h2>Spring Data</h2>
             </div>
 
@@ -945,7 +945,7 @@ const FormTechnicalFF = () => {
           {/* Oil & Gas */}
           <div className="form-section">
             <div className="section-header">
-              <Gauge size={24} />
+              <GaugeIcon size={24} />
               <h2>Oil & Gas</h2>
             </div>
 
@@ -977,7 +977,7 @@ const FormTechnicalFF = () => {
           {/* Compresión */}
           <div className="form-section">
             <div className="section-header">
-              <Wrench size={24} />
+              <WrenchIcon size={24} />
               <h2>Compresión</h2>
             </div>
 
@@ -1013,7 +1013,7 @@ const FormTechnicalFF = () => {
           {/* Ritorno Original */}
           <div className="form-section">
             <div className="section-header">
-              <Settings size={24} />
+              <GearIcon size={24} />
               <h2>Ritorno (Return) - Original</h2>
               <p>Valores de 1 a 25 posiciones</p>
             </div>
@@ -1043,7 +1043,7 @@ const FormTechnicalFF = () => {
           {/* Ritorno Modificado */}
           <div className="form-section">
             <div className="section-header">
-              <Settings size={24} />
+              <GearIcon size={24} />
               <h2>Ritorno (Return) - Modificado</h2>
               <p>Valores de 1 a 25 posiciones</p>
             </div>
@@ -1073,7 +1073,7 @@ const FormTechnicalFF = () => {
           {/* Ajustadores de Compresión Originales */}
           <div className="form-section">
             <div className="section-header">
-              <Gauge size={24} />
+              <GaugeIcon size={24} />
               <h2>Ajustadores de Compresión - Originales</h2>
               <p>Valores de 1 a 30 posiciones</p>
             </div>
@@ -1103,7 +1103,7 @@ const FormTechnicalFF = () => {
           {/* Ajustadores de Compresión Modificados */}
           <div className="form-section">
             <div className="section-header">
-              <Gauge size={24} />
+              <GaugeIcon size={24} />
               <h2>Ajustadores de Compresión - Modificados</h2>
               <p>Valores de 1 a 30 posiciones</p>
             </div>
@@ -1133,7 +1133,7 @@ const FormTechnicalFF = () => {
           {/* Observaciones */}
           <div className="form-section">
             <div className="section-header">
-              <FileText size={24} />
+              <FileTextIcon size={24} />
               <h2>Observaciones</h2>
             </div>
 
@@ -1167,7 +1167,7 @@ const FormTechnicalFF = () => {
                 </>
               ) : (
                 <>
-                  <Save size={20} />
+                  <FloppyDiskIcon size={20} />
                   Guardar Datos Técnicos FF
                 </>
               )}

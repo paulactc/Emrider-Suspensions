@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
-import { ChevronLeft, Sliders } from "lucide-react";
+import { CaretLeftIcon, SlidersHorizontalIcon } from "@phosphor-icons/react";
 import DatosTecnicosServicio from "../DatosTecnicosServicio";
 import { useClienteData } from "../../../hooks/useClienteData";
 
@@ -11,7 +11,7 @@ function ClienteSettings() {
     return (
       <div className="cliente-section-page">
         <Link to="/cliente" className="cliente-section-page__back">
-          <ChevronLeft /> Volver
+          <CaretLeftIcon /> Volver
         </Link>
         <div className="cliente-section-page__loading">Cargando datos técnicos...</div>
       </div>
@@ -22,7 +22,7 @@ function ClienteSettings() {
     return (
       <div className="cliente-section-page">
         <Link to="/cliente" className="cliente-section-page__back">
-          <ChevronLeft /> Volver
+          <CaretLeftIcon /> Volver
         </Link>
         <p className="cliente-section-page__error">{error}</p>
       </div>
@@ -30,13 +30,13 @@ function ClienteSettings() {
   }
 
   return (
-    <div className="cliente-section-page">
+    <div className="cliente-section-page cliente-section-page--suspensiones">
       <div className="cliente-section-page__topbar">
         <Link to="/cliente" className="cliente-section-page__back">
-          <ChevronLeft /> Volver
+          <CaretLeftIcon /> Volver
         </Link>
         <div className="cliente-section-page__title-wrap">
-          <div className="cliente-section-page__title-icon"><Sliders /></div>
+          <div className="cliente-section-page__title-icon"><SlidersHorizontalIcon /></div>
           <h2 className="cliente-section-page__title">Suspensiones</h2>
         </div>
       </div>

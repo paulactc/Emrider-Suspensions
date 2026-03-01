@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router";
 import {
-  ChevronLeft, HeartHandshake, Award, Crown, Zap, Shield,
-  Wrench, Star, MessageCircle, TrendingUp, Truck, ClipboardCheck,
-} from "lucide-react";
+  CaretLeftIcon, HandHeartIcon, TrophyIcon, CrownIcon, LightningIcon, ShieldIcon,
+  WrenchIcon, StarIcon, ChatCircleIcon, TrendUpIcon, TruckIcon, ClipboardTextIcon,
+} from "@phosphor-icons/react";
 import { useClienteData } from "../../../hooks/useClienteData";
 import api from "../../../../services/Api";
 
@@ -16,9 +16,9 @@ const NIVELES_EMRIDER = [
     alt: "EmRider Baby",
     color: "rookie",
     beneficios: [
-      { icon: ClipboardCheck, texto: "Revisión técnica gratuita del estado general de la moto (con cita previa)" },
-      { icon: MessageCircle, texto: "Asesoramiento personalizado por WhatsApp con nuestro técnico" },
-      { icon: TrendingUp, texto: "Informe anual del estado de tus suspensiones" },
+      { icon: ClipboardTextIcon, texto: "Revisión técnica gratuita del estado general de la moto (con cita previa)" },
+      { icon: ChatCircleIcon, texto: "Asesoramiento personalizado por WhatsApp con nuestro técnico" },
+      { icon: TrendUpIcon, texto: "Informe anual del estado de tus suspensiones" },
     ],
     rango: "1 - 600 BananaPoints 🍌",
   },
@@ -30,11 +30,11 @@ const NIVELES_EMRIDER = [
     alt: "EmRider Adolescent",
     color: "pro",
     beneficios: [
-      { icon: Wrench, texto: "Medición y ajuste de SAG gratuito" },
-      { icon: ClipboardCheck, texto: "Revisión técnica gratuita (con cita previa)" },
-      { icon: Star, texto: "Prioridad en citas de taller" },
-      { icon: MessageCircle, texto: "Línea directa WhatsApp con el técnico" },
-      { icon: Shield, texto: "Garantía extendida en mano de obra: 6 meses" },
+      { icon: WrenchIcon, texto: "Medición y ajuste de SAG gratuito" },
+      { icon: ClipboardTextIcon, texto: "Revisión técnica gratuita (con cita previa)" },
+      { icon: StarIcon, texto: "Prioridad en citas de taller" },
+      { icon: ChatCircleIcon, texto: "Línea directa WhatsApp con el técnico" },
+      { icon: ShieldIcon, texto: "Garantía extendida en mano de obra: 6 meses" },
     ],
     rango: "601 - 1.200 BananaPoints 🍌",
   },
@@ -46,12 +46,12 @@ const NIVELES_EMRIDER = [
     alt: "EmRider Legend",
     color: "legend",
     beneficios: [
-      { icon: Truck, texto: "Recogida y entrega del vehículo a domicilio gratis" },
-      { icon: Wrench, texto: "Medición y ajuste de SAG gratuito" },
-      { icon: ClipboardCheck, texto: "Revisión técnica gratuita (con cita previa)" },
-      { icon: Star, texto: "Máxima prioridad en agenda de taller" },
-      { icon: MessageCircle, texto: "Acceso directo al ingeniero de suspensiones" },
-      { icon: Shield, texto: "Garantía extendida en mano de obra: 12 meses" },
+      { icon: TruckIcon, texto: "Recogida y entrega del vehículo a domicilio gratis" },
+      { icon: WrenchIcon, texto: "Medición y ajuste de SAG gratuito" },
+      { icon: ClipboardTextIcon, texto: "Revisión técnica gratuita (con cita previa)" },
+      { icon: StarIcon, texto: "Máxima prioridad en agenda de taller" },
+      { icon: ChatCircleIcon, texto: "Acceso directo al ingeniero de suspensiones" },
+      { icon: ShieldIcon, texto: "Garantía extendida en mano de obra: 12 meses" },
     ],
     rango: "+1.200 BananaPoints 🍌",
   },
@@ -103,7 +103,7 @@ function ClienteTribu() {
     return (
       <div className="cliente-section-page">
         <Link to="/cliente" className="cliente-section-page__back">
-          <ChevronLeft /> Volver
+          <CaretLeftIcon /> Volver
         </Link>
         <div className="cliente-section-page__loading">Cargando...</div>
       </div>
@@ -114,7 +114,7 @@ function ClienteTribu() {
     return (
       <div className="cliente-section-page">
         <Link to="/cliente" className="cliente-section-page__back">
-          <ChevronLeft /> Volver
+          <CaretLeftIcon /> Volver
         </Link>
         <p className="cliente-section-page__error">{error}</p>
       </div>
@@ -130,10 +130,10 @@ function ClienteTribu() {
     <div className="cliente-section-page">
       <div className="cliente-section-page__topbar">
         <Link to="/cliente" className="cliente-section-page__back">
-          <ChevronLeft /> Volver
+          <CaretLeftIcon /> Volver
         </Link>
         <div className="cliente-section-page__title-wrap">
-          <div className="cliente-section-page__title-icon"><HeartHandshake /></div>
+          <div className="cliente-section-page__title-icon"><HandHeartIcon /></div>
           <h2 className="cliente-section-page__title">Mi Tribu</h2>
         </div>
       </div>
@@ -141,7 +141,7 @@ function ClienteTribu() {
       <div className="cliente-section-page__content">
         <div className="emrider-tribu">
           <div className="emrider-tribu__welcome">
-            <div className="emrider-tribu__welcome-icon"><HeartHandshake /></div>
+            <div className="emrider-tribu__welcome-icon"><HandHeartIcon /></div>
             <div>
               <h3 className="emrider-tribu__welcome-title">
                 Bienvenido a la Tribu, {nombreCorto}
@@ -155,7 +155,7 @@ function ClienteTribu() {
           <div className="emrider-niveles">
             <div className="emrider-niveles__header">
               <div className="emrider-niveles__header-icon-wrap">
-                <Award className="emrider-niveles__header-icon" />
+                <TrophyIcon className="emrider-niveles__header-icon" />
               </div>
               <div>
                 <h3>Tu nivel y recompensas</h3>
@@ -222,7 +222,7 @@ function ClienteTribu() {
                           {nivel.id === 1 ? "🏍️" : nivel.id === 2 ? "🏁" : "🏆"}
                         </div>
                         {isCurrentLevel && (
-                          <div className="nivel-card__current-badge"><Zap /></div>
+                          <div className="nivel-card__current-badge"><LightningIcon /></div>
                         )}
                       </div>
                       <div>
@@ -243,7 +243,7 @@ function ClienteTribu() {
                     </ul>
                     {!isUnlocked && (
                       <div className="nivel-card__overlay">
-                        <Shield className="nivel-card__overlay-icon" />
+                        <ShieldIcon className="nivel-card__overlay-icon" />
                         <span>Nivel bloqueado</span>
                       </div>
                     )}

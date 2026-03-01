@@ -2,17 +2,17 @@
 import React, { useState } from "react";
 import NotificationModal from "../../common/NotificationModal";
 import {
-  User,
-  Bike,
-  Save,
-  AlertTriangle,
-  Weight,
-  Target,
-  Navigation,
-  Mountain,
-  Settings,
-  CheckCircle,
-} from "lucide-react";
+  UserIcon,
+  MotorcycleIcon,
+  FloppyDiskIcon,
+  WarningIcon,
+  BarbellIcon,
+  TargetIcon,
+  NavigationArrowIcon,
+  MountainsIcon,
+  GearIcon,
+  CheckCircleIcon,
+} from "@phosphor-icons/react";
 
 const CuestionarioParaTecnico = ({
   cliente,
@@ -121,7 +121,7 @@ const CuestionarioParaTecnico = ({
   return (
     <div className="cuestionario-tecnico-container">
       <div className="cuestionario-header">
-        <AlertTriangle className="warning-icon" />
+        <WarningIcon className="warning-icon" />
         <div className="header-content">
           <h2>Completar Datos del Cuestionario</h2>
           <p>
@@ -138,12 +138,12 @@ const CuestionarioParaTecnico = ({
             tieneClienteCompleto ? "completo" : "incompleto"
           }`}
         >
-          <User className="estado-icon" />
+          <UserIcon className="estado-icon" />
           <span>Datos del Cliente</span>
           {tieneClienteCompleto ? (
-            <CheckCircle className="check-icon" />
+            <CheckCircleIcon className="check-icon" />
           ) : (
-            <AlertTriangle className="warning-icon" />
+            <WarningIcon className="warning-icon" />
           )}
         </div>
         <div
@@ -151,12 +151,12 @@ const CuestionarioParaTecnico = ({
             tieneMotoCompleta ? "completo" : "incompleto"
           }`}
         >
-          <Bike className="estado-icon" />
+          <MotorcycleIcon className="estado-icon" />
           <span>Datos de la Moto</span>
           {tieneMotoCompleta ? (
-            <CheckCircle className="check-icon" />
+            <CheckCircleIcon className="check-icon" />
           ) : (
-            <AlertTriangle className="warning-icon" />
+            <WarningIcon className="warning-icon" />
           )}
         </div>
       </div>
@@ -165,14 +165,14 @@ const CuestionarioParaTecnico = ({
         {/* Sección Cliente */}
         <div className="form-section">
           <div className="section-header">
-            <User className="section-icon" />
+            <UserIcon className="section-icon" />
             <h3>Datos del Cliente</h3>
           </div>
 
           <div className="fields-grid">
             <div className="field-group">
               <label className="field-label">
-                <Weight className="field-icon" />
+                <BarbellIcon className="field-icon" />
                 Peso del Piloto (kg) *
               </label>
               <input
@@ -191,7 +191,7 @@ const CuestionarioParaTecnico = ({
 
             <div className="field-group">
               <label className="field-label">
-                <Target className="field-icon" />
+                <TargetIcon className="field-icon" />
                 Nivel de Pilotaje *
               </label>
               <select
@@ -220,14 +220,14 @@ const CuestionarioParaTecnico = ({
         {/* Sección Moto */}
         <div className="form-section">
           <div className="section-header">
-            <Bike className="section-icon" />
+            <MotorcycleIcon className="section-icon" />
             <h3>Configuración de la Motocicleta</h3>
           </div>
 
           <div className="fields-grid">
             <div className="field-group">
               <label className="field-label">
-                <Navigation className="field-icon" />
+                <NavigationArrowIcon className="field-icon" />
                 Especialidad *
               </label>
               <select
@@ -248,7 +248,7 @@ const CuestionarioParaTecnico = ({
 
             <div className="field-group">
               <label className="field-label">
-                <Settings className="field-icon" />
+                <GearIcon className="field-icon" />
                 Tipo de Conducción *
               </label>
               <select
@@ -272,7 +272,7 @@ const CuestionarioParaTecnico = ({
 
             <div className="field-group">
               <label className="field-label">
-                <Settings className="field-icon" />
+                <GearIcon className="field-icon" />
                 Preferencia de Rigidez *
               </label>
               <select
@@ -309,7 +309,7 @@ const CuestionarioParaTecnico = ({
             "Guardando..."
           ) : (
             <>
-              <Save className="btn-icon" />
+              <FloppyDiskIcon className="btn-icon" />
               Guardar y Continuar
             </>
           )}

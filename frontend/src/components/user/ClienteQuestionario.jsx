@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  User,
-  Bike,
-  ChevronRight,
-  ChevronLeft,
-  Check,
-  AlertCircle,
-  Weight,
-  Target,
-  Navigation,
-  Mountain,
-  Settings,
-  Save,
-  Bell,
-} from "lucide-react";
+  UserIcon,
+  MotorcycleIcon,
+  CaretRightIcon,
+  CaretLeftIcon,
+  CheckIcon,
+  WarningCircleIcon,
+  BarbellIcon,
+  TargetIcon,
+  NavigationArrowIcon,
+  MountainsIcon,
+  GearIcon,
+  FloppyDiskIcon,
+  BellIcon,
+} from "@phosphor-icons/react";
 import api from "../../../services/Api";
 
 function urlBase64ToUint8Array(base64String) {
@@ -97,7 +97,7 @@ const ClienteQuestionario = ({
       title: "Tu información física",
       subtitle:
         "Necesitamos conocer tu peso para ajustar perfectamente tu suspensión",
-      icon: Weight,
+      icon: <BarbellIcon weight="fill" size={32} />,
       question: "¿Cuál es tu peso sin equipación?",
       field: "peso",
       inputType: "number",
@@ -116,7 +116,7 @@ const ClienteQuestionario = ({
       type: "cliente",
       title: "Tu experiencia de pilotaje",
       subtitle: "Esto nos ayuda a configurar la suspensión según tu estilo",
-      icon: Target,
+      icon: <TargetIcon weight="fill" size={32} />,
       question: "¿Cuál es tu nivel de pilotaje?",
       field: "nivelPilotaje",
       inputType: "select",
@@ -157,7 +157,7 @@ const ClienteQuestionario = ({
       type: "selection",
       title: "Selecciona tu motocicleta",
       subtitle: "Configuraremos una moto a la vez",
-      icon: Bike,
+      icon: <MotorcycleIcon weight="fill" size={32} />,
       question: "¿Para qué motocicleta quieres configurar los ajustes?",
       field: "selectedMoto",
       inputType: "moto-select",
@@ -179,11 +179,11 @@ const ClienteQuestionario = ({
       type: "moto",
       motoId: moto.id,
       motoIndex: index,
-      title: `${motoPrefix}${moto.marca} ${moto.modelo}`,
-      subtitle: `Configuremos tu ${moto.marca} ${moto.modelo} (${
+      title: `${motoPrefix}${(moto.marca || "").toUpperCase()} ${(moto.modelo || "").toUpperCase()}`,
+      subtitle: `Configuremos tu ${(moto.marca || "").toUpperCase()} ${(moto.modelo || "").toUpperCase()} (${
         moto.matricula || ""
       })`,
-      icon: Bike,
+      icon: <MotorcycleIcon weight="fill" size={32} />,
       question: "¿Para qué tipo de terreno usas principalmente esta moto?",
       field: "especialidad",
       inputType: "select",
@@ -192,13 +192,13 @@ const ClienteQuestionario = ({
           value: "onroad",
           label: "On Road (Carretera)",
           desc: "Principalmente asfalto y carreteras",
-          icon: Navigation,
+          icon: <NavigationArrowIcon weight="fill" size={24} />,
         },
         {
           value: "offroad",
           label: "Off Road (Campo)",
           desc: "Principalmente tierra y senderos",
-          icon: Mountain,
+          icon: <MountainsIcon weight="fill" size={24} />,
         },
       ],
     });
@@ -209,9 +209,9 @@ const ClienteQuestionario = ({
       type: "moto",
       motoId: moto.id,
       motoIndex: index,
-      title: `${motoPrefix}${moto.marca} ${moto.modelo}`,
-      subtitle: `Tipo de conducción - ${moto.marca} ${moto.modelo}`,
-      icon: Settings,
+      title: `${motoPrefix}${(moto.marca || "").toUpperCase()} ${(moto.modelo || "").toUpperCase()}`,
+      subtitle: `Tipo de conducción - ${(moto.marca || "").toUpperCase()} ${(moto.modelo || "").toUpperCase()}`,
+      icon: <GearIcon weight="fill" size={32} />,
       question: "¿Dónde conduces principalmente esta moto?",
       field: "tipoConduccion",
       inputType: "select",
@@ -240,9 +240,9 @@ const ClienteQuestionario = ({
       type: "moto",
       motoId: moto.id,
       motoIndex: index,
-      title: `${motoPrefix}${moto.marca} ${moto.modelo}`,
-      subtitle: `Preferencias de suspensión - ${moto.marca} ${moto.modelo}`,
-      icon: Settings,
+      title: `${motoPrefix}${(moto.marca || "").toUpperCase()} ${(moto.modelo || "").toUpperCase()}`,
+      subtitle: `Preferencias de suspensión - ${(moto.marca || "").toUpperCase()} ${(moto.modelo || "").toUpperCase()}`,
+      icon: <GearIcon weight="fill" size={32} />,
       question: "¿Qué prefieres en tu suspensión?",
       field: "preferenciaRigidez",
       inputType: "select",
@@ -267,7 +267,7 @@ const ClienteQuestionario = ({
     type: "notificaciones",
     title: "Comunicaciones y avisos",
     subtitle: "Necesitamos tu autorización para enviarte avisos de revisión y datos relevantes de tu moto",
-    icon: Bell,
+    icon: <BellIcon weight="fill" size={32} />,
     question: "¿Nos permites enviarte notificaciones sobre revisiones de suspensión y datos relevantes de tu moto?",
     field: "aceptaNotificaciones",
     inputType: "toggle",
@@ -392,7 +392,7 @@ const ClienteQuestionario = ({
           </div>
           {error && (
             <div className="error-message">
-              <AlertCircle size={16} />
+              <WarningCircleIcon weight="fill" size={16} />
               <span>{error}</span>
             </div>
           )}
@@ -414,13 +414,13 @@ const ClienteQuestionario = ({
                 }`}
               >
                 <div className="option-header">
-                  {IconComponent && <IconComponent size={24} />}
+                  {IconComponent && IconComponent}
                   <h4>{option.label}</h4>
                 </div>
                 <p>{option.desc}</p>
                 {value === option.value && (
                   <div className="selected-indicator">
-                    <Check size={20} />
+                    <CheckIcon weight="fill" size={20} />
                   </div>
                 )}
               </button>
@@ -428,7 +428,7 @@ const ClienteQuestionario = ({
           })}
           {error && (
             <div className="error-message full-width">
-              <AlertCircle size={16} />
+              <WarningCircleIcon weight="fill" size={16} />
               <span>{error}</span>
             </div>
           )}
@@ -448,22 +448,22 @@ const ClienteQuestionario = ({
               }`}
             >
               <div className="option-header">
-                <Bike size={24} />
+                <MotorcycleIcon weight="fill" size={24} />
                 <h4>
-                  {m.marca} {m.modelo}
+                  {(m.marca || "").toUpperCase()} {(m.modelo || "").toUpperCase()}
                 </h4>
               </div>
               <p>{m.matricula || m.bastidor || "Sin matrícula"}</p>
               {selectedMoto === m.id && (
                 <div className="selected-indicator">
-                  <Check size={20} />
+                  <CheckIcon weight="fill" size={20} />
                 </div>
               )}
             </button>
           ))}
           {error && (
             <div className="error-message full-width">
-              <AlertCircle size={16} />
+              <WarningCircleIcon weight="fill" size={16} />
               <span>{error}</span>
             </div>
           )}
@@ -481,11 +481,11 @@ const ClienteQuestionario = ({
             className={`option-card ${checked ? "selected" : ""}`}
           >
             <div className="option-header">
-              <Bell size={24} />
+              <BellIcon weight="fill" size={24} />
               <h4>Sí, acepto</h4>
             </div>
             <p>Me gustaría recibir avisos sobre revisiones y novedades de mi moto</p>
-            {checked && <div className="selected-indicator"><Check size={20} /></div>}
+            {checked && <div className="selected-indicator"><CheckIcon weight="fill" size={20} /></div>}
           </button>
           <p className="notif-required-note">
             * Imprescindible para el correcto funcionamiento de la app
@@ -520,10 +520,7 @@ const ClienteQuestionario = ({
       <div className="questionnaire-content">
         <div className="step-header">
           <div className="step-icon">
-            {(() => {
-              const StepIcon = currentStepData.icon;
-              return <StepIcon size={32} />;
-            })()}
+            {currentStepData.icon}
           </div>
           <div className="step-text">
             <h2>{currentStepData.title}</h2>
@@ -544,7 +541,7 @@ const ClienteQuestionario = ({
               onClick={() => setCurrentStep((p) => p - 1)}
               className="btn-secondary"
             >
-              <ChevronLeft size={20} /> Anterior
+              <CaretLeftIcon weight="fill" size={20} /> Anterior
             </button>
           )}
 
@@ -558,12 +555,12 @@ const ClienteQuestionario = ({
               "Guardando..."
             ) : isLastStep ? (
               <>
-                <Save size={20} />{" "}
+                <FloppyDiskIcon weight="fill" size={20} />{" "}
                 {esConfirmacion ? "Confirmar datos" : "Finalizar"}
               </>
             ) : (
               <>
-                Continuar <ChevronRight size={20} />
+                Continuar <CaretRightIcon weight="fill" size={20} />
               </>
             )}
           </button>

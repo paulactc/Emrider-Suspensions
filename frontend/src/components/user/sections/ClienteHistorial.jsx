@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
-import { ChevronLeft, History } from "lucide-react";
+import { CaretLeftIcon, ClockCounterClockwiseIcon } from "@phosphor-icons/react";
 import HistorialOrdenes from "../HistorialOrdenes";
 import { useClienteData } from "../../../hooks/useClienteData";
 
@@ -11,7 +11,7 @@ function ClienteHistorial() {
     return (
       <div className="cliente-section-page">
         <Link to="/cliente" className="cliente-section-page__back">
-          <ChevronLeft /> Volver
+          <CaretLeftIcon /> Volver
         </Link>
         <div className="cliente-section-page__loading">Cargando historial...</div>
       </div>
@@ -22,7 +22,7 @@ function ClienteHistorial() {
     return (
       <div className="cliente-section-page">
         <Link to="/cliente" className="cliente-section-page__back">
-          <ChevronLeft /> Volver
+          <CaretLeftIcon /> Volver
         </Link>
         <p className="cliente-section-page__error">{error}</p>
       </div>
@@ -30,13 +30,13 @@ function ClienteHistorial() {
   }
 
   return (
-    <div className="cliente-section-page">
+    <div className="cliente-section-page cliente-section-page--historial">
       <div className="cliente-section-page__topbar">
         <Link to="/cliente" className="cliente-section-page__back">
-          <ChevronLeft /> Volver
+          <CaretLeftIcon /> Volver
         </Link>
         <div className="cliente-section-page__title-wrap">
-          <div className="cliente-section-page__title-icon"><History /></div>
+          <div className="cliente-section-page__title-icon"><ClockCounterClockwiseIcon /></div>
           <h2 className="cliente-section-page__title">Historial de Trabajos</h2>
         </div>
       </div>

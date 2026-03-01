@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router";
 import {
-  User,
-  Phone,
-  MapPin,
-  Code,
-  Building,
-  ArrowLeft,
-  FileUser,
-  Lock,
-} from "lucide-react";
+  UserIcon,
+  PhoneIcon,
+  MapPinIcon,
+  CodeIcon,
+  BuildingIcon,
+  ArrowLeftIcon,
+  IdentificationCardIcon,
+  LockIcon,
+} from "@phosphor-icons/react";
 
 const EditarDatosCliente = ({ listCustom = [] }) => {
   const { id } = useParams();
@@ -96,11 +96,11 @@ const EditarDatosCliente = ({ listCustom = [] }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button onClick={handleCancelar} className="Newcustom">
-                <ArrowLeft className="w-5 h-5 text-gray-600" />
+                <ArrowLeftIcon className="w-5 h-5 text-gray-600" />
                 <span>Volver</span>
               </button>
               <div className="flex items-center space-x-3">
-                <Lock className="w-8 h-8 text-gray-500" />
+                <LockIcon className="w-8 h-8 text-gray-500" />
                 <div>
                   <h1 className="header-title">Datos del Cliente</h1>
                   <p className="text-gray-600">
@@ -127,7 +127,7 @@ const EditarDatosCliente = ({ listCustom = [] }) => {
             {/* Nombre */}
             <div>
               <label className="input-label">
-                <User className="w-4 h-4 inline mr-2" />
+                <UserIcon className="w-4 h-4 inline mr-2" />
                 Nombre
               </label>
               <input
@@ -141,7 +141,7 @@ const EditarDatosCliente = ({ listCustom = [] }) => {
             {/* Apellidos */}
             <div>
               <label className="input-label">
-                <User className="w-4 h-4 inline mr-2" />
+                <UserIcon className="w-4 h-4 inline mr-2" />
                 Apellidos
               </label>
               <input
@@ -155,7 +155,7 @@ const EditarDatosCliente = ({ listCustom = [] }) => {
             {/* Teléfono */}
             <div>
               <label className="input-label">
-                <Phone className="w-4 h-4 inline mr-2" />
+                <PhoneIcon className="w-4 h-4 inline mr-2" />
                 Telefono
               </label>
               <input
@@ -169,7 +169,7 @@ const EditarDatosCliente = ({ listCustom = [] }) => {
             {/* CIF */}
             <div>
               <label className="input-label">
-                <FileUser className="w-4 h-4 inline mr-2" />
+                <IdentificationCardIcon className="w-4 h-4 inline mr-2" />
                 CIF
               </label>
               <input
@@ -183,7 +183,7 @@ const EditarDatosCliente = ({ listCustom = [] }) => {
             {/* Dirección */}
             <div className="md:col-span-2">
               <label className="input-label">
-                <MapPin className="w-4 h-4 inline mr-2" />
+                <MapPinIcon className="w-4 h-4 inline mr-2" />
                 Direccion
               </label>
               <input
@@ -197,7 +197,7 @@ const EditarDatosCliente = ({ listCustom = [] }) => {
             {/* Código Postal */}
             <div>
               <label className="input-label">
-                <Code className="w-4 h-4 inline mr-2" />
+                <CodeIcon className="w-4 h-4 inline mr-2" />
                 Codigo Postal
               </label>
               <input
@@ -211,7 +211,7 @@ const EditarDatosCliente = ({ listCustom = [] }) => {
             {/* Población */}
             <div>
               <label className="input-label">
-                <Building className="w-4 h-4 inline mr-2" />
+                <BuildingIcon className="w-4 h-4 inline mr-2" />
                 Poblacion
               </label>
               <input
@@ -225,7 +225,7 @@ const EditarDatosCliente = ({ listCustom = [] }) => {
             {/* Provincia */}
             <div className="md:col-span-2">
               <label className="input-label">
-                <MapPin className="w-4 h-4 inline mr-2" />
+                <MapPinIcon className="w-4 h-4 inline mr-2" />
                 Provincia
               </label>
               <input
@@ -243,7 +243,7 @@ const EditarDatosCliente = ({ listCustom = [] }) => {
               onClick={handleCancelar}
               className="Newcustom"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeftIcon className="w-4 h-4" />
               <span>Volver</span>
             </button>
           </div>

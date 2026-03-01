@@ -2,24 +2,24 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useLocation, useNavigate } from "react-router";
 import {
-  User,
-  Bike,
-  AlertTriangle,
-  CheckCircle,
-  Info,
-  Wrench,
-  Settings,
-  FileText,
-  Calendar,
-  Save,
-  ArrowLeft,
-  Lock,
-  Weight,
-  Target,
-  ChevronDown,
-  ChevronUp,
-  Plus,
-} from "lucide-react";
+  UserIcon,
+  MotorcycleIcon,
+  WarningIcon,
+  CheckCircleIcon,
+  InfoIcon,
+  WrenchIcon,
+  GearIcon,
+  FileTextIcon,
+  CalendarIcon,
+  FloppyDiskIcon,
+  ArrowLeftIcon,
+  LockIcon,
+  BarbellIcon,
+  TargetIcon,
+  CaretDownIcon,
+  CaretUpIcon,
+  PlusIcon,
+} from "@phosphor-icons/react";
 import api from "../../../../services/Api";
 import CuestionarioParaTecnico from "./CuestionarioParaTecnico";
 import NotificationModal from "../../common/NotificationModal";
@@ -54,7 +54,7 @@ const ClienteDataDisplay = ({ cliente }) => {
 
   if (peso) {
     customerDataPilotaje.push({
-      icon: Weight,
+      icon: BarbellIcon,
       label: "Peso",
       value: `Peso: ${peso} kg`,
     });
@@ -62,7 +62,7 @@ const ClienteDataDisplay = ({ cliente }) => {
 
   if (nivelPilotaje) {
     customerDataPilotaje.push({
-      icon: Target,
+      icon: TargetIcon,
       label: "Nivel",
       value: `Nivel: ${getNivelPilotajeLabel(nivelPilotaje)}`,
     });
@@ -953,7 +953,7 @@ const FormTechnicalDataWithClientData = React.memo(
             <button type="button" onClick={() => setExtraRows((prev) => Math.min(prev + 5, 20))}
               style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 1rem", backgroundColor: "#10b981", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "0.9rem", fontWeight: 600 }}
               disabled={!servicioGuardado}>
-              <Plus size={16} /> Agregar 5 filas mas
+              <PlusIcon size={16} /> Agregar 5 filas mas
             </button>
           )}
         </div>
@@ -1012,7 +1012,7 @@ const FormTechnicalDataWithClientData = React.memo(
         {/* Header con boton volver */}
         <div className="form-header">
           <button onClick={() => navigate(-1)} className="btn-back">
-            <ArrowLeft size={20} /> Volver
+            <ArrowLeftIcon size={20} /> Volver
           </button>
           <div className="header-title">
             <h1>Datos Tecnicos - {tipoSuspension === "FF" ? "FF (Horquilla Delantera)" : "RR (Amortiguador Trasero)"}</h1>
@@ -1021,7 +1021,7 @@ const FormTechnicalDataWithClientData = React.memo(
         </div>
 
         {errors.general && (
-          <div className="error-banner"><AlertTriangle size={20} /> {errors.general}</div>
+          <div className="error-banner"><WarningIcon size={20} /> {errors.general}</div>
         )}
 
         {/* Cuestionario para Tecnico */}
@@ -1042,8 +1042,8 @@ const FormTechnicalDataWithClientData = React.memo(
           {/* Datos del Cliente */}
           <div className="info-section">
             <div className="info-header">
-              <User className="info-icon" /><h3>Datos del Cliente</h3>
-              {datosCompletos ? <CheckCircle className="status-icon status-complete" /> : <AlertTriangle className="status-icon status-incomplete" />}
+              <UserIcon className="info-icon" /><h3>Datos del Cliente</h3>
+              {datosCompletos ? <CheckCircleIcon className="status-icon status-complete" /> : <WarningIcon className="status-icon status-incomplete" />}
             </div>
             {clienteData ? (
               <div className="info-grid">
@@ -1052,13 +1052,13 @@ const FormTechnicalDataWithClientData = React.memo(
                 <div className="info-item"><span className="info-label">Datos de Pilotaje:</span><span className="info-value"><ClienteDataDisplay cliente={clienteData} /></span></div>
               </div>
             ) : (
-              <div className="no-data"><Info className="info-icon" /><span>No se encontraron datos del cliente</span></div>
+              <div className="no-data"><InfoIcon className="info-icon" /><span>No se encontraron datos del cliente</span></div>
             )}
           </div>
 
           {/* Datos de la Moto */}
           <div className="info-section">
-            <div className="info-header"><Bike className="info-icon" /><h3>Datos de la Motocicleta</h3></div>
+            <div className="info-header"><MotorcycleIcon className="info-icon" /><h3>Datos de la Motocicleta</h3></div>
             {motoData ? (
               <div className="info-grid">
                 <div className="info-item"><span className="info-label">Marca/Modelo:</span><span className="info-value">{motoData.marca} {motoData.modelo}</span></div>
@@ -1069,16 +1069,16 @@ const FormTechnicalDataWithClientData = React.memo(
                 <div className="info-item"><span className="info-label">Preferencia Rigidez:</span><span className="info-value">{motoData.preferenciaRigidez || <span className="missing-data">No disponible</span>}</span></div>
               </div>
             ) : (
-              <div className="no-data"><Info className="info-icon" /><span>No se encontraron datos de la motocicleta</span></div>
+              <div className="no-data"><InfoIcon className="info-icon" /><span>No se encontraron datos de la motocicleta</span></div>
             )}
           </div>
 
           {/* Estado del Cuestionario */}
           <div className="questionnaire-status">
             {datosCompletos ? (
-              <div className="status-complete"><CheckCircle className="status-icon" /><span>El cliente ya ha completado el cuestionario.</span></div>
+              <div className="status-complete"><CheckCircleIcon className="status-icon" /><span>El cliente ya ha completado el cuestionario.</span></div>
             ) : (
-              <div className="status-incomplete"><AlertTriangle className="status-icon" /><span>El cliente aun no ha completado el cuestionario. Complete los datos en el formulario de arriba.</span></div>
+              <div className="status-incomplete"><WarningIcon className="status-icon" /><span>El cliente aun no ha completado el cuestionario. Complete los datos en el formulario de arriba.</span></div>
             )}
           </div>
         </div>
@@ -1088,22 +1088,22 @@ const FormTechnicalDataWithClientData = React.memo(
           {/* PASO 1: INFORMACION DEL SERVICIO */}
           <div className={`formulario-seccion ${!datosCompletos ? "deshabilitado" : ""} ${servicioGuardado ? "completado" : ""}`}>
             {!datosCompletos && (
-              <div className="overlay-deshabilitado"><AlertTriangle className="overlay-icon" /><p>Completa el cuestionario antes de continuar</p></div>
+              <div className="overlay-deshabilitado"><WarningIcon className="overlay-icon" /><p>Completa el cuestionario antes de continuar</p></div>
             )}
             {servicioGuardado && (
               <div className="overlay-completado">
-                <CheckCircle className="overlay-icon" /><p>Informacion del servicio guardada correctamente</p>
+                <CheckCircleIcon className="overlay-icon" /><p>Informacion del servicio guardada correctamente</p>
                 <button type="button" onClick={() => setServicioGuardado(false)} className="btn-editar-servicio">Modificar informacion</button>
               </div>
             )}
 
             <div className="form-section servicio-section">
               <div className="section-header">
-                <FileText size={24} /><h2>Informacion del Servicio</h2>
+                <FileTextIcon size={24} /><h2>Informacion del Servicio</h2>
                 <div className="section-status">
                   {servicioGuardado
-                    ? <span className="status-saved"><CheckCircle size={16} /> Guardado</span>
-                    : <span className="status-pending"><AlertTriangle size={16} /> Pendiente</span>}
+                    ? <span className="status-saved"><CheckCircleIcon size={16} /> Guardado</span>
+                    : <span className="status-pending"><WarningIcon size={16} /> Pendiente</span>}
                 </div>
               </div>
 
@@ -1175,7 +1175,7 @@ const FormTechnicalDataWithClientData = React.memo(
               {datosCompletos && !servicioGuardado && (
                 <div className="section-actions">
                   <button type="button" onClick={handleGuardarServicio} disabled={guardandoServicio} className="btn-save-service">
-                    {guardandoServicio ? (<><div className="spinner"></div> Guardando...</>) : (<><Save size={20} /> Guardar Informacion del Servicio</>)}
+                    {guardandoServicio ? (<><div className="spinner"></div> Guardando...</>) : (<><FloppyDiskIcon size={20} /> Guardar Informacion del Servicio</>)}
                   </button>
                 </div>
               )}
@@ -1185,18 +1185,18 @@ const FormTechnicalDataWithClientData = React.memo(
           {/* RESTO DE SECCIONES (Solo visibles cuando el servicio este guardado) */}
           <div className={`formulario-tecnico ${!servicioGuardado ? "deshabilitado" : ""}`}>
             {!servicioGuardado && (
-              <div className="overlay-deshabilitado"><Lock className="overlay-icon" /><p>Guarda primero la informacion del servicio para continuar</p></div>
+              <div className="overlay-deshabilitado"><LockIcon className="overlay-icon" /><p>Guarda primero la informacion del servicio para continuar</p></div>
             )}
 
             <div className="form-section">
-              <div className="section-header"><Settings size={24} /><h2>Datos de Suspension</h2></div>
+              <div className="section-header"><GearIcon size={24} /><h2>Datos de Suspension</h2></div>
             </div>
 
             {/* CAMPOS TECNICOS FF */}
             {tipoSuspension === "FF" && (
               <>
                 <div className="form-section">
-                  <div className="section-header"><Wrench size={24} /><h2>Datos Tecnicos FF - Horquilla</h2></div>
+                  <div className="section-header"><WrenchIcon size={24} /><h2>Datos Tecnicos FF - Horquilla</h2></div>
                   <div className="form-grid-inout">
                     {renderInOutField("Tipo de aceite", "oilType", "text", "5W")}
                     {renderInOutField("Nivel de aceite (mm)", "oilLevel", "number", "120")}
@@ -1219,8 +1219,8 @@ const FormTechnicalDataWithClientData = React.memo(
                 <div className="form-section">
                   <div className="section-header collapsible" onClick={() => setMuellePrincipalOpen(!muellePrincipalOpen)}
                     style={{ cursor: "pointer", userSelect: "none" }}>
-                    <Settings size={24} /><h2>Datos de Muelle Principal</h2>
-                    {muellePrincipalOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+                    <GearIcon size={24} /><h2>Datos de Muelle Principal</h2>
+                    {muellePrincipalOpen ? <CaretUpIcon size={24} /> : <CaretDownIcon size={24} />}
                   </div>
                   {muellePrincipalOpen && (
                     <div className="form-grid-inout">
@@ -1239,8 +1239,8 @@ const FormTechnicalDataWithClientData = React.memo(
                 <div className="form-section">
                   <div className="section-header collapsible" onClick={() => setPistonMainOpen(!pistonMainOpen)}
                     style={{ cursor: "pointer", userSelect: "none" }}>
-                    <Settings size={24} /><h2>SPEC FF - Piston Main</h2>
-                    {pistonMainOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+                    <GearIcon size={24} /><h2>SPEC FF - Piston Main</h2>
+                    {pistonMainOpen ? <CaretUpIcon size={24} /> : <CaretDownIcon size={24} />}
                   </div>
 
                   {pistonMainOpen && (
@@ -1316,8 +1316,8 @@ const FormTechnicalDataWithClientData = React.memo(
                 <div className="form-section">
                   <div className="section-header collapsible" onClick={() => setPistonCompresionOpen(!pistonCompresionOpen)}
                     style={{ cursor: "pointer", userSelect: "none" }}>
-                    <Settings size={24} /><h2>SPEC FF - Piston Compresion</h2>
-                    {pistonCompresionOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+                    <GearIcon size={24} /><h2>SPEC FF - Piston Compresion</h2>
+                    {pistonCompresionOpen ? <CaretUpIcon size={24} /> : <CaretDownIcon size={24} />}
                   </div>
 
                   {pistonCompresionOpen && (
@@ -1384,7 +1384,7 @@ const FormTechnicalDataWithClientData = React.memo(
             <div className="form-actions">
               <button type="button" onClick={() => navigate(-1)} className="btn-cancel">Cancelar</button>
               <button type="submit" disabled={saving || !servicioGuardado} className="btn-save">
-                {saving ? (<><div className="spinner"></div> Guardando...</>) : (<><Save size={20} /> Finalizar y Guardar Datos Tecnicos {tipoSuspension}</>)}
+                {saving ? (<><div className="spinner"></div> Guardando...</>) : (<><FloppyDiskIcon size={20} /> Finalizar y Guardar Datos Tecnicos {tipoSuspension}</>)}
               </button>
             </div>
           </div>

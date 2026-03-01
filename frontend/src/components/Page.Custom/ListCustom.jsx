@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
-import { Wrench, CheckCircle, Bell } from "lucide-react";
+import { WrenchIcon, CheckCircleIcon, BellIcon } from "@phosphor-icons/react";
 import InputSearchCustom from "../admin/forms/InputSearchCustom";
 import UleachCustom from "../Page.Custom/UleachCustom";
 import api from "../../../services/Api";
@@ -107,7 +107,7 @@ function ListCustom({
         <div className="admin-trabajos-accesos">
           <Link to="/admin/trabajos-pendientes" className="admin-trabajo-acceso admin-trabajo-acceso--pendientes">
             <div className="admin-trabajo-acceso__icon">
-              <Wrench size={20} />
+              <WrenchIcon size={20} />
             </div>
             <div className="admin-trabajo-acceso__text">
               <span className="admin-trabajo-acceso__title">Pendientes</span>
@@ -120,7 +120,7 @@ function ListCustom({
 
           <Link to="/admin/trabajos-finalizados" className="admin-trabajo-acceso admin-trabajo-acceso--finalizados">
             <div className="admin-trabajo-acceso__icon">
-              <CheckCircle size={20} />
+              <CheckCircleIcon size={20} />
             </div>
             <div className="admin-trabajo-acceso__text">
               <span className="admin-trabajo-acceso__title">Finalizados</span>
@@ -133,7 +133,7 @@ function ListCustom({
 
           <Link to="/admin/avisos" className="admin-trabajo-acceso admin-trabajo-acceso--avisos">
             <div className="admin-trabajo-acceso__icon">
-              <Bell size={20} />
+              <BellIcon size={20} />
             </div>
             <div className="admin-trabajo-acceso__text">
               <span className="admin-trabajo-acceso__title">Avisos</span>

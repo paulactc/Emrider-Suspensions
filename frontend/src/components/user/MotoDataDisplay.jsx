@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigation, Mountain, Settings, MapPin } from "lucide-react";
+import { NavigationArrowIcon, MountainsIcon, GearIcon, MapPinIcon } from "@phosphor-icons/react";
 
 const MotoDataDisplay = ({ moto }) => {
   console.log("🐛 MotoDataDisplay - Props recibidas:", moto);
@@ -33,10 +33,10 @@ const MotoDataDisplay = ({ moto }) => {
   // Mapear valores a etiquetas legibles
   const getEspecialidadInfo = (esp) => {
     const especialidades = {
-      onroad: { label: "On Road", icon: Navigation },
-      offroad: { label: "Off Road", icon: Mountain },
+      onroad: { label: "On Road", icon: NavigationArrowIcon },
+      offroad: { label: "Off Road", icon: MountainsIcon },
     };
-    return especialidades[esp] || { label: esp, icon: Settings };
+    return especialidades[esp] || { label: esp, icon: GearIcon };
   };
 
   const getTipoConduccionLabel = (tipo) => {
@@ -70,7 +70,7 @@ const MotoDataDisplay = ({ moto }) => {
 
   if (tipoConduccion) {
     configData.push({
-      icon: MapPin,
+      icon: MapPinIcon,
       label: "Conducción",
       value: getTipoConduccionLabel(tipoConduccion),
     });
@@ -78,7 +78,7 @@ const MotoDataDisplay = ({ moto }) => {
 
   if (preferenciaRigidez) {
     configData.push({
-      icon: Settings,
+      icon: GearIcon,
       label: "Preferencia",
       value: getPreferenciaRigidezLabel(preferenciaRigidez),
     });

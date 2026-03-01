@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router";
 import {
-  Bike,
-  Save,
-  X,
-  ArrowLeft,
-  Calendar,
-  Hash,
-  FileText,
-  AlertTriangle,
-  Navigation,
-  Settings,
-  Target,
-  Plus,
-} from "lucide-react";
+  MotorcycleIcon,
+  FloppyDiskIcon,
+  XIcon,
+  ArrowLeftIcon,
+  CalendarIcon,
+  HashIcon,
+  FileTextIcon,
+  WarningIcon,
+  NavigationArrowIcon,
+  GearIcon,
+  TargetIcon,
+  PlusIcon,
+} from "@phosphor-icons/react";
 import api from "../../../../services/Api";
 import NotificationModal from "../../common/NotificationModal";
 
@@ -275,7 +275,7 @@ const FormBike = () => {
     return (
       <div className="app-containerform">
         <div className="error-container">
-          <AlertTriangle size={48} />
+          <WarningIcon size={48} />
           <h3>Error al cargar la motocicleta</h3>
           <p>{errors.general}</p>
           <button onClick={() => navigate(-1)} className="Newcustom">
@@ -291,12 +291,12 @@ const FormBike = () => {
       {/* Header */}
       <div className="form-header">
         <button onClick={handleCancelar} className="Newcustom">
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeftIcon className="w-5 h-5" />
           <span>Volver</span>
         </button>
         <div className="header-content">
           <div className="flex items-center space-x-3">
-            <Bike className="w-8 h-8 text-blue-600" />
+            <MotorcycleIcon className="w-8 h-8 text-blue-600" />
             <div>
               <h1 className="header-title">
                 {isEditMode ? "Editar" : "Nueva"} Motocicleta
@@ -325,7 +325,7 @@ const FormBike = () => {
           {/* Datos básicos */}
           <div className="form-section-basic">
             <legend className="input-label">
-              <FileText className="w-4 h-4 inline mr-2" />
+              <FileTextIcon className="w-4 h-4 inline mr-2" />
               Marca *
             </legend>
             <input
@@ -338,7 +338,7 @@ const FormBike = () => {
             {errors.marca && <p className="error-text">{errors.marca}</p>}
 
             <legend className="input-label">
-              <Bike className="w-4 h-4 inline mr-2" />
+              <MotorcycleIcon className="w-4 h-4 inline mr-2" />
               Modelo *
             </legend>
             <input
@@ -351,7 +351,7 @@ const FormBike = () => {
             {errors.modelo && <p className="error-text">{errors.modelo}</p>}
 
             <legend className="input-label">
-              <Calendar className="w-4 h-4 inline mr-2" />
+              <CalendarIcon className="w-4 h-4 inline mr-2" />
               Año de fabricación *
             </legend>
             <input
@@ -366,7 +366,7 @@ const FormBike = () => {
             {errors.anio && <p className="error-text">{errors.anio}</p>}
 
             <legend className="input-label">
-              <Hash className="w-4 h-4 inline mr-2" />
+              <HashIcon className="w-4 h-4 inline mr-2" />
               Matrícula *
             </legend>
             <input
@@ -381,7 +381,7 @@ const FormBike = () => {
             )}
 
             <legend className="input-label">
-              <FileText className="w-4 h-4 inline mr-2" />
+              <FileTextIcon className="w-4 h-4 inline mr-2" />
               Bastidor
             </legend>
             <input
@@ -393,7 +393,7 @@ const FormBike = () => {
             />
 
             <legend className="input-label">
-              <FileText className="w-4 h-4 inline mr-2" />
+              <FileTextIcon className="w-4 h-4 inline mr-2" />
               CIF del Propietario *
               {/* ✅ Mostrar indicador si se auto-completó */}
               {clienteData && (
@@ -422,7 +422,7 @@ const FormBike = () => {
           {/* Datos del cuestionario */}
           <div className="form-section-questionnaire">
             <h3 className="section-subtitle">
-              <Target className="w-5 h-5 inline mr-2" />
+              <TargetIcon className="w-5 h-5 inline mr-2" />
               Configuración de Suspensión
             </h3>
             <p className="section-description">
@@ -430,7 +430,7 @@ const FormBike = () => {
             </p>
 
             <legend className="input-label">
-              <Navigation className="w-4 h-4 inline mr-2" />
+              <NavigationArrowIcon className="w-4 h-4 inline mr-2" />
               Especialidad
             </legend>
             <select
@@ -446,7 +446,7 @@ const FormBike = () => {
             </select>
 
             <legend className="input-label">
-              <Settings className="w-4 h-4 inline mr-2" />
+              <GearIcon className="w-4 h-4 inline mr-2" />
               Tipo de Conducción
             </legend>
             <select
@@ -463,7 +463,7 @@ const FormBike = () => {
             </select>
 
             <legend className="input-label">
-              <Settings className="w-4 h-4 inline mr-2" />
+              <GearIcon className="w-4 h-4 inline mr-2" />
               Preferencia de Rigidez
             </legend>
             <select
@@ -486,7 +486,7 @@ const FormBike = () => {
               className="Newcustom btn-cancel"
               disabled={saving}
             >
-              <X className="w-4 h-4" />
+              <XIcon className="w-4 h-4" />
               <span>Cancelar</span>
             </button>
 
@@ -503,9 +503,9 @@ const FormBike = () => {
               ) : (
                 <>
                   {isEditMode ? (
-                    <Save className="w-4 h-4" />
+                    <FloppyDiskIcon className="w-4 h-4" />
                   ) : (
-                    <Plus className="w-4 h-4" />
+                    <PlusIcon className="w-4 h-4" />
                   )}
                   <span>
                     {isEditMode ? "Guardar Cambios" : "Crear Motocicleta"}
@@ -518,7 +518,7 @@ const FormBike = () => {
           {/* Indicadores de estado */}
           {isEditMode && hayChangios && (
             <div className="status-indicator warning">
-              <AlertTriangle className="w-4 h-4" />
+              <WarningIcon className="w-4 h-4" />
               <span>Hay cambios sin guardar</span>
             </div>
           )}

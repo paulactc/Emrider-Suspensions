@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
-  ArrowLeft, FileText, Wrench, CheckCircle,
-  Hash, Calendar, Gauge, Bike, User,
-} from "lucide-react";
+  ArrowLeftIcon, FileTextIcon, WrenchIcon, CheckCircleIcon,
+  HashIcon, CalendarIcon, GaugeIcon, MotorcycleIcon, UserIcon,
+} from "@phosphor-icons/react";
 import api from "../../../services/Api";
 import DatosTecnicosServicio from "../user/DatosTecnicosServicio";
 import "../../styles/FormTechnicalDataWithClientData.scss";
@@ -95,7 +95,7 @@ function ServicioDetalleAdmin() {
       {/* ── Header ── */}
       <div className="form-header">
         <button onClick={() => navigate(-1)} className="btn-back">
-          <ArrowLeft size={18} /> Volver
+          <ArrowLeftIcon size={18} /> Volver
         </button>
         <div className="header-title">
           <h1>Trabajo finalizado</h1>
@@ -113,10 +113,10 @@ function ServicioDetalleAdmin() {
         {/* ── Información del servicio ── */}
         <div className="servicio-detalle__section">
           <div className="section-header">
-            <FileText size={20} />
+            <FileTextIcon size={20} />
             <h2>Información del servicio</h2>
             <span className="status-saved">
-              <CheckCircle size={13} /> Finalizado
+              <CheckCircleIcon size={13} /> Finalizado
             </span>
           </div>
 
@@ -164,7 +164,7 @@ function ServicioDetalleAdmin() {
         {/* ── Datos técnicos ── */}
         <div className="servicio-detalle__section">
           <div className="section-header">
-            <Wrench size={20} />
+            <WrenchIcon size={20} />
             <h2>
               Datos técnicos —{" "}
               {tipo === "FF" ? "Horquilla delantera" : "Amortiguador trasero"}

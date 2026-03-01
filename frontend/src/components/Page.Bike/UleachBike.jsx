@@ -3,15 +3,15 @@ import MotoDataDisplay from "../user/MotoDataDisplay";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import {
-  Tag,
-  Bike,
-  Calendar,
-  Hash,
-  Settings,
-  AlertTriangle,
-  BookAlert,
-  ArrowLeft,
-} from "lucide-react";
+  TagIcon,
+  MotorcycleIcon,
+  CalendarIcon,
+  HashIcon,
+  GearIcon,
+  WarningIcon,
+  IdentificationCardIcon,
+  ArrowLeftIcon,
+} from "@phosphor-icons/react";
 import Caducidad from "../user/Caducidad";
 
 function UleachBike({ listBikes, listTechnical }) {
@@ -32,7 +32,7 @@ function UleachBike({ listBikes, listTechnical }) {
         <div className="uleach-bikes-container__header">
           <h2>Mis Motocicletas</h2>
           <button onClick={handleCancelar} className="Newcustom">
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <ArrowLeftIcon className="w-5 h-5 text-gray-600" />
             <span>Volver</span>
           </button>
         </div>
@@ -50,7 +50,7 @@ function UleachBike({ listBikes, listTechnical }) {
       <div className="uleach-bikes-container__header">
         <h2>Mis Motocicletas</h2>
         <button onClick={handleCancelar} className="Newcustom">
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
+          <ArrowLeftIcon className="w-5 h-5 text-gray-600" />
           <span>Volver</span>
         </button>
 
@@ -77,7 +77,7 @@ function UleachBike({ listBikes, listTechnical }) {
 
                 {caducado && (
                   <div className="mantenimiento-alerta">
-                    <AlertTriangle size={16} />
+                    <WarningIcon size={16} />
                     <span className="text-sm font-semibold">
                       Mantenimiento de
                       <br /> suspensiones caducado
@@ -91,7 +91,7 @@ function UleachBike({ listBikes, listTechnical }) {
               <div className="listMotocicle__content">
                 <div className="listMotocicle__specs">
                   <div className="listMotocicle__spec-item">
-                    <Tag className="listMotocicle__spec-item-icon" />
+                    <TagIcon className="listMotocicle__spec-item-icon" />
                     <span className="listMotocicle__spec-item-label">
                       Marca:
                     </span>
@@ -101,7 +101,7 @@ function UleachBike({ listBikes, listTechnical }) {
                   </div>
 
                   <div className="listMotocicle__spec-item">
-                    <Bike className="listMotocicle__spec-item-icon" />
+                    <MotorcycleIcon className="listMotocicle__spec-item-icon" />
                     <span className="listMotocicle__spec-item-label">
                       Modelo:
                     </span>
@@ -111,7 +111,7 @@ function UleachBike({ listBikes, listTechnical }) {
                   </div>
 
                   <div className="listMotocicle__spec-item">
-                    <Calendar className="listMotocicle__spec-item-icon" />
+                    <CalendarIcon className="listMotocicle__spec-item-icon" />
                     <span className="listMotocicle__spec-item-label">Año:</span>
                     <span className="listMotocicle__spec-item-value">
                       {bike.anio}
@@ -119,7 +119,7 @@ function UleachBike({ listBikes, listTechnical }) {
                   </div>
 
                   <div className="listMotocicle__spec-item">
-                    <Hash className="listMotocicle__spec-item-icon" />
+                    <HashIcon className="listMotocicle__spec-item-icon" />
                     <span className="listMotocicle__spec-item-label">
                       Matrícula:
                     </span>
@@ -129,7 +129,7 @@ function UleachBike({ listBikes, listTechnical }) {
                   </div>
 
                   <div className="listMotocicle__spec-item">
-                    <BookAlert className="listMotocicle__spec-item-icon" />
+                    <IdentificationCardIcon className="listMotocicle__spec-item-icon" />
                     <span className="listMotocicle__spec-item-label">
                       Bastidor:
                     </span>
@@ -147,7 +147,7 @@ function UleachBike({ listBikes, listTechnical }) {
                   to={`/custom/datos-tecnicos/${bike.id}`}
                   state={{ listTechnical }}
                 >
-                  <Settings /> Servicios realizados
+                  <GearIcon /> Servicios realizados
                 </NavLink>
 
                 <Caducidad

@@ -1,5 +1,5 @@
 import React from "react";
-import { Weight, Target, User } from "lucide-react";
+import { BarbellIcon, TargetIcon } from "@phosphor-icons/react";
 
 const ClienteDataDisplay = ({ cliente }) => {
   console.log("🐛 ClienteDataDisplay - Props recibidas:", cliente);
@@ -44,7 +44,7 @@ const ClienteDataDisplay = ({ cliente }) => {
 
   if (peso) {
     customerDataPilotaje.push({
-      icon: Weight,
+      icon: BarbellIcon,
       label: "Peso",
       value: `${peso} kg`,
     });
@@ -52,7 +52,7 @@ const ClienteDataDisplay = ({ cliente }) => {
 
   if (nivelPilotaje) {
     customerDataPilotaje.push({
-      icon: Target,
+      icon: TargetIcon,
       label: "Nivel",
       value: getNivelPilotajeLabel(nivelPilotaje),
     });

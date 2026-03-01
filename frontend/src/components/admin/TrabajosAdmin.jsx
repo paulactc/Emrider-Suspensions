@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import {
-  Wrench, ChevronLeft, Calendar, Hash, Bike,
-  ArrowRight, RefreshCw, CheckCircle, Eye, User,
-} from "lucide-react";
+  WrenchIcon, CaretLeftIcon, CalendarIcon, HashIcon, MotorcycleIcon,
+  ArrowRightIcon, ArrowClockwiseIcon, CheckCircleIcon, EyeIcon, UserIcon,
+} from "@phosphor-icons/react";
 import api from "../../../services/Api";
 
 const TIPO_LABEL = { FF: "Horquilla delantera", RR: "Amortiguador trasero" };
@@ -24,9 +24,10 @@ function formatDate(d) {
 }
 
 function TrabajoCard({ t, finalizado = false, onContinuar, onVer }) {
-  const motoNombre =
+  const motoNombre = (
     [t.moto_marca_gdtaller, t.moto_modelo_gdtaller].filter(Boolean).join(" ") ||
-    "Moto sin datos";
+    "Moto sin datos"
+  ).toUpperCase();
 
   return (
     <div className={`trabajo-card${finalizado ? " trabajo-card--finalizado" : ""}`}>
@@ -35,22 +36,22 @@ function TrabajoCard({ t, finalizado = false, onContinuar, onVer }) {
           {TIPO_LABEL[t.tipo_suspension] || t.tipo_suspension}
         </span>
         <span className="trabajo-card__or">
-          <Hash size={12} /> {t.numero_orden}
+          <HashIcon size={12} /> {t.numero_orden}
         </span>
         {finalizado && (
           <span className="trabajo-card__badge-finalizado">
-            <CheckCircle size={12} /> Finalizado
+            <CheckCircleIcon size={12} /> Finalizado
           </span>
         )}
       </div>
 
       <div className="trabajo-card__body">
         <div className="trabajo-card__cliente">
-          <User size={13} />
+          <UserIcon size={13} />
           <span>{t.nombre_cliente || t.cif_cliente || "Cliente desconocido"}</span>
         </div>
         <div className="trabajo-card__moto">
-          <Bike size={15} />
+          <MotorcycleIcon size={15} />
           <span>
             {motoNombre}
             {t.matricula_moto && <em> · {t.matricula_moto}</em>}
@@ -58,23 +59,23 @@ function TrabajoCard({ t, finalizado = false, onContinuar, onVer }) {
         </div>
         {t.servicio_suspension && (
           <div className="trabajo-card__servicio">
-            <Wrench size={13} />
+            <WrenchIcon size={13} />
             {SERVICIO_LABEL[t.servicio_suspension] || t.servicio_suspension}
           </div>
         )}
         <div className="trabajo-card__fecha">
-          <Calendar size={13} />
+          <CalendarIcon size={13} />
           {formatDate(t.fecha_servicio)}
         </div>
       </div>
 
       {finalizado ? (
         <button className="trabajo-card__btn trabajo-card__btn--ver" onClick={() => onVer(t)}>
-          <Eye size={14} /> Ver datos técnicos
+          <EyeIcon size={14} /> Ver datos técnicos
         </button>
       ) : (
         <button className="trabajo-card__btn" onClick={() => onContinuar(t)}>
-          Continuar datos técnicos <ArrowRight size={14} />
+          Continuar datos técnicos <ArrowRightIcon size={14} />
         </button>
       )}
     </div>
@@ -118,20 +119,20 @@ function TrabajosAdmin({ modo = "pendientes" }) {
   const verFinalizado = (trabajo) => navigate(`/admin/servicio/${trabajo.id}`);
 
   const titulo = esPendientes ? "Trabajos pendientes" : "Trabajos finalizados";
-  const IconoTitulo = esPendientes ? Wrench : CheckCircle;
+  const IconoTitulo = esPendientes ? WrenchIcon : CheckCircleIcon;
 
   return (
     <div className={`trabajos-admin${esPendientes ? "" : " trabajos-admin--finalizados"}`}>
       <div className="trabajos-admin__topbar">
         <Link to="/admin/clientes" className="trabajos-admin__back">
-          <ChevronLeft size={18} /> Volver
+          <CaretLeftIcon size={18} /> Volver
         </Link>
         <div className="trabajos-admin__title-wrap">
           <IconoTitulo className="trabajos-admin__title-icon" />
           <h2 className="trabajos-admin__title">{titulo}</h2>
         </div>
         <button className="trabajos-admin__refresh" onClick={cargar} title="Actualizar">
-          <RefreshCw size={16} />
+          <ArrowClockwiseIcon size={16} />
         </button>
       </div>
 

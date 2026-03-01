@@ -12,6 +12,7 @@
     "serve": "vite build && vite preview"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "lucide-react": "^0.532.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

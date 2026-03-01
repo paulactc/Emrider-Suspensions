@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
 import {
-  Bike, ChevronLeft, ChevronDown, ChevronUp,
-  Wrench, Calendar, Hash, FileUser, Gauge, AlertTriangle,
-  Droplets, Flame, Wind, Settings, Pencil, Trash2,
-} from "lucide-react";
+  MotorcycleIcon, CaretLeftIcon, CaretDownIcon, CaretUpIcon,
+  WrenchIcon, CalendarIcon, HashIcon, IdentificationCardIcon, GaugeIcon, WarningIcon,
+  DropIcon, FlameIcon, WindIcon, GearIcon, PencilIcon, TrashIcon,
+} from "@phosphor-icons/react";
 import { useClienteData } from "../../../hooks/useClienteData";
 import api from "../../../../services/Api";
 import ClienteQuestionario from "../ClienteQuestionario";
@@ -156,7 +156,7 @@ function ClienteGarage() {
             <div className="moto-delete-confirm__icon">🗑️</div>
             <h3 className="moto-delete-confirm__title">¿Eliminar del garage?</h3>
             <p className="moto-delete-confirm__desc">
-              Vas a eliminar <strong>{motoABorrar.marca} {motoABorrar.modelo}</strong>
+              Vas a eliminar <strong>{(motoABorrar.marca || "").toUpperCase()} {(motoABorrar.modelo || "").toUpperCase()}</strong>
               {motoABorrar.matricula ? ` (${motoABorrar.matricula})` : ""} de tu garage.
               <br />Esta acción es permanente. Si la moto vuelve a estar activa en el taller, reaparecerá.
             </p>
@@ -194,12 +194,12 @@ function ClienteGarage() {
         />
         <div className="cliente-section-page__topbar">
           <button className="cliente-section-page__back" onClick={() => setMotoEditando(null)}>
-            <ChevronLeft /> Volver al garage
+            <CaretLeftIcon weight="fill" /> Volver al garage
           </button>
           <div className="cliente-section-page__title-wrap">
-            <div className="cliente-section-page__title-icon"><Settings /></div>
+            <div className="cliente-section-page__title-icon"><GearIcon weight="fill" /></div>
             <h2 className="cliente-section-page__title">
-              {motoEditando.marca} {motoEditando.modelo}
+              {(motoEditando.marca || "").toUpperCase()} {(motoEditando.modelo || "").toUpperCase()}
             </h2>
           </div>
         </div>
@@ -220,7 +220,7 @@ function ClienteGarage() {
     return (
       <div className="cliente-section-page">
         <Link to="/cliente" className="cliente-section-page__back">
-          <ChevronLeft /> Volver
+          <CaretLeftIcon weight="fill" /> Volver
         </Link>
         <div className="cliente-section-page__loading">Cargando garage...</div>
       </div>
@@ -231,7 +231,7 @@ function ClienteGarage() {
     return (
       <div className="cliente-section-page">
         <Link to="/cliente" className="cliente-section-page__back">
-          <ChevronLeft /> Volver
+          <CaretLeftIcon weight="fill" /> Volver
         </Link>
         <p className="cliente-section-page__error">{error}</p>
       </div>
@@ -239,7 +239,7 @@ function ClienteGarage() {
   }
 
   return (
-    <div className="cliente-section-page">
+    <div className="cliente-section-page cliente-section-page--garage">
       <NotificationModal
         isOpen={notif.open}
         type={notif.type}
@@ -248,17 +248,17 @@ function ClienteGarage() {
       />
       <div className="cliente-section-page__topbar">
         <Link to="/cliente" className="cliente-section-page__back">
-          <ChevronLeft /> Volver
+          <CaretLeftIcon weight="fill" /> Volver
         </Link>
         <div className="cliente-section-page__title-wrap">
-          <div className="cliente-section-page__title-icon"><Bike /></div>
+          <div className="cliente-section-page__title-icon"><MotorcycleIcon weight="fill" /></div>
           <h2 className="cliente-section-page__title">Mi Garage</h2>
         </div>
       </div>
 
       {motos.length === 0 ? (
         <div className="moto-card moto-card--empty">
-          <Bike />
+          <MotorcycleIcon weight="fill" />
           <p>No se encontraron motocicletas registradas.</p>
           <p style={{ fontSize: "0.85rem", opacity: 0.7 }}>
             Contacta con nosotros para asociar tus motos a tu cuenta.
@@ -284,7 +284,7 @@ function ClienteGarage() {
                     onKeyDown={(e) => e.key === "Enter" && setMotoExpandida(isOpen ? null : motoKey)}
                   >
                     <div className="moto-card__toggle-left">
-                      <div className="moto-card__icon"><Bike /></div>
+                      <div className="moto-card__icon"><MotorcycleIcon weight="fill" /></div>
                       <div className="moto-card__info">
                         <span className="moto-card__nombre">{moto.marca} {moto.modelo}</span>
                         <span className="moto-card__matricula">{moto.matricula || "Sin matrícula"}</span>
@@ -293,10 +293,10 @@ function ClienteGarage() {
                     <div className="moto-card__toggle-right">
                       {hayAlerta && (
                         <span className="moto-card__alert-wrap">
-                          <AlertTriangle className="moto-card__alert-icon" />
+                          <WarningIcon weight="fill" className="moto-card__alert-icon" />
                         </span>
                       )}
-                      {isOpen ? <ChevronUp /> : <ChevronDown />}
+                      {isOpen ? <CaretUpIcon weight="fill" /> : <CaretDownIcon weight="fill" />}
                     </div>
                   </div>
                   <button
@@ -304,7 +304,7 @@ function ClienteGarage() {
                     title="Eliminar moto del garage"
                     onClick={() => setMotoABorrar(moto)}
                   >
-                    <Trash2 size={15} />
+                    <TrashIcon weight="fill" size={15} />
                   </button>
                 </div>
 
@@ -314,21 +314,21 @@ function ClienteGarage() {
                       <h4 className="moto-card__section-title">Ficha del vehículo</h4>
                       <div className="moto-card__ficha-grid">
                         <div className="moto-card__ficha-item">
-                          <Bike className="moto-card__ficha-icon" />
+                          <MotorcycleIcon weight="fill" className="moto-card__ficha-icon" />
                           <div>
                             <span className="moto-card__ficha-label">Marca / Modelo</span>
-                            <span className="moto-card__ficha-value">{moto.marca || "—"} {moto.modelo || "—"}</span>
+                            <span className="moto-card__ficha-value">{(moto.marca || "—").toUpperCase()} {(moto.modelo || "—").toUpperCase()}</span>
                           </div>
                         </div>
                         <div className="moto-card__ficha-item">
-                          <Hash className="moto-card__ficha-icon" />
+                          <HashIcon weight="fill" className="moto-card__ficha-icon" />
                           <div>
                             <span className="moto-card__ficha-label">Matrícula</span>
                             <span className="moto-card__ficha-value">{moto.matricula || "—"}</span>
                           </div>
                         </div>
                         <div className="moto-card__ficha-item">
-                          <Calendar className="moto-card__ficha-icon" />
+                          <CalendarIcon weight="fill" className="moto-card__ficha-icon" />
                           <div>
                             <span className="moto-card__ficha-label">Año</span>
                             <span className="moto-card__ficha-value">{moto.anio || "—"}</span>
@@ -336,7 +336,7 @@ function ClienteGarage() {
                         </div>
                         {moto.bastidor && (
                           <div className="moto-card__ficha-item">
-                            <FileUser className="moto-card__ficha-icon" />
+                            <IdentificationCardIcon weight="fill" className="moto-card__ficha-icon" />
                             <div>
                               <span className="moto-card__ficha-label">Bastidor</span>
                               <span className="moto-card__ficha-value">{moto.bastidor}</span>
@@ -345,7 +345,7 @@ function ClienteGarage() {
                         )}
                         {moto.km && (
                           <div className="moto-card__ficha-item">
-                            <Gauge className="moto-card__ficha-icon" />
+                            <GaugeIcon weight="fill" className="moto-card__ficha-icon" />
                             <div>
                               <span className="moto-card__ficha-label">Kilómetros</span>
                               <span className="moto-card__ficha-value">
@@ -408,52 +408,52 @@ function ClienteGarage() {
                             <h4 className="moto-avisos__title">Avisos</h4>
                             {hayAviso && (
                               <span className="moto-avisos__badge">
-                                <AlertTriangle size={13} /> Revisión pendiente
+                                <WarningIcon weight="fill" size={13} /> Revisión pendiente
                               </span>
                             )}
                           </div>
 
                           {/* Horquilla Delantera (FF) */}
                           <div className="moto-avisos__item">
-                            <span className="moto-avisos__item-label"><Wrench size={13} /> Horquilla delantera (FF)</span>
+                            <span className="moto-avisos__item-label"><WrenchIcon weight="fill" size={13} /> Horquilla delantera (FF)</span>
                             <div className={`moto-card__mantenimiento moto-card__mantenimiento--${stFF.status}`}>
-                              <Wrench className="moto-card__mantenimiento-icon" />
+                              <WrenchIcon weight="fill" className="moto-card__mantenimiento-icon" />
                               <span>{stFF.texto}</span>
                             </div>
                           </div>
 
                           {/* Amortiguador Trasero (RR) */}
                           <div className="moto-avisos__item">
-                            <span className="moto-avisos__item-label"><Wrench size={13} /> Amortiguador trasero (RR)</span>
+                            <span className="moto-avisos__item-label"><WrenchIcon weight="fill" size={13} /> Amortiguador trasero (RR)</span>
                             <div className={`moto-card__mantenimiento moto-card__mantenimiento--${stRR.status}`}>
-                              <Wrench className="moto-card__mantenimiento-icon" />
+                              <WrenchIcon weight="fill" className="moto-card__mantenimiento-icon" />
                               <span>{stRR.texto}</span>
                             </div>
                           </div>
 
                           {/* Aceite de motor */}
                           <div className="moto-avisos__item">
-                            <span className="moto-avisos__item-label"><Droplets size={13} /> Aceite de motor</span>
+                            <span className="moto-avisos__item-label"><DropIcon weight="fill" size={13} /> Aceite de motor</span>
                             <div className={`moto-card__mantenimiento moto-card__mantenimiento--${stAceite.status}`}>
-                              <Droplets className="moto-card__mantenimiento-icon" />
+                              <DropIcon weight="fill" className="moto-card__mantenimiento-icon" />
                               <span>{stAceite.texto}</span>
                             </div>
                           </div>
 
                           {/* Líquido de frenos */}
                           <div className="moto-avisos__item">
-                            <span className="moto-avisos__item-label"><Wind size={13} /> Líquido de frenos</span>
-                            <div className={`moto-card__mantenimiento moto-card__mantenimiento--${stFreno.status}`}>
-                              <Wind className="moto-card__mantenimiento-icon" />
+                            <span className="moto-avisos__item-label"><WindIcon weight="fill" size={13} /> Líquido de frenos</span>
+<div className={`moto-card__mantenimiento moto-card__mantenimiento--${stFreno.status}`}>
+                              <WindIcon weight="fill" className="moto-card__mantenimiento-icon" />
                               <span>{stFreno.texto}</span>
                             </div>
                           </div>
 
                           {/* Refrigerante */}
                           <div className="moto-avisos__item">
-                            <span className="moto-avisos__item-label"><Flame size={13} /> Refrigerante</span>
+                            <span className="moto-avisos__item-label"><FlameIcon weight="fill" size={13} /> Refrigerante</span>
                             <div className={`moto-card__mantenimiento moto-card__mantenimiento--${stRefri.status}`}>
-                              <Flame className="moto-card__mantenimiento-icon" />
+                              <FlameIcon weight="fill" className="moto-card__mantenimiento-icon" />
                               <span>{stRefri.texto}</span>
                             </div>
                           </div>
@@ -475,7 +475,7 @@ function ClienteGarage() {
                             className="moto-config-btn moto-config-btn--edit"
                             onClick={() => setMotoEditando(moto)}
                           >
-                            <Pencil size={14} /> Editar
+                            <PencilIcon weight="fill" size={14} /> Editar
                           </button>
                         </div>
                       ) : (
@@ -490,7 +490,7 @@ function ClienteGarage() {
                             className="moto-config-btn moto-config-btn--setup"
                             onClick={() => setMotoEditando(moto)}
                           >
-                            <Settings size={14} /> Configurar
+                            <GearIcon weight="fill" size={14} /> Configurar
                           </button>
                         </div>
                       )}

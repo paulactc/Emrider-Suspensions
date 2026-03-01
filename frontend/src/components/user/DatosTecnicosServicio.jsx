@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Wrench, ChevronDown, ChevronUp, Loader, Bike, Calendar } from "lucide-react";
+import { WrenchIcon, CaretDownIcon, CaretUpIcon, SpinnerGapIcon, MotorcycleIcon, CalendarIcon } from "@phosphor-icons/react";
 import api from "../../../services/Api";
 
 const LABELS_FF = {
@@ -289,13 +289,13 @@ function DatosTecnicosServicio({ cif, servicios: serviciosProp, groupByMoto = fa
       <div className={`datos-tecnicos-servicio${groupByMoto ? " datos-tecnicos-servicio--nested" : ""}`}>
         {!groupByMoto && (
           <div className="datos-tecnicos-servicio__header">
-            <Wrench className="datos-tecnicos-servicio__icon" />
+            <WrenchIcon className="datos-tecnicos-servicio__icon" />
             <h3>Datos técnicos de servicios de suspensiones</h3>
           </div>
         )}
         <div className="datos-tecnicos-servicio__loading-card">
           <div className="datos-tecnicos-servicio__loading-icon">
-            <Loader className="spinner" />
+            <SpinnerGapIcon className="spinner" />
           </div>
           <p className="datos-tecnicos-servicio__loading-text">Cargando datos técnicos...</p>
         </div>
@@ -308,12 +308,12 @@ function DatosTecnicosServicio({ cif, servicios: serviciosProp, groupByMoto = fa
       <div className={`datos-tecnicos-servicio${groupByMoto ? " datos-tecnicos-servicio--nested" : ""}`}>
         {!groupByMoto && (
           <div className="datos-tecnicos-servicio__header">
-            <Wrench className="datos-tecnicos-servicio__icon" />
+            <WrenchIcon className="datos-tecnicos-servicio__icon" />
             <h3>Datos técnicos de servicios de suspensiones</h3>
           </div>
         )}
         <div className="datos-tecnicos-servicio__empty">
-          <Wrench className="datos-tecnicos-servicio__empty-icon" />
+          <WrenchIcon className="datos-tecnicos-servicio__empty-icon" />
           <p>Aún no hay datos técnicos registrados para tus suspensiones.</p>
         </div>
       </div>
@@ -333,7 +333,7 @@ function DatosTecnicosServicio({ cif, servicios: serviciosProp, groupByMoto = fa
                 onClick={() => setExpandedMoto(isOpen ? null : group.key)}
               >
                 <div className="datos-tecnicos__moto-group-info">
-                  <Bike className="datos-tecnicos__moto-group-icon" />
+                  <MotorcycleIcon className="datos-tecnicos__moto-group-icon" />
                   <div>
                     <span className="datos-tecnicos__moto-group-nombre">
                       {[group.marca, group.modelo].filter(Boolean).join(" ") || group.matricula}
@@ -345,7 +345,7 @@ function DatosTecnicosServicio({ cif, servicios: serviciosProp, groupByMoto = fa
                   <span className="datos-tecnicos__moto-group-count">
                     {group.items.length} {group.items.length === 1 ? "servicio" : "servicios"}
                   </span>
-                  {isOpen ? <ChevronUp /> : <ChevronDown />}
+                  {isOpen ? <CaretUpIcon /> : <CaretDownIcon />}
                 </div>
               </button>
 
@@ -365,7 +365,7 @@ function DatosTecnicosServicio({ cif, servicios: serviciosProp, groupByMoto = fa
                           onClick={() => setExpandedId(isExpanded ? null : servicio.id)}
                         >
                           <div className="datos-tecnicos__card-info">
-                            <Calendar className="datos-tecnicos__card-icon" />
+                            <CalendarIcon className="datos-tecnicos__card-icon" />
                             <div className="datos-tecnicos__card-meta">
                               <span className={`datos-tecnicos__tipo datos-tecnicos__tipo--${(servicio.tipo_suspension || "").toLowerCase()}`}>
                                 {tipoLabel}
@@ -374,7 +374,7 @@ function DatosTecnicosServicio({ cif, servicios: serviciosProp, groupByMoto = fa
                             </div>
                           </div>
                           <div className="datos-tecnicos__card-right">
-                            {isExpanded ? <ChevronUp /> : <ChevronDown />}
+                            {isExpanded ? <CaretUpIcon /> : <CaretDownIcon />}
                           </div>
                         </button>
                         {isExpanded && (
@@ -402,7 +402,7 @@ function DatosTecnicosServicio({ cif, servicios: serviciosProp, groupByMoto = fa
   return (
     <div className="datos-tecnicos-servicio">
       <div className="datos-tecnicos-servicio__header">
-        <Wrench className="datos-tecnicos-servicio__icon" />
+        <WrenchIcon className="datos-tecnicos-servicio__icon" />
         <h3>Datos técnicos de servicios de suspensiones</h3>
         <span className="datos-tecnicos-servicio__count">
           {servicios.length} {servicios.length === 1 ? "servicio" : "servicios"}
@@ -425,11 +425,11 @@ function DatosTecnicosServicio({ cif, servicios: serviciosProp, groupByMoto = fa
                 onClick={() => setExpandedId(isExpanded ? null : servicio.id)}
               >
                 <div className="datos-tecnicos__card-info">
-                  <Calendar className="datos-tecnicos__card-icon" />
+                  <CalendarIcon className="datos-tecnicos__card-icon" />
                   <div className="datos-tecnicos__card-meta">
                     {servicio.matricula_moto && (
                       <span className="datos-tecnicos__vehiculo">
-                        <Bike className="datos-tecnicos__vehiculo-icon" />
+                        <MotorcycleIcon className="datos-tecnicos__vehiculo-icon" />
                         {[servicio.marca, servicio.modelo].filter(Boolean).join(" ") || servicio.matricula_moto}
                         {servicio.matricula_moto && <span className="datos-tecnicos__matricula">{servicio.matricula_moto}</span>}
                       </span>
@@ -441,7 +441,7 @@ function DatosTecnicosServicio({ cif, servicios: serviciosProp, groupByMoto = fa
                   <span className={`datos-tecnicos__tipo datos-tecnicos__tipo--${(servicio.tipo_suspension || "").toLowerCase()}`}>
                     {tipoLabel}
                   </span>
-                  {isExpanded ? <ChevronUp /> : <ChevronDown />}
+                  {isExpanded ? <CaretUpIcon /> : <CaretDownIcon />}
                 </div>
               </button>
 
