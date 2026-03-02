@@ -243,6 +243,17 @@ async function runMigrations() {
     `)
   );
 
+  await runSafeMigration("Columna operario_id en usuarios", async () => {
+    const [[{ cnt }]] = await pool.execute(
+      `SELECT COUNT(*) as cnt FROM INFORMATION_SCHEMA.COLUMNS
+       WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'usuarios'
+       AND COLUMN_NAME = 'operario_id'`
+    );
+    if (cnt === 0) {
+      await pool.execute(`ALTER TABLE usuarios ADD COLUMN operario_id INT NULL DEFAULT NULL`);
+    }
+  });
+
   // Crear usuario admin por defecto si no existe
   await runSafeMigration("Usuario admin verificado", async () => {
     const [adminExists] = await pool.execute(

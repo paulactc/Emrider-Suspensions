@@ -40,11 +40,15 @@ async function getNombresUsuariosMap() {
   }
 }
 
-// Helper: fusionar nombre local (de usuarios) en el cliente de GDTaller si procede
+// Helper: fusionar nombre local (de usuarios) en el cliente de GDTaller si procede.
+// Desde que GDTaller devuelve el nombre, solo se usa como fallback (nunca sobreescribe).
 function mergeNombre(client, nombresMap) {
   if (!client.cif || !nombresMap) return client;
+  // GDTaller ya devuelve el nombre: no sobreescribir
+  if (client.nombre) return client;
   const localNombre = nombresMap[client.cif.toLowerCase()];
-  if (localNombre) {
+  // No usar si es un placeholder igual al CIF/DNI (registro sin nombre real)
+  if (localNombre && localNombre.toLowerCase() !== client.cif.toLowerCase()) {
     return { ...client, nombre: localNombre };
   }
   return client;

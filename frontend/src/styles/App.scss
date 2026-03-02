@@ -6266,3 +6266,191 @@ footer {
     }
   }
 }
+
+// ── HORAS / FACTURACIÓN POR OPERARIO ──────────────────────────────────────
+.horas-operario-admin {
+  padding: 0 0 2rem;
+
+  &__filtros {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: $ohlins-gray-800;
+    border-bottom: 1px solid $ohlins-gray-700;
+    flex-wrap: wrap;
+  }
+
+  &__filtro-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.72rem;
+    color: $ohlins-gray-400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__date-input {
+    background: $ohlins-gray-700;
+    border: 1px solid $ohlins-gray-600;
+    border-radius: 6px;
+    color: $ohlins-white;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+    outline: none;
+    &:focus { border-color: $ohlins-yellow; }
+    color-scheme: dark;
+  }
+
+  &__buscar-btn {
+    background: $ohlins-yellow;
+    color: $ohlins-black;
+    border: none;
+    border-radius: 6px;
+    padding: 0.45rem 1.1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    &:hover { opacity: 0.85; }
+  }
+
+  &__resumen {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0.9rem 1.25rem;
+    background: $ohlins-gray-800;
+    border-bottom: 1px solid $ohlins-gray-700;
+    flex-wrap: wrap;
+  }
+
+  &__resumen-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    color: $ohlins-gray-400;
+
+    strong { color: $ohlins-yellow; }
+    svg { color: $ohlins-gray-500; }
+  }
+
+  &__tabla-wrap {
+    overflow-x: auto;
+    padding: 1rem 1.25rem 0;
+  }
+
+  &__tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+
+    th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      color: $ohlins-gray-400;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid $ohlins-gray-700;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.65rem 0.75rem;
+      color: $ohlins-gray-300;
+      border-bottom: 1px solid $ohlins-gray-800;
+      vertical-align: middle;
+    }
+
+    tbody tr:hover td {
+      background: rgba($ohlins-gray-700, 0.4);
+    }
+
+    tfoot td {
+      border-top: 1px solid $ohlins-gray-600;
+      border-bottom: none;
+      font-weight: 700;
+      color: $ohlins-white;
+      padding-top: 0.8rem;
+    }
+  }
+
+  &__nombre {
+    font-weight: 600;
+    color: $ohlins-white;
+  }
+
+  &__id {
+    margin-left: 0.4rem;
+    font-size: 0.72rem;
+    color: $ohlins-gray-500;
+  }
+
+  &__importe {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+
+    &--total {
+      color: $ohlins-yellow;
+      font-weight: 600;
+    }
+  }
+
+  &__fila--sin-asignar td {
+    color: $ohlins-gray-500;
+    font-style: italic;
+  }
+
+  &__total-row td {
+    background: rgba($ohlins-gray-700, 0.3);
+  }
+
+  &__total-horas {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.2rem 1.25rem;
+    background: rgba($ohlins-yellow, 0.06);
+    border-bottom: 1px solid rgba($ohlins-yellow, 0.15);
+    color: $ohlins-yellow;
+
+    svg { flex-shrink: 0; }
+  }
+
+  &__total-horas-num {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__total-horas-label {
+    font-size: 0.85rem;
+    color: $ohlins-gray-400;
+    margin-top: 0.1rem;
+  }
+
+  &__orden {
+    font-family: monospace;
+    font-size: 0.82rem;
+    color: $ohlins-yellow;
+  }
+
+  &__desc {
+    color: $ohlins-gray-300;
+    font-size: 0.82rem;
+    max-width: 200px;
+  }
+
+  &__horas {
+    text-align: right;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: $ohlins-white;
+  }
+
+  &__vacio {
+    color: $ohlins-gray-600;
+  }
+}

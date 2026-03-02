@@ -215,6 +215,16 @@ class ApiService {
     return this.makeRequest(`/gdtaller/maintenance-alerts/${encodeURIComponent(clientId)}`);
   }
 
+  async getHorasOperario(year, month) {
+    const params = new URLSearchParams({ year, month });
+    return this.makeRequest(`/gdtaller/horas-operario?${params}`);
+  }
+
+  async getOperarioLineas(operarioId, year, month) {
+    const params = new URLSearchParams({ operarioId, year, month });
+    return this.makeRequest(`/gdtaller/operario-lineas?${params}`);
+  }
+
   // ===== DATOS TÉCNICOS =====
 
   // GET datos técnicos por motoId

@@ -1,6 +1,6 @@
 import "../styles/App.scss";
 import React, { useState, useEffect } from "react";
-import { Route, Routes, useLocation } from "react-router";
+import { Route, Routes, useLocation, Navigate } from "react-router";
 import Footer from "./layout/Footer.jsx";
 import Header from "./layout/Header";
 import LandingPage from "./layout/LandingPage";
@@ -24,6 +24,7 @@ import FormTechnicalDataWithClientData from "./admin/forms/FormTechnicalDataWith
 import TrabajosAdmin from "./admin/TrabajosAdmin";
 import ServicioDetalleAdmin from "./admin/ServicioDetalleAdmin";
 import AvisosAdmin from "./admin/AvisosAdmin";
+import HorasOperarioAdmin from "./admin/HorasOperarioAdmin";
 
 // Importar el servicio API
 import apiService from "../../services/Api.jsx";
@@ -41,6 +42,13 @@ function ScrollToTop() {
   }, [pathname]);
 
   return null;
+}
+
+// Redirige a operarios fuera de su área
+function SoloAdmin({ children }) {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  if (user.operario_id != null) return <Navigate to="/admin/horas-operario" replace />;
+  return children;
 }
 
 function App() {
@@ -272,10 +280,11 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         {/* 🔧 TRABAJOS PENDIENTES / FINALIZADOS (TÉCNICO) */}
-        <Route path="/admin/trabajos-pendientes" element={<TrabajosAdmin modo="pendientes" />} />
-        <Route path="/admin/trabajos-finalizados" element={<TrabajosAdmin modo="finalizados" />} />
-        <Route path="/admin/servicio/:id" element={<ServicioDetalleAdmin />} />
-        <Route path="/admin/avisos" element={<AvisosAdmin />} />
+        <Route path="/admin/trabajos-pendientes" element={<SoloAdmin><TrabajosAdmin modo="pendientes" /></SoloAdmin>} />
+        <Route path="/admin/trabajos-finalizados" element={<SoloAdmin><TrabajosAdmin modo="finalizados" /></SoloAdmin>} />
+        <Route path="/admin/servicio/:id" element={<SoloAdmin><ServicioDetalleAdmin /></SoloAdmin>} />
+        <Route path="/admin/avisos" element={<SoloAdmin><AvisosAdmin /></SoloAdmin>} />
+        <Route path="/admin/horas-operario" element={<HorasOperarioAdmin />} />
 
         {/* 📝 FORMULARIOS */}
         <Route path="/nuevo-usuario" element={<FormNewUser />} />

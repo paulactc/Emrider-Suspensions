@@ -1,6 +1,6 @@
 import { useState } from "react";
 import logoEmrider from "/images/Logomonoemrider.jpeg";
-import logoÖhlins from "/images/Logo.ohlins.png";
+import logoÖhlins from "/images/Öhlins.jpg";
 import logoKayaba from "/images/Kayaba.png";
 import logoAndreani from "/images/AndreaniMHS.png";
 import logoShowa from "/images/Showa.png";
@@ -49,7 +49,9 @@ function LandingPage(props) {
         localStorage.setItem("token", result.data.token);
         localStorage.setItem("user", JSON.stringify(result.data.user));
 
-        if (result.data.user.rol === "admin") {
+        if (result.data.user.rol === "admin" && result.data.user.operario_id != null) {
+          navigate("/admin/horas-operario");
+        } else if (result.data.user.rol === "admin") {
           navigate("/admin/clientes");
         } else {
           navigate("/cliente");

@@ -178,6 +178,7 @@ class AuthController {
             dni: user.dni,
             telefono: user.telefono,
             rol: user.rol,
+            operario_id: user.operario_id ?? null,
           },
           token,
         },
@@ -249,6 +250,7 @@ class AuthController {
             dni: userData.dni,
             telefono: userData.telefono,
             rol: userData.rol,
+            operario_id: userData.operario_id ?? null,
           },
         },
       });

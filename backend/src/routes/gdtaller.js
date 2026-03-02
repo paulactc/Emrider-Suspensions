@@ -447,4 +447,176 @@ router.post("/clear-cache", async (req, res) => {
   res.json({ success: true, message: "Cache limpiado" });
 });
 
+// GET - Debug: ver estructura RAW de GetOrderLines (primeras líneas sin mapear)
+router.get("/debug-orderlines-sample", async (_req, res) => {
+  try {
+    gdtallerService.clearCache();
+    const lines = await gdtallerService.getOrderLines();
+    res.json({
+      total_lineas: lines.length,
+      campos_disponibles: lines.length > 0 ? Object.keys(lines[0]) : [],
+      muestra_primeras_5: lines.slice(0, 5),
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET - Debug: ver operarios únicos en GetOrderLines
+router.get("/debug-operarios", async (_req, res) => {
+  try {
+    const lines = await gdtallerService.getOrderLines();
+    const operariosMap = {};
+    for (const l of lines) {
+      const key = l.operarioID ?? -1;
+      if (!operariosMap[key]) {
+        operariosMap[key] = { operarioID: key, operario: l.operario || "", lineas: 0 };
+      }
+      operariosMap[key].lineas++;
+    }
+    const operarios = Object.values(operariosMap).sort((a, b) => b.lineas - a.lineas);
+    res.json({ total_operarios: operarios.length, operarios });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET - Líneas de trabajo de un operario por mes/año, con datos del vehículo
+// Query params: operarioId, year, month
+router.get("/operario-lineas", async (req, res) => {
+  try {
+    const { operarioId, year, month } = req.query;
+    if (!operarioId) return res.status(400).json({ success: false, error: "operarioId requerido" });
+
+    const y = parseInt(year) || new Date().getFullYear();
+    const m = parseInt(month) || new Date().getMonth() + 1;
+    const startDate = `${y}-${String(m).padStart(2, "0")}-01`;
+    const lastDay = new Date(y, m, 0).getDate();
+    const endDate = `${y}-${String(m).padStart(2, "0")}-${lastDay}`;
+
+    const [lines, vehicles] = await Promise.all([
+      gdtallerService.getOrderLines({ startDate, endDate }),
+      gdtallerService.getVehicles().catch(() => []),
+    ]);
+
+    // Mapa vehiculoID → datos del vehículo
+    const vehicleMap = {};
+    for (const v of vehicles) {
+      if (v.vehiculoID) vehicleMap[v.vehiculoID] = v;
+    }
+
+    // Filtrar por operario y rango de fecha
+    const opId = parseInt(operarioId);
+    const propias = lines.filter((l) => {
+      if (parseInt(l.operarioID) !== opId) return false;
+      if (!l.orFecha) return false;
+      const fecha = l.orFecha.substring(0, 10);
+      return fecha >= startDate && fecha <= endDate;
+    });
+
+    // Calcular año desde bastidor (VIN)
+    function anioDesdeVIN(vin) {
+      if (!vin) return null;
+      const clean = vin.replace(/[\s-]/g, "").toUpperCase();
+      if (clean.length !== 17) return null;
+      const map = {
+        A:1980,B:1981,C:1982,D:1983,E:1984,F:1985,G:1986,H:1987,J:1988,K:1989,
+        L:1990,M:1991,N:1992,P:1993,R:1994,S:1995,T:1996,V:1997,W:1998,X:1999,Y:2000,
+        "1":2001,"2":2002,"3":2003,"4":2004,"5":2005,"6":2006,"7":2007,"8":2008,"9":2009,
+      };
+      let yr = map[clean[9]];
+      if (!yr) return null;
+      if (yr < 2010 && yr + 30 <= new Date().getFullYear()) yr += 30;
+      return yr;
+    }
+
+    const lineas = propias.map((l) => {
+      const v = vehicleMap[l.vehiculoID] || null;
+      return {
+        orNum: l.orNum,
+        orFecha: l.orFecha ? l.orFecha.substring(0, 10) : null,
+        desc: l.desc || "",
+        ref: l.ref || "",
+        cant: parseFloat(l.cant) || 0,
+        marca: v?.marca || null,
+        modelo: v?.modelo || null,
+        anio: anioDesdeVIN(v?.bastidor) || null,
+        matricula: l.matricula || v?.matricula || null,
+      };
+    }).sort((a, b) => (a.orFecha || "").localeCompare(b.orFecha || ""));
+
+    const totalHoras = lineas.reduce((s, l) => s + l.cant, 0);
+    const operarioNombre = propias.length > 0 ? (propias[0].operario?.trim() || `Operario ${opId}`) : `Operario ${opId}`;
+
+    res.json({
+      success: true,
+      operario: operarioNombre,
+      periodo: { year: y, month: m },
+      total_horas: Math.round(totalHoras * 100) / 100,
+      lineas,
+    });
+  } catch (error) {
+    console.error("Error en operario-lineas:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// GET - Horas por operario en un período (resumen, para Ernesto)
+// Query params: year, month
+router.get("/horas-operario", async (req, res) => {
+  try {
+    const hoy = new Date();
+    const y = parseInt(req.query.year) || hoy.getFullYear();
+    const m = parseInt(req.query.month) || hoy.getMonth() + 1;
+    const startDate = `${y}-${String(m).padStart(2, "0")}-01`;
+    const lastDay = new Date(y, m, 0).getDate();
+    const endDate = `${y}-${String(m).padStart(2, "0")}-${lastDay}`;
+
+    const lines = await gdtallerService.getOrderLines({ startDate, endDate });
+
+    const filtradas = lines.filter((l) => {
+      if (!l.orFecha) return false;
+      const fecha = l.orFecha.substring(0, 10);
+      return fecha >= startDate && fecha <= endDate;
+    });
+
+    const operariosMap = {};
+    for (const l of filtradas) {
+      const id = l.operarioID ?? -1;
+      if (id === -1) continue; // excluir sin asignar
+      if (!operariosMap[id]) {
+        operariosMap[id] = {
+          operarioID: id,
+          operario: l.operario?.trim() || `Operario ${id}`,
+          ordenes: new Set(),
+          lineas: 0,
+          totalHoras: 0,
+        };
+      }
+      if (l.orNum) operariosMap[id].ordenes.add(l.orNum);
+      operariosMap[id].lineas++;
+      operariosMap[id].totalHoras += parseFloat(l.cant) || 0;
+    }
+
+    const resultado = Object.values(operariosMap)
+      .map((o) => ({
+        operarioID: o.operarioID,
+        operario: o.operario,
+        ordenes: o.ordenes.size,
+        lineas: o.lineas,
+        totalHoras: Math.round(o.totalHoras * 100) / 100,
+      }))
+      .sort((a, b) => b.totalHoras - a.totalHoras);
+
+    res.json({
+      success: true,
+      periodo: { year: y, month: m },
+      operarios: resultado,
+    });
+  } catch (error) {
+    console.error("Error calculando horas por operario:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 module.exports = router;
