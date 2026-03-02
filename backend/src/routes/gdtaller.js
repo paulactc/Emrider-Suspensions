@@ -538,6 +538,8 @@ router.get("/operario-lineas", async (req, res) => {
         desc: l.desc || "",
         ref: l.ref || "",
         cant: parseFloat(l.cant) || 0,
+        precio: parseFloat(l.precio) || 0,
+        importe: parseFloat(l.importe) || 0,
         marca: v?.marca || null,
         modelo: v?.modelo || null,
         anio: anioDesdeVIN(v?.bastidor) || null,
@@ -546,6 +548,7 @@ router.get("/operario-lineas", async (req, res) => {
     }).sort((a, b) => (a.orFecha || "").localeCompare(b.orFecha || ""));
 
     const totalHoras = lineas.reduce((s, l) => s + l.cant, 0);
+    const totalImporte = lineas.reduce((s, l) => s + l.importe, 0);
     const operarioNombre = propias.length > 0 ? (propias[0].operario?.trim() || `Operario ${opId}`) : `Operario ${opId}`;
 
     res.json({
@@ -553,6 +556,7 @@ router.get("/operario-lineas", async (req, res) => {
       operario: operarioNombre,
       periodo: { year: y, month: m },
       total_horas: Math.round(totalHoras * 100) / 100,
+      total_importe: Math.round(totalImporte * 100) / 100,
       lineas,
     });
   } catch (error) {
@@ -591,11 +595,13 @@ router.get("/horas-operario", async (req, res) => {
           ordenes: new Set(),
           lineas: 0,
           totalHoras: 0,
+          totalImporte: 0,
         };
       }
       if (l.orNum) operariosMap[id].ordenes.add(l.orNum);
       operariosMap[id].lineas++;
       operariosMap[id].totalHoras += parseFloat(l.cant) || 0;
+      operariosMap[id].totalImporte += parseFloat(l.importe) || 0;
     }
 
     const resultado = Object.values(operariosMap)
@@ -605,6 +611,7 @@ router.get("/horas-operario", async (req, res) => {
         ordenes: o.ordenes.size,
         lineas: o.lineas,
         totalHoras: Math.round(o.totalHoras * 100) / 100,
+        totalImporte: Math.round(o.totalImporte * 100) / 100,
       }))
       .sort((a, b) => b.totalHoras - a.totalHoras);
 

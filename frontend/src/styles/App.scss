@@ -5812,7 +5812,8 @@ footer {
 .cliente-section-page--garage {
   background:
     linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.68) 100%),
-    url('/images/cuentakm.jpg') center center / 110% auto no-repeat;
+    url('/images/cuentakm.jpg') center center / cover no-repeat;
+  background-attachment: fixed;
 
   .moto-card {
     background: rgba(26, 26, 26, 0.72);
@@ -6452,5 +6453,84 @@ footer {
 
   &__vacio {
     color: $ohlins-gray-600;
+  }
+
+  &__acord-list {
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__acord {
+    border: 1px solid $ohlins-gray-700;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  &__acord-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    background: $ohlins-gray-800;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: $ohlins-white;
+    transition: background 0.15s;
+
+    &:hover { background: rgba($ohlins-gray-700, 0.7); }
+
+    svg:last-child {
+      margin-left: auto;
+      color: $ohlins-gray-500;
+      flex-shrink: 0;
+    }
+  }
+
+  &__acord-nombre {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    min-width: 0;
+
+    svg { color: $ohlins-gray-400; flex-shrink: 0; }
+  }
+
+  &__acord-stats {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-left: auto;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  &__acord-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+    color: $ohlins-gray-400;
+    font-variant-numeric: tabular-nums;
+
+    &--eur {
+      color: $ohlins-yellow;
+      font-weight: 600;
+    }
+
+    &--meta {
+      color: $ohlins-gray-500;
+      font-size: 0.75rem;
+    }
+  }
+
+  &__acord-body {
+    border-top: 1px solid $ohlins-gray-700;
+    background: rgba($ohlins-gray-900, 0.4);
   }
 }

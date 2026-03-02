@@ -209,14 +209,16 @@ function App() {
         <Route
           path="/admin/clientes"
           element={
-            <ListCustom
-              Custom={filteredCustom}
-              handleInputFilter={handleInputFilter}
-              filters={filters}
-              listBikes={listBikes}
-              listCustom={listCustom}
-              loading={loading}
-            />
+            <SoloAdmin>
+              <ListCustom
+                Custom={filteredCustom}
+                handleInputFilter={handleInputFilter}
+                filters={filters}
+                listBikes={listBikes}
+                listCustom={listCustom}
+                loading={loading}
+              />
+            </SoloAdmin>
           }
         />
 
@@ -245,12 +247,14 @@ function App() {
         <Route
           path="/admin/motos/:id"
           element={
-            <ListBike listBikes={listBikes} listTechnical={listTechnical} />
+            <SoloAdmin>
+              <ListBike listBikes={listBikes} listTechnical={listTechnical} />
+            </SoloAdmin>
           }
         />
         <Route
           path="/admin/motosadmin/:id"
-          element={<ListBikeadmin listBikes={listBikes} />}
+          element={<SoloAdmin><ListBikeadmin listBikes={listBikes} /></SoloAdmin>}
         />
 
         {/* 📊 DATOS TÉCNICOS */}
@@ -266,7 +270,7 @@ function App() {
         />
         <Route
           path="/admin/datos-tecnicos-admin/:id"
-          element={<TechnicalDataAdmin listTechnical={listTechnical} />}
+          element={<SoloAdmin><TechnicalDataAdmin listTechnical={listTechnical} /></SoloAdmin>}
         />
 
         {/* 📱 SECCIONES DEL ÁREA DE CLIENTE */}
@@ -298,20 +302,24 @@ function App() {
         <Route
           path="/admin/form-technical-ff/:motoId"
           element={
-            <FormTechnicalDataWithClientData
-              tipoSuspension="FF"
-              formData={formData}
-            />
+            <SoloAdmin>
+              <FormTechnicalDataWithClientData
+                tipoSuspension="FF"
+                formData={formData}
+              />
+            </SoloAdmin>
           }
         />
 
         <Route
           path="/admin/form-technical-rr/:motoId"
           element={
-            <FormTechnicalDataWithClientData
-              tipoSuspension="RR"
-              formData={formData}
-            />
+            <SoloAdmin>
+              <FormTechnicalDataWithClientData
+                tipoSuspension="RR"
+                formData={formData}
+              />
+            </SoloAdmin>
           }
         />
       </Routes>

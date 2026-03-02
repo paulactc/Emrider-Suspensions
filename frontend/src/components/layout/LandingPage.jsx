@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 import logoEmrider from "/images/Logomonoemrider.jpeg";
-import logoÖhlins from "/images/Öhlins.jpg";
+import logoÖhlins from "/images/Logo.ohlins.jpg";
 import logoKayaba from "/images/Kayaba.png";
 import logoAndreani from "/images/AndreaniMHS.png";
 import logoShowa from "/images/Showa.png";
@@ -16,6 +17,7 @@ function LandingPage(props) {
   });
   const [loginError, setLoginError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPass, setShowPass] = useState(false);
 
   const handleInput = (ev) => {
     const { name, value } = ev.target;
@@ -109,14 +111,40 @@ function LandingPage(props) {
           placeholder="DNI o email"
         />
         <label className="input-label">Clave:</label>
-        <input
-          className="input-field"
-          name="pass"
-          value={login.pass}
-          onInput={handleInput}
-          type="password"
-          placeholder="••••••••"
-        />
+        <div style={{ position: "relative" }}>
+          <input
+            className="input-field"
+            name="pass"
+            value={login.pass}
+            onInput={handleInput}
+            type={showPass ? "text" : "password"}
+            placeholder="••••••••"
+            style={{ paddingRight: "2.5rem" }}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPass((v) => !v)}
+            style={{
+              position: "absolute",
+              right: "0.75rem",
+              top: "50%",
+              transform: "translateY(-60%)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              color: "#9ca3af",
+              display: "flex",
+              alignItems: "center",
+            }}
+            tabIndex={-1}
+          >
+            {showPass
+              ? <EyeSlashIcon size={18} />
+              : <EyeIcon size={18} />
+            }
+          </button>
+        </div>
         {loginError && (
           <p style={{ color: "#f44336", margin: "0.5rem 0" }}>{loginError}</p>
         )}
