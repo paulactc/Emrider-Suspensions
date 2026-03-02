@@ -18,7 +18,7 @@ function formatEur(n) {
 }
 
 // Vista detalle: líneas del operario en el mes
-function VistaDetalle({ operarioId, year, month }) {
+function VistaDetalle({ operarioId, year, month, mostrarImporte = false }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -46,7 +46,7 @@ function VistaDetalle({ operarioId, year, month }) {
           <ClockIcon size={22} weight="fill" />
           <span className="horas-operario-admin__total-horas-num">{totalHoras.toFixed(2)}</span>
           <span className="horas-operario-admin__total-horas-label">horas en {MESES[month - 1]} {year}</span>
-          {totalImporte > 0 && (
+          {mostrarImporte && totalImporte > 0 && (
             <>
               <span style={{ margin: "0 0.5rem", color: "var(--ohlins-gray-600, #4b5563)" }}>·</span>
               <CurrencyEurIcon size={18} weight="fill" />
@@ -73,7 +73,7 @@ function VistaDetalle({ operarioId, year, month }) {
                 <th>Año</th>
                 <th>Descripción</th>
                 <th style={{ textAlign: "right" }}>Horas</th>
-                <th style={{ textAlign: "right" }}>Importe</th>
+                {mostrarImporte && <th style={{ textAlign: "right" }}>Importe</th>}
               </tr>
             </thead>
             <tbody>
@@ -86,15 +86,15 @@ function VistaDetalle({ operarioId, year, month }) {
                   <td>{l.anio || <span className="horas-operario-admin__vacio">—</span>}</td>
                   <td className="horas-operario-admin__desc">{l.desc}</td>
                   <td className="horas-operario-admin__horas">{l.cant.toFixed(2)}</td>
-                  <td className="horas-operario-admin__horas" style={{ color: "#d1d5db" }}>{formatEur(l.importe)}</td>
+                  {mostrarImporte && <td className="horas-operario-admin__horas" style={{ color: "#d1d5db" }}>{formatEur(l.importe)}</td>}
                 </tr>
               ))}
             </tbody>
             <tfoot>
               <tr className="horas-operario-admin__total-row">
-                <td colSpan={6}>Total</td>
+                <td colSpan={mostrarImporte ? 6 : 6}>Total</td>
                 <td className="horas-operario-admin__horas">{totalHoras.toFixed(2)}</td>
-                <td className="horas-operario-admin__horas" style={{ color: "#facc15" }}>{formatEur(totalImporte)}</td>
+                {mostrarImporte && <td className="horas-operario-admin__horas" style={{ color: "#facc15" }}>{formatEur(totalImporte)}</td>}
               </tr>
             </tfoot>
           </table>
@@ -137,7 +137,7 @@ function FilaOperario({ operario, year, month }) {
 
       {abierto && (
         <div className="horas-operario-admin__acord-body">
-          <VistaDetalle operarioId={operario.operarioID} year={year} month={month} />
+          <VistaDetalle operarioId={operario.operarioID} year={year} month={month} mostrarImporte={true} />
         </div>
       )}
     </div>
