@@ -78,7 +78,7 @@ function LandingPage(props) {
       </section>
 
       <div className="sectmedium">
-        <h3>Tu área personal como cliente EmRider. Todo lo que necesitas, siempre a mano.</h3>
+        <h3>Bienvenido a EmRider Garage. Tu moto, tu historial, siempre contigo.</h3>
 
         <div className="brand-list">
           <div className="wrapper">
