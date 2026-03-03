@@ -494,8 +494,11 @@ router.get("/operario-lineas", async (req, res) => {
     const lastDay = new Date(y, m, 0).getDate();
     const endDate = `${y}-${String(m).padStart(2, "0")}-${lastDay}`;
 
+    // Obtener todos los datos sin filtro de fecha y filtrar por orFecha en nuestro lado.
+    // Si pasamos startDate/endDate a GDTaller, filtra por fecha de entrada al sistema (no orFecha)
+    // y se pierden líneas registradas tardíamente con orFecha dentro del mes solicitado.
     const [lines, vehicles] = await Promise.all([
-      gdtallerService.getOrderLines({ startDate, endDate }),
+      gdtallerService.getOrderLines(),
       gdtallerService.getVehicles().catch(() => []),
     ]);
 
@@ -576,7 +579,8 @@ router.get("/horas-operario", async (req, res) => {
     const lastDay = new Date(y, m, 0).getDate();
     const endDate = `${y}-${String(m).padStart(2, "0")}-${lastDay}`;
 
-    const lines = await gdtallerService.getOrderLines({ startDate, endDate });
+    // Ídem: obtener todos los datos y filtrar por orFecha en nuestro lado
+    const lines = await gdtallerService.getOrderLines();
 
     const filtradas = lines.filter((l) => {
       if (!l.orFecha) return false;
