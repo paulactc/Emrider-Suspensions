@@ -494,11 +494,11 @@ router.get("/operario-lineas", async (req, res) => {
     const lastDay = new Date(y, m, 0).getDate();
     const endDate = `${y}-${String(m).padStart(2, "0")}-${lastDay}`;
 
-    // Obtener todos los datos sin filtro de fecha y filtrar por orFecha en nuestro lado.
-    // Si pasamos startDate/endDate a GDTaller, filtra por fecha de entrada al sistema (no orFecha)
-    // y se pierden líneas registradas tardíamente con orFecha dentro del mes solicitado.
+    // GDTaller filtra GetOrderLines por fecha de TRABAJO (cuando se registró la línea),
+    // no por orFecha (fecha de apertura de la OR). Esto es lo correcto para imputación
+    // de horas: una OR abierta en enero pero trabajada en febrero aparece en febrero.
     const [lines, vehicles] = await Promise.all([
-      gdtallerService.getOrderLines(),
+      gdtallerService.getOrderLines({ startDate, endDate }),
       gdtallerService.getVehicles().catch(() => []),
     ]);
 
@@ -508,14 +508,9 @@ router.get("/operario-lineas", async (req, res) => {
       if (v.vehiculoID) vehicleMap[v.vehiculoID] = v;
     }
 
-    // Filtrar por operario y rango de fecha
+    // Filtrar solo por operario — GDTaller ya aplicó el filtro de fecha de trabajo
     const opId = parseInt(operarioId);
-    const propias = lines.filter((l) => {
-      if (parseInt(l.operarioID) !== opId) return false;
-      if (!l.orFecha) return false;
-      const fecha = l.orFecha.substring(0, 10);
-      return fecha >= startDate && fecha <= endDate;
-    });
+    const propias = lines.filter((l) => parseInt(l.operarioID) === opId);
 
     // Calcular año desde bastidor (VIN)
     function anioDesdeVIN(vin) {
@@ -579,14 +574,10 @@ router.get("/horas-operario", async (req, res) => {
     const lastDay = new Date(y, m, 0).getDate();
     const endDate = `${y}-${String(m).padStart(2, "0")}-${lastDay}`;
 
-    // Ídem: obtener todos los datos y filtrar por orFecha en nuestro lado
-    const lines = await gdtallerService.getOrderLines();
+    // GDTaller filtra por fecha de trabajo — es la fuente correcta para imputación mensual
+    const lines = await gdtallerService.getOrderLines({ startDate, endDate });
 
-    const filtradas = lines.filter((l) => {
-      if (!l.orFecha) return false;
-      const fecha = l.orFecha.substring(0, 10);
-      return fecha >= startDate && fecha <= endDate;
-    });
+    const filtradas = lines.filter((l) => l.operarioID !== undefined);
 
     const operariosMap = {};
     for (const l of filtradas) {
