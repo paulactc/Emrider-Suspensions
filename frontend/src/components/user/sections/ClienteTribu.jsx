@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import {
   CaretLeftIcon, HandHeartIcon, TrophyIcon, CrownIcon, LightningIcon, ShieldIcon,
   WrenchIcon, StarIcon, ChatCircleIcon, TrendUpIcon, TruckIcon, ClipboardTextIcon,
+  FileTextIcon,
 } from "@phosphor-icons/react";
 import { useClienteData } from "../../../hooks/useClienteData";
 import api from "../../../../services/Api";
@@ -16,9 +17,9 @@ const NIVELES_EMRIDER = [
     alt: "EmRider Baby",
     color: "rookie",
     beneficios: [
-      { icon: ClipboardTextIcon, texto: "Revisión técnica gratuita del estado general de la moto (con cita previa)" },
-      { icon: ChatCircleIcon, texto: "Asesoramiento personalizado por WhatsApp con nuestro técnico" },
-      { icon: TrendUpIcon, texto: "Informe anual del estado de tus suspensiones" },
+      { icon: ClipboardTextIcon, texto: "Historial técnico digital de tu moto en la app" },
+      { icon: TrendUpIcon, texto: "Recordatorios de mantenimiento preventivo personalizados" },
+      { icon: FileTextIcon, texto: "Informe básico digital tras cada visita al taller" },
     ],
     rango: "1 - 600 BananaPoints 🍌",
   },
@@ -30,11 +31,11 @@ const NIVELES_EMRIDER = [
     alt: "EmRider Adolescent",
     color: "pro",
     beneficios: [
-      { icon: WrenchIcon, texto: "Medición y ajuste de SAG gratuito" },
-      { icon: ClipboardTextIcon, texto: "Revisión técnica gratuita (con cita previa)" },
-      { icon: StarIcon, texto: "Prioridad en citas de taller" },
-      { icon: ChatCircleIcon, texto: "Línea directa WhatsApp con el técnico" },
-      { icon: ShieldIcon, texto: "Garantía extendida en mano de obra: 6 meses" },
+      { icon: ClipboardTextIcon, texto: "Historial técnico digital de tu moto en la app" },
+      { icon: TrendUpIcon, texto: "Recordatorios de mantenimiento preventivo personalizados" },
+      { icon: FileTextIcon, texto: "Informe técnico detallado tras cada servicio" },
+      { icon: LightningIcon, texto: "Acceso anticipado a promociones y nuevos servicios" },
+      { icon: ChatCircleIcon, texto: "Consulta técnica gratuita por la app (1 al mes)" },
     ],
     rango: "601 - 1.200 BananaPoints 🍌",
   },
@@ -46,12 +47,10 @@ const NIVELES_EMRIDER = [
     alt: "EmRider Legend",
     color: "legend",
     beneficios: [
-      { icon: TruckIcon, texto: "Recogida y entrega del vehículo a domicilio gratis" },
+      { icon: TruckIcon, texto: "Recogida o entrega del vehículo a domicilio — Zona 1" },
       { icon: WrenchIcon, texto: "Medición y ajuste de SAG gratuito" },
-      { icon: ClipboardTextIcon, texto: "Revisión técnica gratuita (con cita previa)" },
+      { icon: ClipboardTextIcon, texto: "Revisión técnica gratuita" },
       { icon: StarIcon, texto: "Máxima prioridad en agenda de taller" },
-      { icon: ChatCircleIcon, texto: "Acceso directo al ingeniero de suspensiones" },
-      { icon: ShieldIcon, texto: "Garantía extendida en mano de obra: 12 meses" },
     ],
     rango: "+1.200 BananaPoints 🍌",
   },
