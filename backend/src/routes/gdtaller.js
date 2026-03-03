@@ -496,6 +496,12 @@ const SERVICIOS_TIEMPO_FIJO = [
   { test: (t) => t.includes("mantenimiento") && t.includes("retenes") && t.includes("trial"), horas: 2.36 },
   // Mantenimiento básico + cambio de retenes VELOCIDAD FF: 2.82 h
   { test: (t) => t.includes("mantenimiento") && t.includes("retenes") && t.includes("velocidad"), horas: 2.82 },
+  // Mantenimiento básico VELOCIDAD FF (sin cambio de retenes): 2.7 h
+  { test: (t) => t.includes("mantenimiento") && t.includes("velocidad") && t.includes("ff") && !t.includes("retenes"), horas: 2.7 },
+  // Modificación del hidráulico VELOCIDAD Suspensión Delantera FF: 3.30 h
+  { test: (t) => t.includes("modificaci") && t.includes("velocidad") && t.includes("delantera"), horas: 3.30 },
+  // Servicio mantenimiento amortiguador de dirección Off Road: 1.5 h
+  { test: (t) => t.includes("amortiguador") && t.includes("direcc"), horas: 1.5 },
 ];
 
 /**
