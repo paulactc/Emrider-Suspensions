@@ -501,6 +501,37 @@ function horasImputadas(linea) {
   return parseFloat(linea.cant) || 0;
 }
 
+// GET - Debug: ver todos los campos RAW de las primeras líneas de GDTaller
+// Query params: year, month, limit (default 5), q (filtro texto en desc/ref)
+router.get("/debug-raw-fields", async (req, res) => {
+  try {
+    const hoy = new Date();
+    const y = parseInt(req.query.year) || hoy.getFullYear();
+    const m = parseInt(req.query.month) || hoy.getMonth() + 1;
+    const lim = parseInt(req.query.limit) || 5;
+    const q = (req.query.q || "").toLowerCase();
+    const startDate = `${y}-${String(m).padStart(2, "0")}-01`;
+    const lastDay = new Date(y, m, 0).getDate();
+    const endDate = `${y}-${String(m).padStart(2, "0")}-${lastDay}`;
+
+    const lines = await gdtallerService.getOrderLines({ startDate, endDate });
+
+    let resultado = q
+      ? lines.filter((l) => (l.desc || "").toLowerCase().includes(q) || (l.ref || "").toLowerCase().includes(q))
+      : lines;
+
+    res.json({
+      periodo: { year: y, month: m },
+      total_lineas: resultado.length,
+      mostrando: Math.min(lim, resultado.length),
+      // Todos los campos raw de las primeras N líneas
+      lineas: resultado.slice(0, lim),
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // GET - Debug: ver descripciones únicas de líneas para verificar patrones de servicios
 // Query params: year, month (opcionales), q (filtro de texto opcional)
 router.get("/debug-desc-servicios", async (req, res) => {
