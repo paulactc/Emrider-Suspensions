@@ -462,26 +462,6 @@ router.get("/debug-orderlines-sample", async (_req, res) => {
   }
 });
 
-// GET - Debug: campos raw completos de GetOrderLines (primeras N líneas)
-// Query params: n (default 3), operarioId (opcional, para filtrar por operario)
-router.get("/debug-raw-lines", async (req, res) => {
-  try {
-    const n = parseInt(req.query.n) || 3;
-    const operarioId = req.query.operarioId ? parseInt(req.query.operarioId) : null;
-    const lines = await gdtallerService.getOrderLines();
-    const muestra = operarioId
-      ? lines.filter((l) => parseInt(l.operarioID) === operarioId).slice(0, n)
-      : lines.slice(0, n);
-    res.json({
-      total_lineas: lines.length,
-      muestra_campos_raw: muestra,
-      claves_disponibles: muestra.length > 0 ? Object.keys(muestra[0]) : [],
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // GET - Debug: ver operarios únicos en GetOrderLines
 router.get("/debug-operarios", async (_req, res) => {
   try {
