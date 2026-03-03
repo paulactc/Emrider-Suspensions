@@ -201,6 +201,7 @@ function ClienteTribu() {
               {NIVELES_EMRIDER.map((nivel) => {
                 const isCurrentLevel = nivel.id === nivelActual.id;
                 const isUnlocked = facturacionAnual >= nivel.facturacion.min;
+                const faltanParaEste = isUnlocked ? 0 : Math.round(nivel.facturacion.min - facturacionAnual);
                 return (
                   <div
                     key={nivel.id}
@@ -242,8 +243,13 @@ function ClienteTribu() {
                     </ul>
                     {!isUnlocked && (
                       <div className="nivel-card__overlay">
-                        <ShieldIcon className="nivel-card__overlay-icon" />
-                        <span>Nivel bloqueado</span>
+                        <div className="nivel-card__overlay-badge">
+                          <ShieldIcon className="nivel-card__overlay-icon" />
+                          <span>Nivel bloqueado</span>
+                        </div>
+                        <span className="nivel-card__overlay-puntos">
+                          Faltan 🍌 {faltanParaEste.toLocaleString("es-ES")} BananaPoints
+                        </span>
                       </div>
                     )}
                   </div>
