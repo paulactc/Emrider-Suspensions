@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy en servidor
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: 46.62.153.160
-          username: root
-          password: ${{ secrets.SERVER_PASSWORD }}
-          script: |
-            cd /var/www/emrider
-            git pull
-            pm2 restart all --update-env
+        env:
+          SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H 46.62.153.160 >> ~/.ssh/known_hosts 2>/dev/null
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@46.62.153.160 \
+            "cd /var/www/emrider && git pull && pm2 restart all --update-env"
