@@ -501,6 +501,48 @@ function horasImputadas(linea) {
   return parseFloat(linea.cant) || 0;
 }
 
+// GET - Debug: ver descripciones únicas de líneas para verificar patrones de servicios
+// Query params: year, month (opcionales), q (filtro de texto opcional)
+router.get("/debug-desc-servicios", async (req, res) => {
+  try {
+    const hoy = new Date();
+    const y = parseInt(req.query.year) || hoy.getFullYear();
+    const m = parseInt(req.query.month) || hoy.getMonth() + 1;
+    const startDate = `${y}-${String(m).padStart(2, "0")}-01`;
+    const lastDay = new Date(y, m, 0).getDate();
+    const endDate = `${y}-${String(m).padStart(2, "0")}-${lastDay}`;
+    const q = (req.query.q || "").toLowerCase();
+
+    const lines = await gdtallerService.getOrderLines({ startDate, endDate });
+
+    const mapa = {};
+    for (const l of lines) {
+      const key = `${l.desc || ""}|||${l.ref || ""}`;
+      if (!mapa[key]) {
+        const horasFijas = horasImputadas(l);
+        const cantOriginal = parseFloat(l.cant) || 0;
+        mapa[key] = {
+          desc: l.desc || "",
+          ref: l.ref || "",
+          cant_original: cantOriginal,
+          horas_imputadas: horasFijas,
+          es_servicio_fijo: horasFijas !== cantOriginal,
+          apariciones: 0,
+        };
+      }
+      mapa[key].apariciones++;
+    }
+
+    let resultado = Object.values(mapa);
+    if (q) resultado = resultado.filter((r) => r.desc.toLowerCase().includes(q) || r.ref.toLowerCase().includes(q));
+    resultado.sort((a, b) => b.apariciones - a.apariciones);
+
+    res.json({ periodo: { year: y, month: m }, total: resultado.length, lineas: resultado });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // GET - Debug: ver operarios únicos en GetOrderLines
 router.get("/debug-operarios", async (_req, res) => {
   try {
