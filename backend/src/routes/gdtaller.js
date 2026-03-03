@@ -462,6 +462,45 @@ router.get("/debug-orderlines-sample", async (_req, res) => {
   }
 });
 
+// ---------------------------------------------------------------------------
+// Imputación de horas a operario
+// Algunos servicios tienen un tiempo imputable fijo que no coincide con cant.
+// ---------------------------------------------------------------------------
+
+function normalizarTexto(str) {
+  return (str || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // eliminar tildes
+    .toLowerCase();
+}
+
+// Servicios con horas fijas: el valor de cant de GDTaller se ignora para estos.
+const SERVICIOS_TIEMPO_FIJO = [
+  // Recogida de vehículo a domicilio zona 1: 0.74 h
+  { test: (t) => t.includes("recogida") && t.includes("domicilio") && t.includes("zona 1"), horas: 0.74 },
+  // Neumático delantero: 0.33 h
+  { test: (t) => t.includes("neumatico") && t.includes("delantero"), horas: 0.33 },
+  // Neumático trasero: 0.77 h
+  { test: (t) => t.includes("neumatico") && t.includes("trasero"), horas: 0.77 },
+  // Diagnósis avanzada A: 3 h
+  { test: (t) => /diagnosis.*avanzada?\s+a\b/.test(t), horas: 3 },
+  // Diagnósis avanzada B: 5 h
+  { test: (t) => /diagnosis.*avanzada?\s+b\b/.test(t), horas: 5 },
+];
+
+/**
+ * Devuelve las horas imputables al operario para una línea de GDTaller.
+ * Para los servicios de la tabla anterior usa el tiempo fijo definido aquí;
+ * para el resto devuelve parseFloat(linea.cant).
+ */
+function horasImputadas(linea) {
+  const texto = normalizarTexto((linea.desc || "") + " " + (linea.ref || ""));
+  for (const { test, horas } of SERVICIOS_TIEMPO_FIJO) {
+    if (test(texto)) return horas;
+  }
+  return parseFloat(linea.cant) || 0;
+}
+
 // GET - Debug: ver operarios únicos en GetOrderLines
 router.get("/debug-operarios", async (_req, res) => {
   try {
@@ -535,7 +574,7 @@ router.get("/operario-lineas", async (req, res) => {
         orFecha: l.orFecha ? l.orFecha.substring(0, 10) : null,
         desc: l.desc || "",
         ref: l.ref || "",
-        cant: parseFloat(l.cant) || 0,
+        cant: horasImputadas(l),
         precio: parseFloat(l.precio) || 0,
         importe: parseFloat(l.importe) || 0,
         marca: v?.marca || null,
@@ -595,7 +634,7 @@ router.get("/horas-operario", async (req, res) => {
       }
       if (l.orNum) operariosMap[id].ordenes.add(l.orNum);
       operariosMap[id].lineas++;
-      operariosMap[id].totalHoras += parseFloat(l.cant) || 0;
+      operariosMap[id].totalHoras += horasImputadas(l);
       operariosMap[id].totalImporte += parseFloat(l.importe) || 0;
     }
 
