@@ -486,6 +486,16 @@ const SERVICIOS_TIEMPO_FIJO = [
   { test: (t) => /diagnosis.*avanzada?\s+a\b/.test(t), horas: 3 },
   // Diagnósis avanzada B: 5 h
   { test: (t) => /diagnosis.*avanzada?\s+b\b/.test(t), horas: 5 },
+  // Mantenimiento completo Full Overhaul Suspensión Trasera RR: 3.82 h
+  { test: (t) => t.includes("full overhaul") && t.includes("trasera"), horas: 3.82 },
+  // Mantenimiento completo Full Overhaul Suspensión Delantera FF: 3.82 h
+  { test: (t) => t.includes("full overhaul") && t.includes("delantera"), horas: 3.82 },
+  // Mantenimiento básico Motocross/Supermotard FF (sin cambio de retenes): 2.59 h
+  { test: (t) => t.includes("mantenimiento") && t.includes("motocross") && t.includes("ff") && !t.includes("retenes"), horas: 2.59 },
+  // Mantenimiento básico + cambio de retenes TRIAL: 2.36 h
+  { test: (t) => t.includes("mantenimiento") && t.includes("retenes") && t.includes("trial"), horas: 2.36 },
+  // Mantenimiento básico + cambio de retenes VELOCIDAD FF: 2.82 h
+  { test: (t) => t.includes("mantenimiento") && t.includes("retenes") && t.includes("velocidad"), horas: 2.82 },
 ];
 
 /**
