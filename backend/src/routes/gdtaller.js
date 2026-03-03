@@ -478,10 +478,10 @@ function normalizarTexto(str) {
 const SERVICIOS_TIEMPO_FIJO = [
   // Recogida de vehículo a domicilio zona 1: 0.74 h
   { test: (t) => t.includes("recogida") && t.includes("domicilio") && t.includes("zona 1"), horas: 0.74 },
-  // Neumático delantero: 0.33 h
-  { test: (t) => t.includes("neumatico") && t.includes("delantero"), horas: 0.33 },
+  // Neumático delantero: 0.33 h (GDTaller puede devolver 'neum?tico' por encoding)
+  { test: (t) => /neum.tico/.test(t) && t.includes("delantero") && t.includes("desmontaje"), horas: 0.33 },
   // Neumático trasero: 0.77 h
-  { test: (t) => t.includes("neumatico") && t.includes("trasero"), horas: 0.77 },
+  { test: (t) => /neum.tico/.test(t) && t.includes("trasero") && t.includes("desmontaje"), horas: 0.77 },
   // Diagnósis avanzada A: 3 h
   { test: (t) => /diagnosis.*avanzada?\s+a\b/.test(t), horas: 3 },
   // Diagnósis avanzada B: 5 h
