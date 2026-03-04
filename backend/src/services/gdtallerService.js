@@ -326,8 +326,14 @@ async function getOrderLines(options = {}) {
 
   const params = {};
 
+  // endDate con +1 día para incluir registros del día de hoy
+  // (el filtro de GDTaller es exclusivo en el extremo superior)
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
   params.startDate = options.startDate || options.dateFrom || "2020-01-01";
-  params.endDate = options.endDate || options.dateTo || new Date().toISOString().split("T")[0];
+  params.endDate = options.endDate || options.dateTo || tomorrowStr;
   if (options.vehicleId) params.vehicleId = options.vehicleId;
   if (options.clientId) params.clientId = options.clientId;
 
