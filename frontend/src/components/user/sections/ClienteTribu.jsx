@@ -163,99 +163,119 @@ function ClienteTribu() {
             </div>
 
             {!loadingNivel && (
-              <div className="emrider-niveles__estado">
-                <div className="emrider-niveles__estado-actual">
-                  <img
-                    src={nivelActual.imagen}
-                    alt={nivelActual.alt}
-                    className="emrider-niveles__estado-img"
-                    onError={(e) => { e.target.style.display = "none"; }}
-                  />
-                  <div className="emrider-niveles__estado-info">
-                    <span className="emrider-niveles__estado-label">Tu nivel actual</span>
-                    <h4>{nivelActual.nombre}</h4>
-                    <span className="emrider-niveles__estado-facturacion">
-                      🍌 {Math.round(facturacionAnual).toLocaleString("es-ES")} BananaPoints en {new Date().getFullYear()}
-                    </span>
+              <>
+                {/* === TU NIVEL ACTUAL === */}
+                <div className="emrider-nivel-actual">
+                  <div className="emrider-nivel-actual__top">
+                    <img
+                      src={nivelActual.imagen}
+                      alt={nivelActual.alt}
+                      className="emrider-nivel-actual__img"
+                      onError={(e) => { e.target.style.display = "none"; }}
+                    />
+                    <div className="emrider-nivel-actual__info">
+                      <span className="emrider-nivel-actual__label">Tu nivel actual</span>
+                      <h3 className="emrider-nivel-actual__nombre">{nivelActual.nombre}</h3>
+                      <span className="emrider-nivel-actual__points">
+                        🍌 {Math.round(facturacionAnual).toLocaleString("es-ES")} BananaPoints en {new Date().getFullYear()}
+                      </span>
+                    </div>
                   </div>
+
+                  {siguienteNivel ? (
+                    <div className="emrider-nivel-actual__progreso">
+                      <div className="emrider-nivel-actual__progreso-info">
+                        <span>Hacia {siguienteNivel.nombre}</span>
+                        <span>Faltan 🍌 {Math.round(faltaParaSiguiente).toLocaleString("es-ES")}</span>
+                      </div>
+                      <div className="emrider-niveles__progreso-bar">
+                        <div
+                          className="emrider-niveles__progreso-fill"
+                          style={{ width: porcentajeProgreso + "%" }}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="emrider-nivel-actual__max">¡Nivel máximo alcanzado! Eres parte de la élite EmRider.</p>
+                  )}
+
+                  <div className="emrider-nivel-actual__beneficios-titulo">Tus beneficios</div>
+                  <ul className="nivel-card__beneficios">
+                    {nivelActual.beneficios.map((b, idx) => {
+                      const IconComp = b.icon;
+                      return (
+                        <li key={idx}>
+                          <IconComp className="nivel-card__beneficio-icon" />
+                          <span>{b.texto}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
 
-                {siguienteNivel && (
-                  <div className="emrider-niveles__progreso">
-                    <div className="emrider-niveles__progreso-info">
-                      <span>Siguiente: {siguienteNivel.nombre}</span>
-                      <span>Faltan 🍌 {Math.round(faltaParaSiguiente).toLocaleString("es-ES")}</span>
-                    </div>
-                    <div className="emrider-niveles__progreso-bar">
-                      <div
-                        className="emrider-niveles__progreso-fill"
-                        style={{ width: porcentajeProgreso + "%" }}
-                      />
-                    </div>
+                {/* === TODOS LOS NIVELES === */}
+                <div className="emrider-niveles__seccion">
+                  <h4 className="emrider-niveles__seccion-titulo">
+                    <TrophyIcon /> Niveles de la Tribu
+                  </h4>
+                  <div className="emrider-niveles__grid">
+                    {NIVELES_EMRIDER.map((nivel) => {
+                      const isCurrentLevel = nivel.id === nivelActual.id;
+                      const isUnlocked = facturacionAnual >= nivel.facturacion.min;
+                      const faltanParaEste = isUnlocked ? 0 : Math.round(nivel.facturacion.min - facturacionAnual);
+                      return (
+                        <div
+                          key={nivel.id}
+                          className={`nivel-card nivel-card--${nivel.color} ${isCurrentLevel ? "nivel-card--current" : ""} ${isUnlocked ? "nivel-card--unlocked" : "nivel-card--locked"}`}
+                        >
+                          <div className="nivel-card__header">
+                            <div className="nivel-card__icon">
+                              <img
+                                src={nivel.imagen}
+                                alt={nivel.alt}
+                                className="nivel-card__img"
+                                onError={(e) => {
+                                  e.target.style.display = "none";
+                                  e.target.nextSibling.style.display = "flex";
+                                }}
+                              />
+                              <div className="nivel-card__img-fallback" style={{ display: "none" }}>
+                                {nivel.id === 1 ? "🏍️" : nivel.id === 2 ? "🏁" : "🏆"}
+                              </div>
+                              {isCurrentLevel && (
+                                <div className="nivel-card__current-badge"><LightningIcon /></div>
+                              )}
+                            </div>
+                            <div>
+                              <h4>{nivel.nombre}</h4>
+                              <span className="nivel-card__rango">{nivel.rango}</span>
+                            </div>
+                          </div>
+                          <ul className="nivel-card__beneficios">
+                            {nivel.beneficios.map((b, idx) => {
+                              const IconComp = b.icon;
+                              return (
+                                <li key={idx}>
+                                  <IconComp className="nivel-card__beneficio-icon" />
+                                  <span>{b.texto}</span>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                          {!isUnlocked && (
+                            <div className="nivel-card__lock-footer">
+                              <ShieldIcon className="nivel-card__lock-icon" />
+                              <span>Nivel bloqueado</span>
+                              <span className="nivel-card__lock-puntos">· Faltan 🍌 {faltanParaEste.toLocaleString("es-ES")}</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
-                )}
-              </div>
+                </div>
+              </>
             )}
-
-            <div className="emrider-niveles__grid">
-              {NIVELES_EMRIDER.map((nivel) => {
-                const isCurrentLevel = nivel.id === nivelActual.id;
-                const isUnlocked = facturacionAnual >= nivel.facturacion.min;
-                const faltanParaEste = isUnlocked ? 0 : Math.round(nivel.facturacion.min - facturacionAnual);
-                return (
-                  <div
-                    key={nivel.id}
-                    className={`nivel-card nivel-card--${nivel.color} ${isCurrentLevel ? "nivel-card--current" : ""} ${isUnlocked ? "nivel-card--unlocked" : "nivel-card--locked"}`}
-                  >
-                    <div className="nivel-card__header">
-                      <div className="nivel-card__icon">
-                        <img
-                          src={nivel.imagen}
-                          alt={nivel.alt}
-                          className="nivel-card__img"
-                          onError={(e) => {
-                            e.target.style.display = "none";
-                            e.target.nextSibling.style.display = "flex";
-                          }}
-                        />
-                        <div className="nivel-card__img-fallback" style={{ display: "none" }}>
-                          {nivel.id === 1 ? "🏍️" : nivel.id === 2 ? "🏁" : "🏆"}
-                        </div>
-                        {isCurrentLevel && (
-                          <div className="nivel-card__current-badge"><LightningIcon /></div>
-                        )}
-                      </div>
-                      <div>
-                        <h4>{nivel.nombre}</h4>
-                        <span className="nivel-card__rango">{nivel.rango}</span>
-                      </div>
-                    </div>
-                    <ul className="nivel-card__beneficios">
-                      {nivel.beneficios.map((b, idx) => {
-                        const IconComp = b.icon;
-                        return (
-                          <li key={idx}>
-                            <IconComp className="nivel-card__beneficio-icon" />
-                            <span>{b.texto}</span>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                    {!isUnlocked && (
-                      <div className="nivel-card__overlay">
-                        <div className="nivel-card__overlay-badge">
-                          <ShieldIcon className="nivel-card__overlay-icon" />
-                          <span>Nivel bloqueado</span>
-                        </div>
-                        <span className="nivel-card__overlay-puntos">
-                          Faltan 🍌 {faltanParaEste.toLocaleString("es-ES")} BananaPoints
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
           </div>
         </div>
       </div>

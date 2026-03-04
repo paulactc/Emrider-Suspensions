@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { ClockIcon, TrayIcon, UserIcon, CaretDownIcon, CaretUpIcon, CurrencyEurIcon } from "@phosphor-icons/react";
+import { ClockIcon, TrayIcon, UserIcon, CaretDownIcon, CaretUpIcon, CurrencyEurIcon, TrophyIcon, LockSimpleIcon } from "@phosphor-icons/react";
 import api from "../../../services/Api";
+import { calcularIncentivo } from "../../utils/incentivos";
 
 const MESES = [
   "Enero","Febrero","Marzo","Abril","Mayo","Junio",
@@ -15,6 +16,102 @@ function formatFecha(f) {
 
 function formatEur(n) {
   return Number(n || 0).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+}
+
+// Pill compacto para la fila del admin
+function IncentivoPill({ nombre, totalHoras }) {
+  const info = calcularIncentivo(nombre, totalHoras);
+  if (!info) return null;
+  const { nivelActual } = info;
+  const nivel = nivelActual?.id ?? 0;
+  return (
+    <span className={`incentivo-pill incentivo-pill--${nivel}`}>
+      {nivelActual ? `${nivelActual.emoji} ${nivelActual.nombre} · +${nivelActual.umbral.incentivo} €` : "Sin incentivo"}
+    </span>
+  );
+}
+
+// Banner completo de incentivo para la vista del operario
+function IncentivoBanner({ nombre, totalHoras, mes, year }) {
+  const info = calcularIncentivo(nombre, totalHoras);
+  if (!info) return null;
+
+  const { nivelActual, nivelSiguiente, horasHastaProximo, progreso, todosLosNiveles } = info;
+  const nivelId = nivelActual?.id ?? 0;
+
+  return (
+    <div className="incentivo-banner">
+      <div className="incentivo-banner__titulo">
+        <TrophyIcon size={16} weight="fill" />
+        Incentivo de {MESES[mes - 1]} {year}
+      </div>
+
+      {/* Nivel alcanzado */}
+      <div className={`incentivo-banner__nivel incentivo-banner__nivel--${nivelId}`}>
+        <span className="incentivo-banner__emoji">
+          {nivelActual ? nivelActual.emoji : "🎯"}
+        </span>
+        <div className="incentivo-banner__nivel-info">
+          <span className="incentivo-banner__label">
+            {nivelActual ? "Nivel alcanzado" : "Sin incentivo aún"}
+          </span>
+          <h4 className="incentivo-banner__nombre">
+            {nivelActual ? nivelActual.nombre : "Sigue sumando horas"}
+          </h4>
+          {nivelActual && (
+            <span className="incentivo-banner__incentivo">
+              +{nivelActual.umbral.incentivo} € este mes
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Progreso hacia siguiente nivel */}
+      {nivelSiguiente && (
+        <div className="incentivo-banner__progreso">
+          <div className="incentivo-banner__progreso-info">
+            <span>Hacia {nivelSiguiente.emoji} {nivelSiguiente.nombre}</span>
+            <span>{horasHastaProximo.toFixed(1)} h más → +{nivelSiguiente.umbral.incentivo} €</span>
+          </div>
+          <div className="incentivo-banner__bar">
+            <div
+              className="incentivo-banner__bar-fill"
+              style={{ width: `${progreso}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Todos los niveles */}
+      <div className="incentivo-banner__todos-titulo">Todos los niveles</div>
+      <div className="incentivo-banner__todos">
+        {todosLosNiveles.map((n) => {
+          const reached = totalHoras >= n.umbral.min;
+          const isCurrent = nivelActual?.id === n.id;
+          return (
+            <div
+              key={n.id}
+              className={`incentivo-nivel-mini ${isCurrent ? "incentivo-nivel-mini--current" : reached ? "incentivo-nivel-mini--reached" : "incentivo-nivel-mini--locked"}`}
+            >
+              <span className="incentivo-nivel-mini__emoji">{n.emoji}</span>
+              <span className="incentivo-nivel-mini__nombre">{n.nombre}</span>
+              <span className="incentivo-nivel-mini__rango">
+                {n.umbral.max
+                  ? `${n.umbral.min} – ${n.umbral.max} h`
+                  : `+${n.umbral.min} h`}
+              </span>
+              <span className="incentivo-nivel-mini__incentivo">
+                {reached
+                  ? `+${n.umbral.incentivo} €`
+                  : <><LockSimpleIcon size={11} /> {n.umbral.incentivo} €</>
+                }
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 // Vista detalle: líneas del operario en el mes
@@ -35,6 +132,7 @@ function VistaDetalle({ operarioId, year, month, mostrarImporte = false }) {
   const lineas = data?.lineas || [];
   const totalHoras = data?.total_horas ?? 0;
   const totalImporte = data?.total_importe ?? 0;
+  const nombreOperario = data?.operario ?? "";
 
   if (loading) return <div className="trabajos-admin__loading">Cargando...</div>;
   if (error) return <div className="trabajos-admin__empty"><TrayIcon size={40} /><p>Error: {error}</p></div>;
@@ -42,18 +140,22 @@ function VistaDetalle({ operarioId, year, month, mostrarImporte = false }) {
   return (
     <>
       {data && (
-        <div className="horas-operario-admin__total-horas">
-          <ClockIcon size={22} weight="fill" />
-          <span className="horas-operario-admin__total-horas-num">{totalHoras.toFixed(2)}</span>
-          <span className="horas-operario-admin__total-horas-label">horas en {MESES[month - 1]} {year}</span>
-          {mostrarImporte && totalImporte > 0 && (
-            <>
-              <span style={{ margin: "0 0.5rem", color: "var(--ohlins-gray-600, #4b5563)" }}>·</span>
-              <CurrencyEurIcon size={18} weight="fill" />
-              <span className="horas-operario-admin__total-horas-num" style={{ fontSize: "1.4rem" }}>{formatEur(totalImporte)}</span>
-            </>
-          )}
-        </div>
+        <>
+          <div className="horas-operario-admin__total-horas">
+            <ClockIcon size={22} weight="fill" />
+            <span className="horas-operario-admin__total-horas-num">{totalHoras.toFixed(2)}</span>
+            <span className="horas-operario-admin__total-horas-label">horas en {MESES[month - 1]} {year}</span>
+            {mostrarImporte && totalImporte > 0 && (
+              <>
+                <span style={{ margin: "0 0.5rem", color: "var(--ohlins-gray-600, #4b5563)" }}>·</span>
+                <CurrencyEurIcon size={18} weight="fill" />
+                <span className="horas-operario-admin__total-horas-num" style={{ fontSize: "1.4rem" }}>{formatEur(totalImporte)}</span>
+              </>
+            )}
+          </div>
+
+          <IncentivoBanner nombre={nombreOperario} totalHoras={totalHoras} mes={month} year={year} />
+        </>
       )}
 
       {lineas.length === 0 ? (
@@ -128,6 +230,7 @@ function FilaOperario({ operario, year, month }) {
               {formatEur(operario.totalImporte)}
             </span>
           )}
+          <IncentivoPill nombre={operario.operario} totalHoras={operario.totalHoras} />
           <span className="horas-operario-admin__acord-stat horas-operario-admin__acord-stat--meta">
             {operario.ordenes} órd · {operario.lineas} lín
           </span>

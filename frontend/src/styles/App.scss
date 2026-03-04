@@ -4549,6 +4549,123 @@ footer {
       grid-template-columns: 1fr;
     }
   }
+
+  &__seccion {
+    margin-top: 0.5rem;
+
+    &-titulo {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: $ohlins-gray-400;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin: 0 0 0.85rem;
+
+      svg {
+        width: 0.85rem;
+        height: 0.85rem;
+        color: $ohlins-yellow;
+      }
+    }
+  }
+}
+
+// === NIVEL ACTUAL DEL CLIENTE ===
+.emrider-nivel-actual {
+  background: $ohlins-gray-800;
+  border: 1px solid rgba($ohlins-yellow, 0.4);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, $ohlins-yellow, $ohlins-yellow-dark);
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  &__img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid $ohlins-yellow;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+  }
+
+  &__label {
+    display: block;
+    font-size: 0.68rem;
+    color: $ohlins-gray-400;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.15rem;
+  }
+
+  &__nombre {
+    margin: 0 0 0.2rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: $ohlins-yellow;
+  }
+
+  &__points {
+    font-size: 0.82rem;
+    color: $ohlins-gray-300;
+  }
+
+  &__progreso {
+    margin-bottom: 1.25rem;
+
+    &-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: $ohlins-gray-300;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+  }
+
+  &__max {
+    margin: 0 0 1.25rem;
+    font-size: 0.82rem;
+    color: $ohlins-yellow;
+    font-weight: 600;
+    text-align: center;
+    background: rgba($ohlins-yellow, 0.08);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  &__beneficios-titulo {
+    font-size: 0.68rem;
+    color: $ohlins-gray-400;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
 }
 
 // Tarjetas de nivel
@@ -4593,52 +4710,45 @@ footer {
   }
 
   &--locked {
-    opacity: 0.75;
-
-    .nivel-card__overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        to bottom,
-        rgba($ohlins-black, 0.15) 0%,
-        rgba($ohlins-black, 0.75) 55%,
-        rgba($ohlins-black, 0.92) 100%
-      );
-      backdrop-filter: blur(2px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      padding-bottom: 1.5rem;
-      gap: 0.5rem;
-      border-radius: 0.75rem;
-
-      &-badge {
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        background: rgba($ohlins-gray-700, 0.7);
-        border: 1px solid rgba($ohlins-gray-500, 0.4);
-        border-radius: 2rem;
-        padding: 0.3rem 0.85rem;
-        color: $ohlins-gray-300;
-        font-size: 0.78rem;
-        font-weight: 600;
-        letter-spacing: 0.03em;
-      }
-
-      &-icon {
-        width: 0.9rem;
-        height: 0.9rem;
-        flex-shrink: 0;
-      }
-
-      &-puntos {
-        font-size: 0.75rem;
-        color: $ohlins-gray-400;
-        font-weight: 500;
-      }
+    .nivel-card__header h4 {
+      color: $ohlins-gray-500;
     }
+
+    .nivel-card__rango {
+      color: $ohlins-gray-600;
+    }
+
+    .nivel-card__beneficios li {
+      color: $ohlins-gray-600;
+    }
+
+    .nivel-card__beneficio-icon {
+      color: $ohlins-gray-600;
+    }
+  }
+
+  &__lock-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.85rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid $ohlins-gray-700;
+    font-size: 0.75rem;
+    color: $ohlins-gray-400;
+    font-weight: 600;
+  }
+
+  &__lock-icon {
+    width: 0.85rem;
+    height: 0.85rem;
+    color: $ohlins-gray-500;
+    flex-shrink: 0;
+  }
+
+  &__lock-puntos {
+    color: $ohlins-gray-500;
+    font-weight: 400;
   }
 
   &__header {
@@ -4730,6 +4840,193 @@ footer {
     color: $ohlins-yellow;
     flex-shrink: 0;
     margin-top: 0.1rem;
+  }
+}
+
+// === SISTEMA DE INCENTIVOS OPERARIO ===
+.incentivo-banner {
+  background: $ohlins-gray-800;
+  border: 1px solid $ohlins-gray-700;
+  border-radius: 0.75rem;
+  padding: 1.1rem;
+  margin-bottom: 1.5rem;
+
+  &__titulo {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: $ohlins-gray-400;
+    font-weight: 700;
+    margin-bottom: 0.85rem;
+
+    svg { color: $ohlins-yellow; }
+  }
+
+  &__nivel {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.85rem 1rem;
+    border-radius: 0.6rem;
+    border: 1px solid transparent;
+    margin-bottom: 1rem;
+
+    &--0 { background: rgba($ohlins-gray-700, 0.4); border-color: $ohlins-gray-700; }
+    &--1 { background: rgba(#ea580c, 0.1); border-color: rgba(#ea580c, 0.35); }
+    &--2 { background: rgba(#d97706, 0.1); border-color: rgba(#d97706, 0.35); }
+    &--3 { background: rgba($ohlins-yellow, 0.1); border-color: rgba($ohlins-yellow, 0.35); }
+    &--4 { background: rgba(#a78bfa, 0.1); border-color: rgba(#a78bfa, 0.35); }
+    &--5 {
+      background: linear-gradient(135deg, rgba(#f59e0b, 0.14), rgba(#ef4444, 0.08));
+      border-color: rgba(#f59e0b, 0.45);
+    }
+  }
+
+  &__emoji {
+    font-size: 2.1rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  &__nivel-info { flex: 1; }
+
+  &__label {
+    display: block;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $ohlins-gray-400;
+    margin-bottom: 0.15rem;
+  }
+
+  &__nombre {
+    margin: 0 0 0.2rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: $ohlins-white;
+  }
+
+  &__incentivo {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: $ohlins-yellow;
+  }
+
+  &__progreso {
+    margin-bottom: 1rem;
+
+    &-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.77rem;
+      color: $ohlins-gray-300;
+      margin-bottom: 0.45rem;
+    }
+  }
+
+  &__bar {
+    height: 8px;
+    background: $ohlins-gray-700;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  &__bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #D4A020, $ohlins-yellow, #FFD700);
+    border-radius: 4px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &__todos-titulo {
+    font-size: 0.68rem;
+    color: $ohlins-gray-500;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  &__todos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+}
+
+.incentivo-nivel-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 0.45rem;
+  font-size: 0.77rem;
+  border: 1px solid transparent;
+
+  &__emoji { font-size: 0.95rem; flex-shrink: 0; }
+  &__nombre { font-weight: 600; min-width: 90px; }
+  &__rango { color: $ohlins-gray-500; font-size: 0.72rem; flex: 1; }
+  &__incentivo {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 700;
+    font-size: 0.77rem;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  &--reached {
+    background: rgba($ohlins-gray-700, 0.35);
+    border-color: $ohlins-gray-700;
+    color: $ohlins-gray-300;
+    .incentivo-nivel-mini__incentivo { color: $ohlins-yellow; }
+  }
+
+  &--current {
+    background: rgba($ohlins-yellow, 0.1);
+    border-color: rgba($ohlins-yellow, 0.35);
+    color: $ohlins-white;
+    .incentivo-nivel-mini__nombre { color: $ohlins-yellow; }
+    .incentivo-nivel-mini__incentivo { color: $ohlins-yellow; }
+  }
+
+  &--locked {
+    background: transparent;
+    border-color: rgba($ohlins-gray-700, 0.4);
+    color: $ohlins-gray-600;
+    .incentivo-nivel-mini__incentivo { color: $ohlins-gray-600; }
+  }
+}
+
+// Pill compacto para vista admin (fila acordeón)
+.incentivo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.18rem 0.5rem;
+  border-radius: 2rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+  white-space: nowrap;
+
+  &--0 {
+    background: rgba($ohlins-gray-700, 0.4);
+    color: $ohlins-gray-500;
+    border-color: $ohlins-gray-700;
+  }
+  &--1 { background: rgba(#ea580c, 0.15); color: #fb923c; border-color: rgba(#ea580c, 0.3); }
+  &--2 { background: rgba(#d97706, 0.15); color: #fcd34d; border-color: rgba(#d97706, 0.3); }
+  &--3 { background: rgba($ohlins-yellow, 0.15); color: $ohlins-yellow; border-color: rgba($ohlins-yellow, 0.3); }
+  &--4 { background: rgba(#a78bfa, 0.15); color: #c4b5fd; border-color: rgba(#a78bfa, 0.3); }
+  &--5 {
+    background: linear-gradient(135deg, rgba(#f59e0b, 0.2), rgba(#ef4444, 0.15));
+    color: #fde68a;
+    border-color: rgba(#f59e0b, 0.4);
   }
 }
 
