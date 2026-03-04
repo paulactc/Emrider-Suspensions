@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ClockIcon, TrayIcon, UserIcon, CaretDownIcon, CaretUpIcon, CurrencyEurIcon, TrophyIcon, LockSimpleIcon } from "@phosphor-icons/react";
+import { ClockIcon, TrayIcon, UserIcon, CaretDownIcon, CaretUpIcon, CurrencyEurIcon, TrophyIcon, LockSimpleIcon, SealCheckIcon } from "@phosphor-icons/react";
 import api from "../../../services/Api";
 import { calcularIncentivo } from "../../utils/incentivos";
 
@@ -59,9 +59,16 @@ function IncentivoBanner({ nombre, totalHoras, mes, year }) {
             {nivelActual ? nivelActual.nombre : "Sigue sumando horas"}
           </h4>
           {nivelActual && (
-            <span className="incentivo-banner__incentivo">
-              +{nivelActual.umbral.incentivo} € este mes
-            </span>
+            <>
+              <p className="incentivo-banner__felicitacion">
+                <SealCheckIcon size={13} weight="fill" />
+                {nivelActual.felicitacion}
+              </p>
+              <div className="incentivo-banner__importe">
+                <CurrencyEurIcon size={20} weight="fill" />
+                <span>{nivelActual.umbral.incentivo} € de incentivo este mes</span>
+              </div>
+            </>
           )}
         </div>
       </div>
