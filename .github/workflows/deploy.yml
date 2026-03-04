@@ -17,5 +17,26 @@ jobs:
           printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H 46.62.153.160 >> ~/.ssh/known_hosts 2>/dev/null
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@46.62.153.160 \
-            "cd /var/www/emrider && git pull && pm2 restart all --update-env"
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@46.62.153.160 << 'ENDSSH'
+            set -e
+            cd /var/www/emrider
+
+            echo ">>> git pull"
+            git pull
+
+            echo ">>> Backend: instalar dependencias"
+            cd backend
+            npm ci --omit=dev
+            cd ..
+
+            echo ">>> Frontend: instalar dependencias y construir"
+            cd frontend
+            npm ci
+            npm run build
+            cd ..
+
+            echo ">>> PM2: reiniciar backend"
+            pm2 startOrRestart ecosystem.config.js --update-env
+
+            echo ">>> Deploy completado"
+          ENDSSH

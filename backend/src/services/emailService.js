@@ -13,6 +13,8 @@ const transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false,
   },
+  connectionTimeout: 5000,
+  socketTimeout: 5000,
 });
 
 async function sendPasswordResetEmail(email, resetUrl) {
