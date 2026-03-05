@@ -31,8 +31,20 @@ function HistorialOrdenes({ clientId }) {
     return num.toLocaleString("es-ES", { style: "currency", currency: "EUR" });
   };
 
+  // Filtrar órdenes: las anteriores al 05/03/2026 se muestran siempre;
+  // las posteriores solo si tienen una línea con "trabajo finalizado"
+  const FECHA_CORTE = new Date("2026-03-05");
+  const ordenesFiltradas = ordenes.filter((orden) => {
+    const fechaOrden = orden.fecha ? new Date(orden.fecha) : null;
+    if (!fechaOrden || fechaOrden < FECHA_CORTE) return true;
+    return (orden.lineas || []).some((l) => {
+      const texto = `${l.desc || ""} ${l.ref || ""} ${l.obs || ""}`.toLowerCase();
+      return texto.includes("trabajo finalizado");
+    });
+  });
+
   // Agrupar órdenes por moto
-  const grupos = ordenes.reduce((acc, orden) => {
+  const grupos = ordenesFiltradas.reduce((acc, orden) => {
     const clave = orden.matricula || `${orden.marca || ""}_${orden.modelo || ""}` || "sin-moto";
     if (!acc[clave]) {
       acc[clave] = {
@@ -73,7 +85,7 @@ function HistorialOrdenes({ clientId }) {
     </div>
   );
 
-  if (ordenes.length === 0) return (
+  if (ordenesFiltradas.length === 0) return (
     <div className="historial-ordenes">
       <p className="no-results-message">No hay trabajos registrados</p>
     </div>
