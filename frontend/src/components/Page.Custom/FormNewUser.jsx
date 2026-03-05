@@ -15,9 +15,9 @@ function FormNewUser() {
     event.preventDefault();
 
     const formData = new FormData(event.target);
-    const nombre = formData.get("nombre") || "";
     const email = formData.get("email") || "";
     const dni = (formData.get("dni") || "").toUpperCase();
+    const codigoCliente = formData.get("codigoCliente") || "";
     const password = formData.get("password") || "";
     const repeatPassword = formData.get("repeatPassword") || "";
 
@@ -25,14 +25,6 @@ function FormNewUser() {
     setSuccess("");
 
     // Validaciones
-    if (nombre === "") {
-      setError("El nombre no puede estar vacío.");
-      return;
-    }
-    if (nombre.length > 50) {
-      setError("El nombre es demasiado largo.");
-      return;
-    }
     if (email === "") {
       setError("El correo electrónico no puede estar vacío.");
       return;
@@ -71,10 +63,10 @@ function FormNewUser() {
     setLoading(true);
     try {
       const result = await api.register({
-        nombre,
         email,
         password,
         dni,
+        codigoCliente,
       });
 
       if (result && result.success) {
@@ -135,19 +127,6 @@ function FormNewUser() {
           )}
 
           <div className="input-group">
-            <label htmlFor="nombre" className="input-label">
-              Nombre
-            </label>
-            <input
-              className="input-field"
-              type="text"
-              name="nombre"
-              id="nombre"
-              placeholder="Tu nombre"
-            />
-          </div>
-
-          <div className="input-group">
             <label htmlFor="email" className="input-label">
               Correo Electrónico
             </label>
@@ -171,6 +150,19 @@ function FormNewUser() {
               id="dni"
               placeholder="47231882W"
               style={{ textTransform: "uppercase" }}
+            />
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="codigoCliente" className="input-label">
+              Código cliente
+            </label>
+            <input
+              className="input-field"
+              type="password"
+              name="codigoCliente"
+              id="codigoCliente"
+              placeholder="••••"
             />
           </div>
 

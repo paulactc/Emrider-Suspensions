@@ -10,42 +10,49 @@ class AuthController {
   static async register(req, res) {
     try {
       const {
-        nombre = "",
         email,
         password,
         dni,
+        codigoCliente,
         telefono,
         rol = "cliente",
       } = req.body;
 
-      // Si no envían nombre, usar el DNI como nombre temporal
-      const nombreFinal = nombre || dni;
-
       // Validar campos requeridos
-      if (!email || !password || !dni) {
+      if (!email || !password || !dni || !codigoCliente) {
         return res.status(400).json({
           success: false,
-          message: "Email, contraseña y DNI son obligatorios para el registro.",
+          message: "Todos los campos son obligatorios.",
         });
       }
 
-      // Verificar que el DNI/CIF existe en GDTaller (solo clientes EmRider pueden registrarse)
+      // Verificar código cliente
+      if (codigoCliente !== "2222") {
+        return res.status(403).json({
+          success: false,
+          message: "Código cliente incorrecto.",
+        });
+      }
+
+      // Verificar que el DNI/CIF existe en GDTaller y obtener el nombre real
+      let nombreFinal = dni;
       try {
         const clientes = await gdtallerService.getClients();
         const dniNorm = (dni || "").replace(/\s+/g, "").toLowerCase();
-        const esCliente = clientes.some((c) => {
+        const clienteGDT = clientes.find((c) => {
           const cifNorm = (c.cif || "").replace(/\s+/g, "").toLowerCase();
           return cifNorm === dniNorm;
         });
-        if (!esCliente) {
+        if (!clienteGDT) {
           return res.status(403).json({
             success: false,
             message: "No encontramos ningún cliente EmRider con ese DNI/CIF. Si crees que es un error, contacta con el taller.",
           });
         }
+        const mapped = gdtallerService.mapClientFromGDTaller(clienteGDT);
+        nombreFinal = mapped.nombre || mapped.nombre_completo || dni;
       } catch (gdtErr) {
         console.error("Error verificando cliente en GDTaller:", gdtErr.message);
-        // Si GDTaller no responde, dejamos pasar para no bloquear el registro
       }
 
       // Verificar si el usuario ya existe
