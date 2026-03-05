@@ -9,11 +9,8 @@ const MESES = [
 ];
 
 const TIPOS_INCIDENCIA = [
-  "Protocolo no seguido",
-  "Error en OR",
-  "Falta de comunicación",
-  "Trabajo incompleto",
-  "Documentación incorrecta",
+  "Imágenes no comunicadas",
+  "Checkin incompleto",
   "Otro",
 ];
 
@@ -39,6 +36,7 @@ function IncidenciasProtocoloAdmin() {
     or_numero: "",
     moto_marca_modelo: "",
     tipo_incidencia: TIPOS_INCIDENCIA[0],
+    notas: "",
   });
   const [guardando, setGuardando] = useState(false);
   const [guardadoOk, setGuardadoOk] = useState(false);
@@ -76,7 +74,7 @@ function IncidenciasProtocoloAdmin() {
     try {
       await api.crearIncidenciaProtocolo({ ...form, mes: month, anio: year });
       setGuardadoOk(true);
-      setForm((f) => ({ ...f, or_numero: "", moto_marca_modelo: "" }));
+      setForm((f) => ({ ...f, or_numero: "", moto_marca_modelo: "", notas: "" }));
       // Recargar listado
       const res = await api.getIncidenciasProtocolo(month, year);
       setIncidencias(res.data || []);
@@ -197,6 +195,16 @@ function IncidenciasProtocoloAdmin() {
           </label>
         </div>
 
+        <label className="incidencias-form__campo incidencias-form__campo--full">
+          <span>Notas (opcional)</span>
+          <textarea
+            value={form.notas}
+            onChange={(e) => setForm((f) => ({ ...f, notas: e.target.value }))}
+            placeholder="Descripción adicional..."
+            rows={2}
+          />
+        </label>
+
         <button
           type="submit"
           className="incidencias-form__btn"
@@ -233,6 +241,7 @@ function IncidenciasProtocoloAdmin() {
                   <th>Nº OR</th>
                   <th>Moto</th>
                   <th>Tipo</th>
+                  <th>Notas</th>
                   <th>Fecha</th>
                   <th></th>
                 </tr>
@@ -244,6 +253,7 @@ function IncidenciasProtocoloAdmin() {
                     <td><span className="horas-operario-admin__orden">{inc.or_numero}</span></td>
                     <td>{inc.moto_marca_modelo}</td>
                     <td>{inc.tipo_incidencia}</td>
+                    <td className="horas-operario-admin__desc">{inc.notas || <span className="horas-operario-admin__vacio">—</span>}</td>
                     <td>{formatFecha(inc.created_at)}</td>
                     <td>
                       <button

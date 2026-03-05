@@ -6990,6 +6990,28 @@ footer {
     }
   }
 
+  &__campo--full {
+    grid-column: 1 / -1;
+
+    textarea {
+      background: $ohlins-gray-700;
+      border: 1px solid $ohlins-gray-600;
+      border-radius: 6px;
+      color: $ohlins-white;
+      padding: 0.45rem 0.7rem;
+      font-size: 0.85rem;
+      outline: none;
+      resize: vertical;
+      width: 100%;
+      font-family: inherit;
+      transition: border-color 0.15s;
+
+      &:focus {
+        border-color: rgba(#f97316, 0.5);
+      }
+    }
+  }
+
   &__btn {
     display: inline-flex;
     align-items: center;

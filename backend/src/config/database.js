@@ -251,12 +251,24 @@ async function runMigrations() {
         or_numero VARCHAR(50) NOT NULL,
         moto_marca_modelo VARCHAR(150) NOT NULL,
         tipo_incidencia VARCHAR(100) NOT NULL,
+        notas TEXT NULL,
         mes INT NOT NULL,
         anio INT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `)
   );
+
+  await runSafeMigration("Columna notas en incidencias_protocolo", async () => {
+    const [[{ cnt }]] = await pool.execute(
+      `SELECT COUNT(*) as cnt FROM INFORMATION_SCHEMA.COLUMNS
+       WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'incidencias_protocolo'
+       AND COLUMN_NAME = 'notas'`
+    );
+    if (cnt === 0) {
+      await pool.execute(`ALTER TABLE incidencias_protocolo ADD COLUMN notas TEXT NULL`);
+    }
+  });
 
   await runSafeMigration("Columna operario_id en usuarios", async () => {
     const [[{ cnt }]] = await pool.execute(

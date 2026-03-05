@@ -26,16 +26,16 @@ router.get("/", async (req, res) => {
 // POST / — crear incidencia
 router.post("/", async (req, res) => {
   try {
-    const { operario_nombre, or_numero, moto_marca_modelo, tipo_incidencia, mes, anio } = req.body;
+    const { operario_nombre, or_numero, moto_marca_modelo, tipo_incidencia, notas, mes, anio } = req.body;
 
     if (!operario_nombre || !or_numero || !moto_marca_modelo || !tipo_incidencia || !mes || !anio) {
       return res.status(400).json({ message: "Faltan campos obligatorios" });
     }
 
     const [result] = await pool.execute(
-      `INSERT INTO incidencias_protocolo (operario_nombre, or_numero, moto_marca_modelo, tipo_incidencia, mes, anio)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [operario_nombre, or_numero, moto_marca_modelo, tipo_incidencia, Number(mes), Number(anio)]
+      `INSERT INTO incidencias_protocolo (operario_nombre, or_numero, moto_marca_modelo, tipo_incidencia, notas, mes, anio)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [operario_nombre, or_numero, moto_marca_modelo, tipo_incidencia, notas || null, Number(mes), Number(anio)]
     );
 
     res.status(201).json({ id: result.insertId, message: "Incidencia registrada" });
