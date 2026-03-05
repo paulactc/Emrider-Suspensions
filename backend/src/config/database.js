@@ -243,6 +243,21 @@ async function runMigrations() {
     `)
   );
 
+  await runSafeMigration("Tabla incidencias_protocolo verificada", () =>
+    pool.execute(`
+      CREATE TABLE IF NOT EXISTS incidencias_protocolo (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        operario_nombre VARCHAR(100) NOT NULL,
+        or_numero VARCHAR(50) NOT NULL,
+        moto_marca_modelo VARCHAR(150) NOT NULL,
+        tipo_incidencia VARCHAR(100) NOT NULL,
+        mes INT NOT NULL,
+        anio INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `)
+  );
+
   await runSafeMigration("Columna operario_id en usuarios", async () => {
     const [[{ cnt }]] = await pool.execute(
       `SELECT COUNT(*) as cnt FROM INFORMATION_SCHEMA.COLUMNS

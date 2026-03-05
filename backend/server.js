@@ -64,6 +64,9 @@ app.use("/api/citas", require("./src/routes/citas"));
 // Push notifications
 app.use("/api/push", require("./src/routes/push"));
 
+// Incidencias de protocolo
+app.use("/api/incidencias-protocolo", require("./src/routes/incidenciasProtocolo"));
+
 console.log("✅ Rutas registradas:");
 console.log("  - /api/clientes");
 console.log("  - /api/motos");

@@ -25,6 +25,7 @@ import TrabajosAdmin from "./admin/TrabajosAdmin";
 import ServicioDetalleAdmin from "./admin/ServicioDetalleAdmin";
 import AvisosAdmin from "./admin/AvisosAdmin";
 import HorasOperarioAdmin from "./admin/HorasOperarioAdmin";
+import IncidenciasProtocoloAdmin from "./admin/IncidenciasProtocoloAdmin";
 
 // Importar el servicio API
 import apiService from "../../services/Api.jsx";
@@ -289,6 +290,7 @@ function App() {
         <Route path="/admin/servicio/:id" element={<SoloAdmin><ServicioDetalleAdmin /></SoloAdmin>} />
         <Route path="/admin/avisos" element={<SoloAdmin><AvisosAdmin /></SoloAdmin>} />
         <Route path="/admin/horas-operario" element={<HorasOperarioAdmin />} />
+        <Route path="/admin/incidencias-protocolo" element={<SoloAdmin><IncidenciasProtocoloAdmin /></SoloAdmin>} />
 
         {/* 📝 FORMULARIOS */}
         <Route path="/nuevo-usuario" element={<FormNewUser />} />

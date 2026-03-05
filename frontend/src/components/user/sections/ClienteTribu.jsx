@@ -164,8 +164,21 @@ function ClienteTribu() {
 
             {!loadingNivel && (
               <>
-                {/* === TU NIVEL ACTUAL === */}
-                <div className="emrider-nivel-actual">
+                {/* === SIN BANANAPOINTS AÚN === */}
+                {facturacionAnual === 0 ? (
+                  <div className="emrider-sin-nivel">
+                    <div className="emrider-sin-nivel__emoji">🍌</div>
+                    <h3 className="emrider-sin-nivel__titulo">Aún no estás en ningún nivel</h3>
+                    <p className="emrider-sin-nivel__texto">
+                      Todavía no tienes BananaPoints este año. ¡Cada servicio que realizas en EmRider suma puntos y desbloquea recompensas exclusivas!
+                    </p>
+                    <p className="emrider-sin-nivel__cta">
+                      Visítanos y empieza a subir en la Tribu 🏍️
+                    </p>
+                  </div>
+                ) : (
+                  /* === TU NIVEL ACTUAL === */
+                  <div className="emrider-nivel-actual">
                   <div className="emrider-nivel-actual__top">
                     <img
                       src={nivelActual.imagen}
@@ -212,6 +225,7 @@ function ClienteTribu() {
                     })}
                   </ul>
                 </div>
+                )}
 
                 {/* === TODOS LOS NIVELES === */}
                 <div className="emrider-niveles__seccion">

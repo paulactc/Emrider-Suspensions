@@ -412,6 +412,27 @@ class ApiService {
   async pushNotifLog() {
     return this.makeRequest("/push/notif-log");
   }
+
+  // ===== INCIDENCIAS DE PROTOCOLO =====
+
+  async getIncidenciasProtocolo(mes, anio, operario = null) {
+    const params = new URLSearchParams({ mes, anio });
+    if (operario) params.append("operario", operario);
+    return this.makeRequest(`/incidencias-protocolo?${params}`);
+  }
+
+  async crearIncidenciaProtocolo(data) {
+    return this.makeRequest("/incidencias-protocolo", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async eliminarIncidenciaProtocolo(id) {
+    return this.makeRequest(`/incidencias-protocolo/${id}`, {
+      method: "DELETE",
+    });
+  }
 }
 
 // Crear instancia única del servicio

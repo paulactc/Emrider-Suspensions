@@ -476,8 +476,8 @@ function normalizarTexto(str) {
 
 // Servicios con horas fijas: el valor de cant de GDTaller se ignora para estos.
 const SERVICIOS_TIEMPO_FIJO = [
-  // Recogida de vehículo a domicilio zona 1: 0.74 h
-  { test: (t) => t.includes("recogida") && t.includes("domicilio") && t.includes("zona 1"), horas: 0.74 },
+  // Recogida de vehículo a domicilio zona 1: 0.6 h
+  { test: (t) => t.includes("recogida") && t.includes("domicilio") && t.includes("zona 1"), horas: 0.6 },
   // Neumático delantero: 0.33 h (GDTaller puede devolver 'neum?tico' por encoding)
   { test: (t) => /neum.tico/.test(t) && t.includes("delantero") && t.includes("desmontaje"), horas: 0.33 },
   // Neumático trasero: 0.77 h

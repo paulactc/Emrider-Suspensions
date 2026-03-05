@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
-import { WrenchIcon, CheckCircleIcon, BellIcon } from "@phosphor-icons/react";
+import { WrenchIcon, CheckCircleIcon, BellIcon, WarningIcon } from "@phosphor-icons/react";
 import InputSearchCustom from "../admin/forms/InputSearchCustom";
 import UleachCustom from "../Page.Custom/UleachCustom";
 import api from "../../../services/Api";
@@ -144,6 +144,16 @@ function ListCustom({
                 {avisosCount} hoy
               </span>
             )}
+          </Link>
+
+          <Link to="/admin/incidencias-protocolo" className="admin-trabajo-acceso admin-trabajo-acceso--incidencias">
+            <div className="admin-trabajo-acceso__icon">
+              <WarningIcon size={20} />
+            </div>
+            <div className="admin-trabajo-acceso__text">
+              <span className="admin-trabajo-acceso__title">Incidencias</span>
+              <span className="admin-trabajo-acceso__sub">Protocolos</span>
+            </div>
           </Link>
         </div>
 

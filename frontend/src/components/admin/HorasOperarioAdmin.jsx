@@ -309,6 +309,53 @@ function VistaResumen({ year, month }) {
   );
 }
 
+// Sección de incidencias de protocolo (Ernesto: todas; operario: solo las suyas)
+function SeccionIncidencias({ year, month, operario = null }) {
+  const [incidencias, setIncidencias] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    api.getIncidenciasProtocolo(month, year, operario)
+      .then((res) => setIncidencias(res.data || []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [year, month, operario]); // eslint-disable-line
+
+  if (loading) return null;
+  if (incidencias.length === 0) return null;
+
+  return (
+    <div className="incidencias-seccion">
+      <h3 className="incidencias-seccion__titulo">
+        ⚠ Incidencias de protocolo — {MESES[month - 1]} {year}
+      </h3>
+      <div className="horas-operario-admin__tabla-wrap">
+        <table className="horas-operario-admin__tabla">
+          <thead>
+            <tr>
+              {!operario && <th>Operario</th>}
+              <th>Nº OR</th>
+              <th>Moto</th>
+              <th>Tipo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {incidencias.map((inc) => (
+              <tr key={inc.id}>
+                {!operario && <td>{inc.operario_nombre}</td>}
+                <td><span className="horas-operario-admin__orden">{inc.or_numero}</span></td>
+                <td>{inc.moto_marca_modelo}</td>
+                <td>{inc.tipo_incidencia}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 function HorasOperarioAdmin() {
   const hoy = new Date();
   const [year, setYear] = useState(hoy.getFullYear());
@@ -360,8 +407,18 @@ function HorasOperarioAdmin() {
       </div>
 
       {esResumen
-        ? <VistaResumen year={year} month={month} />
-        : <VistaDetalle operarioId={miOperarioId} year={year} month={month} />
+        ? (
+          <>
+            <VistaResumen year={year} month={month} />
+            <SeccionIncidencias year={year} month={month} />
+          </>
+        )
+        : (
+          <>
+            <VistaDetalle operarioId={miOperarioId} year={year} month={month} />
+            <SeccionIncidencias year={year} month={month} operario={currentUser.nombre} />
+          </>
+        )
       }
     </div>
   );

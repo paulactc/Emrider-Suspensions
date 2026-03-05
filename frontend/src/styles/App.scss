@@ -675,6 +675,24 @@ footer {
       border: 1px solid rgba(#22c55e, 0.3);
     }
   }
+
+  // ── INCIDENCIAS (naranja) ──
+  &--incidencias {
+    border: 1px solid rgba(#f97316, 0.22);
+
+    &::before {
+      background: linear-gradient(90deg, transparent, rgba(#f97316, 0.7), transparent);
+    }
+
+    &:hover {
+      border-color: rgba(#f97316, 0.45);
+    }
+
+    .admin-trabajo-acceso__icon {
+      background: rgba(#f97316, 0.12);
+      color: #fb923c;
+    }
+  }
 }
 
 // Alias mantenido por si hubiera referencias antiguas
@@ -4573,6 +4591,47 @@ footer {
   }
 }
 
+// === SIN BANANAPOINTS AÚN ===
+.emrider-sin-nivel {
+  background: $ohlins-gray-800;
+  border: 1px solid rgba($ohlins-yellow, 0.2);
+  border-radius: 14px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+
+  &__emoji {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__titulo {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: $ohlins-white;
+    margin: 0 0 0.6rem;
+  }
+
+  &__texto {
+    font-size: 0.88rem;
+    color: $ohlins-gray-300;
+    margin: 0 0 1rem;
+    line-height: 1.5;
+  }
+
+  &__cta {
+    display: inline-block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $ohlins-yellow;
+    background: rgba($ohlins-yellow, 0.1);
+    border: 1px solid rgba($ohlins-yellow, 0.3);
+    border-radius: 8px;
+    padding: 0.5rem 1.2rem;
+    margin: 0;
+  }
+}
+
 // === NIVEL ACTUAL DEL CLIENTE ===
 .emrider-nivel-actual {
   background: $ohlins-gray-800;
@@ -6871,5 +6930,144 @@ footer {
   &__acord-body {
     border-top: 1px solid $ohlins-gray-700;
     background: rgba($ohlins-gray-900, 0.4);
+  }
+}
+
+// ── INCIDENCIAS PROTOCOLO (formulario + listado + sección en HorasOperarioAdmin) ──
+.incidencias-form {
+  max-width: 680px;
+  margin: 1.5rem auto;
+  padding: 1.25rem 1.25rem 1rem;
+  background: $ohlins-gray-800;
+  border: 1px solid rgba(#f97316, 0.2);
+  border-radius: 10px;
+
+  &__titulo {
+    margin: 0 0 1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fb923c;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  &__campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+
+    @media (max-width: 520px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    span {
+      font-size: 0.75rem;
+      color: $ohlins-gray-300;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    input, select {
+      background: $ohlins-gray-700;
+      border: 1px solid $ohlins-gray-600;
+      border-radius: 6px;
+      color: $ohlins-white;
+      padding: 0.45rem 0.7rem;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.15s;
+
+      &:focus {
+        border-color: rgba(#f97316, 0.5);
+      }
+    }
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    padding: 0.5rem 1.1rem;
+    background: rgba(#f97316, 0.15);
+    border: 1px solid rgba(#f97316, 0.4);
+    border-radius: 7px;
+    color: #fb923c;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+
+    &:hover:not(:disabled) {
+      background: rgba(#f97316, 0.25);
+      border-color: rgba(#f97316, 0.65);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+
+  &__ok {
+    margin: 0.5rem 0 0;
+    font-size: 0.8rem;
+    color: #4ade80;
+  }
+}
+
+.incidencias-lista {
+  max-width: 680px;
+  margin: 0 auto 2rem;
+
+  &__titulo {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $ohlins-gray-300;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 0.75rem;
+    padding: 0 0.25rem;
+  }
+
+  &__btn-eliminar {
+    background: transparent;
+    border: none;
+    color: $ohlins-gray-500;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.15s;
+
+    &:hover {
+      color: #f87171;
+    }
+  }
+}
+
+.incidencias-seccion {
+  max-width: 680px;
+  margin: 1.5rem auto 0;
+  padding: 1rem 1rem 0.5rem;
+  background: rgba(#f97316, 0.06);
+  border: 1px solid rgba(#f97316, 0.18);
+  border-radius: 10px;
+
+  &__titulo {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fb923c;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 0.75rem;
   }
 }
