@@ -29,6 +29,25 @@ class AuthController {
         });
       }
 
+      // Verificar que el DNI/CIF existe en GDTaller (solo clientes EmRider pueden registrarse)
+      try {
+        const clientes = await gdtallerService.getClients();
+        const dniNorm = (dni || "").replace(/\s+/g, "").toLowerCase();
+        const esCliente = clientes.some((c) => {
+          const cifNorm = (c.cif || "").replace(/\s+/g, "").toLowerCase();
+          return cifNorm === dniNorm;
+        });
+        if (!esCliente) {
+          return res.status(403).json({
+            success: false,
+            message: "No encontramos ningún cliente EmRider con ese DNI/CIF. Si crees que es un error, contacta con el taller.",
+          });
+        }
+      } catch (gdtErr) {
+        console.error("Error verificando cliente en GDTaller:", gdtErr.message);
+        // Si GDTaller no responde, dejamos pasar para no bloquear el registro
+      }
+
       // Verificar si el usuario ya existe
       const existingUser = await executeQuery(
         "SELECT id, email, dni FROM usuarios WHERE email = ? OR dni = ?",
