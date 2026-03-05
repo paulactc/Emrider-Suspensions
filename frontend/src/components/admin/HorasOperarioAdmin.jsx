@@ -322,36 +322,44 @@ function SeccionIncidencias({ year, month, operario = null }) {
       .finally(() => setLoading(false));
   }, [year, month, operario]); // eslint-disable-line
 
-  if (loading) return null;
-  if (incidencias.length === 0) return null;
-
   return (
     <div className="incidencias-seccion">
       <h3 className="incidencias-seccion__titulo">
         ⚠ Incidencias de protocolo — {MESES[month - 1]} {year}
       </h3>
-      <div className="horas-operario-admin__tabla-wrap">
-        <table className="horas-operario-admin__tabla">
-          <thead>
-            <tr>
-              {!operario && <th>Operario</th>}
-              <th>Nº OR</th>
-              <th>Moto</th>
-              <th>Tipo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {incidencias.map((inc) => (
-              <tr key={inc.id}>
-                {!operario && <td>{inc.operario_nombre}</td>}
-                <td><span className="horas-operario-admin__orden">{inc.or_numero}</span></td>
-                <td>{inc.moto_marca_modelo}</td>
-                <td>{inc.tipo_incidencia}</td>
+
+      {loading && <p className="incidencias-seccion__vacio">Cargando...</p>}
+
+      {!loading && incidencias.length === 0 && (
+        <p className="incidencias-seccion__vacio">Sin incidencias este mes ✓</p>
+      )}
+
+      {!loading && incidencias.length > 0 && (
+        <div className="horas-operario-admin__tabla-wrap">
+          <table className="horas-operario-admin__tabla">
+            <thead>
+              <tr>
+                {!operario && <th>Operario</th>}
+                <th>Nº OR</th>
+                <th>Moto</th>
+                <th>Tipo</th>
+                <th>Notas</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {incidencias.map((inc) => (
+                <tr key={inc.id}>
+                  {!operario && <td>{inc.operario_nombre}</td>}
+                  <td><span className="horas-operario-admin__orden">{inc.or_numero}</span></td>
+                  <td>{inc.moto_marca_modelo}</td>
+                  <td>{inc.tipo_incidencia}</td>
+                  <td className="horas-operario-admin__desc">{inc.notas || <span className="horas-operario-admin__vacio">—</span>}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

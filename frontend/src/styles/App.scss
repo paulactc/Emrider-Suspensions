@@ -7092,4 +7092,11 @@ footer {
     letter-spacing: 0.06em;
     margin: 0 0 0.75rem;
   }
+
+  &__vacio {
+    font-size: 0.85rem;
+    color: $ohlins-gray-400;
+    margin: 0;
+    padding: 0.25rem 0 0.5rem;
+  }
 }

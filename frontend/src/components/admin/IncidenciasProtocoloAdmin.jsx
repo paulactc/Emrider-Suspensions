@@ -46,15 +46,21 @@ function IncidenciasProtocoloAdmin() {
 
   // Cargar lista de operarios
   useEffect(() => {
-    api.getHorasOperario(year, month)
+    const hoyLocal = new Date();
+    api.getHorasOperario(hoyLocal.getFullYear(), hoyLocal.getMonth() + 1)
       .then((res) => {
-        const nombres = (res.operarios || []).map((o) => o.operario).filter(Boolean);
-        setOperarios(nombres);
-        if (nombres.length > 0 && !form.operario_nombre) {
-          setForm((f) => ({ ...f, operario_nombre: nombres[0] }));
+        const FIJOS = ["Samuele Zanuso", "Rene Orran Beyer"];
+        const deGdtaller = (res.operarios || []).map((o) => o.operario).filter(Boolean);
+        const todos = [...new Set([...FIJOS, ...deGdtaller])];
+        setOperarios(todos);
+        if (!form.operario_nombre) {
+          setForm((f) => ({ ...f, operario_nombre: todos[0] }));
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        setOperarios(["Samuele Zanuso", "Rene Orran Beyer"]);
+        setForm((f) => ({ ...f, operario_nombre: "Samuele Zanuso" }));
+      });
   }, []); // eslint-disable-line
 
   // Cargar incidencias del mes
@@ -143,23 +149,13 @@ function IncidenciasProtocoloAdmin() {
         <div className="incidencias-form__campos">
           <label className="incidencias-form__campo">
             <span>Operario</span>
-            {operarios.length > 0 ? (
-              <select
-                value={form.operario_nombre}
-                onChange={(e) => setForm((f) => ({ ...f, operario_nombre: e.target.value }))}
-                required
-              >
-                {operarios.map((o) => <option key={o} value={o}>{o}</option>)}
-              </select>
-            ) : (
-              <input
-                type="text"
-                value={form.operario_nombre}
-                onChange={(e) => setForm((f) => ({ ...f, operario_nombre: e.target.value }))}
-                placeholder="Nombre del operario"
-                required
-              />
-            )}
+            <select
+              value={form.operario_nombre}
+              onChange={(e) => setForm((f) => ({ ...f, operario_nombre: e.target.value }))}
+              required
+            >
+              {operarios.map((o) => <option key={o} value={o}>{o}</option>)}
+            </select>
           </label>
 
           <label className="incidencias-form__campo">
