@@ -1,0 +1,6 @@
+# Variables de entorno — NUNCA subir al repositorio
+.env
+.env.*
+
+node_modules
+*.log

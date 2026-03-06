@@ -2,9 +2,10 @@ const express = require("express");
 const router = express.Router();
 const { pool } = require("../config/database");
 const { sendCitaEmail } = require("../services/emailService");
+const { verifyToken } = require("../middleware/auth");
 
 // POST /api/citas
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   const { cif, nombre, fecha, motivo } = req.body;
 
   if (!fecha || !fecha.trim()) {

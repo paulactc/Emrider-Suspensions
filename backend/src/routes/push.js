@@ -3,6 +3,8 @@ const router = express.Router();
 const webpush = require("web-push");
 const { pool } = require("../config/database");
 const gdtallerService = require("../services/gdtallerService");
+const { verifyToken, verifyRole } = require("../middleware/auth");
+const soloAdmin = [verifyToken, verifyRole(["admin"])];
 
 webpush.setVapidDetails(
   process.env.VAPID_EMAIL,
@@ -260,8 +262,8 @@ router.get("/vapid-public-key", (req, res) => {
   res.json({ publicKey: process.env.VAPID_PUBLIC_KEY });
 });
 
-// POST - Guardar suscripción de un dispositivo (acepta cif opcional)
-router.post("/subscribe", async (req, res) => {
+// POST - Guardar suscripción de un dispositivo — autenticado
+router.post("/subscribe", verifyToken, async (req, res) => {
   const subscription = req.body;
   if (!subscription || !subscription.endpoint || !subscription.keys) {
     return res.status(400).json({ error: "Suscripción inválida" });
@@ -294,9 +296,9 @@ router.post("/subscribe", async (req, res) => {
   }
 });
 
-// POST - Disparar comprobación y envío de notificaciones de mantenimiento
+// POST - Disparar comprobación y envío de notificaciones de mantenimiento — solo admin
 // ?dry=true para simular sin enviar
-router.post("/notify-maintenance", async (req, res) => {
+router.post("/notify-maintenance", soloAdmin, async (req, res) => {
   const dryRun = req.query.dry === "true";
   try {
     console.log(`[push] Iniciando check-and-notify${dryRun ? " [DRY-RUN]" : ""}...`);
@@ -309,8 +311,8 @@ router.post("/notify-maintenance", async (req, res) => {
   }
 });
 
-// POST - Enviar notificación de prueba a todos los dispositivos suscritos
-router.post("/send-test", async (req, res) => {
+// POST - Enviar notificación de prueba a todos los dispositivos suscritos — solo admin
+router.post("/send-test", soloAdmin, async (req, res) => {
   const { title, body, url } = req.body;
   const payload = JSON.stringify({
     title: title || "Taller Emrider",
@@ -362,8 +364,8 @@ router.post("/send-test", async (req, res) => {
   }
 });
 
-// GET - Ver cuántos dispositivos están suscritos
-router.get("/status", async (_req, res) => {
+// GET - Ver cuántos dispositivos están suscritos — solo admin
+router.get("/status", soloAdmin, async (_req, res) => {
   try {
     const [[{ total }]] = await pool.execute(
       "SELECT COUNT(*) as total FROM push_subscriptions"
@@ -377,8 +379,8 @@ router.get("/status", async (_req, res) => {
   }
 });
 
-// DELETE - Eliminar suscripción de un dispositivo
-router.delete("/unsubscribe", async (req, res) => {
+// DELETE - Eliminar suscripción de un dispositivo — autenticado
+router.delete("/unsubscribe", verifyToken, async (req, res) => {
   const { endpoint } = req.body;
   if (!endpoint) return res.status(400).json({ error: "Endpoint requerido" });
 
@@ -393,8 +395,8 @@ router.delete("/unsubscribe", async (req, res) => {
   }
 });
 
-// GET - Historial de avisos enviados (para panel admin)
-router.get("/notif-log", async (_req, res) => {
+// GET - Historial de avisos enviados (para panel admin) — solo admin
+router.get("/notif-log", soloAdmin, async (_req, res) => {
   try {
     const [rows] = await pool.execute(
       `SELECT cif, tipo, enviado_at, sent_date

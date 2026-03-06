@@ -32,15 +32,14 @@ function HistorialOrdenes({ clientId }) {
   };
 
   // Filtrar órdenes: las anteriores al 05/03/2026 se muestran siempre;
-  // las posteriores solo si tienen una línea con "trabajo finalizado"
+  // las posteriores solo si el backend las marca como finalizadas.
+  // El flag finalizado lo calcula el backend mirando todas las líneas (incluidas las de pack),
+  // pero las líneas de pack nunca se envían al cliente.
   const FECHA_CORTE = new Date("2026-03-05");
   const ordenesFiltradas = ordenes.filter((orden) => {
     const fechaOrden = orden.fecha ? new Date(orden.fecha) : null;
     if (!fechaOrden || fechaOrden < FECHA_CORTE) return true;
-    return (orden.lineas || []).some((l) => {
-      const texto = `${l.desc || ""} ${l.ref || ""} ${l.obs || ""}`.toLowerCase();
-      return texto.includes("trabajo finalizado");
-    });
+    return orden.finalizado === true;
   });
 
   // Agrupar órdenes por moto

@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const { pool } = require("../config/database");
+const { verifyToken, verifyRole } = require("../middleware/auth");
+const soloAdmin = [verifyToken, verifyRole(["admin"])];
 
-// GET - Obtener datos tecnicos por moto ID
-router.get("/moto/:motoId", async (req, res) => {
+// GET - Obtener datos tecnicos por moto ID — autenticado
+router.get("/moto/:motoId", verifyToken, async (req, res) => {
   try {
     const { motoId } = req.params;
 
@@ -38,8 +40,8 @@ router.get("/moto/:motoId", async (req, res) => {
   }
 });
 
-// GET - Obtener datos tecnicos por ID
-router.get("/:id", async (req, res) => {
+// GET - Obtener datos tecnicos por ID — autenticado
+router.get("/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -77,8 +79,8 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// POST - Crear datos tecnicos
-router.post("/", async (req, res) => {
+// POST - Crear datos tecnicos — solo admin
+router.post("/", soloAdmin, async (req, res) => {
   try {
     const {
       servicioId,
@@ -128,8 +130,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-// PUT - Actualizar datos tecnicos
-router.put("/:id", async (req, res) => {
+// PUT - Actualizar datos tecnicos — solo admin
+router.put("/:id", soloAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const {

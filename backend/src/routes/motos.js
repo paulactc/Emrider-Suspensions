@@ -4,6 +4,8 @@ const express = require("express");
 const router = express.Router();
 const { pool } = require("../config/database");
 const gdtallerService = require("../services/gdtallerService");
+const { verifyToken, verifyRole } = require("../middleware/auth");
+const soloAdmin = [verifyToken, verifyRole(["admin"])];
 
 // Helper: obtener cuestionarios de motos de forma segura (si MySQL falla, devuelve mapa vacío)
 async function getCuestionarioMotosMap() {
@@ -101,10 +103,16 @@ async function getMotosOcultasSet(cif) {
   }
 }
 
-// GET - Obtener motos por CIF (GDTaller + merge cuestionario local, con fallback a BD local)
-router.get("/by-cif/:cif", async (req, res) => {
+// GET - Obtener motos por CIF — admin o propio cliente
+router.get("/by-cif/:cif", verifyToken, async (req, res) => {
   try {
     const { cif } = req.params;
+    if (req.user.rol !== "admin") {
+      const norm = (s) => (s || "").replace(/\s+/g, "").toLowerCase();
+      if (norm(cif) !== norm(req.user.dni)) {
+        return res.status(403).json({ error: "Acceso denegado" });
+      }
+    }
     let vehicles = [];
     let fromLocal = false;
 
@@ -150,10 +158,16 @@ router.get("/by-cif/:cif", async (req, res) => {
   }
 });
 
-// POST - Ocultar moto del garage (el cliente la ha vendido)
-router.post("/ocultar", async (req, res) => {
+// POST - Ocultar moto del garage — propio cliente o admin
+router.post("/ocultar", verifyToken, async (req, res) => {
   try {
     const { cif, vehiculoId } = req.body;
+    if (req.user.rol !== "admin") {
+      const norm = (s) => (s || "").replace(/\s+/g, "").toLowerCase();
+      if (norm(cif) !== norm(req.user.dni)) {
+        return res.status(403).json({ success: false, message: "Acceso denegado" });
+      }
+    }
     if (!cif || !vehiculoId) {
       return res.status(400).json({ success: false, message: "cif y vehiculoId son obligatorios" });
     }
@@ -169,8 +183,8 @@ router.post("/ocultar", async (req, res) => {
   }
 });
 
-// GET - Obtener todas las motos (GDTaller + merge cuestionario local)
-router.get("/", async (req, res) => {
+// GET - Obtener todas las motos — solo admin
+router.get("/", soloAdmin, async (req, res) => {
   try {
     const rawVehicles = await gdtallerService.getVehicles();
     const vehicles = rawVehicles.map(gdtallerService.mapVehicleFromGDTaller);
@@ -188,8 +202,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET - Obtener moto por ID (GDTaller vehiculoID) o matrícula
-router.get("/:id", async (req, res) => {
+// GET - Obtener moto por ID (GDTaller vehiculoID) o matrícula — autenticado
+router.get("/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
 

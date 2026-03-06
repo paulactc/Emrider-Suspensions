@@ -2,9 +2,10 @@ const express = require("express");
 const router = express.Router();
 const { pool } = require("../config/database");
 const { sendSugerenciaEmail } = require("../services/emailService");
+const { verifyToken } = require("../middleware/auth");
 
 // POST /api/sugerencias
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   const { mensaje, cif, nombre } = req.body;
 
   if (!mensaje || !mensaje.trim()) {

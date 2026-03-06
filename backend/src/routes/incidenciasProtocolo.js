@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const { pool } = require("../config/database");
+const { verifyToken, verifyRole } = require("../middleware/auth");
+const soloAdmin = [verifyToken, verifyRole(["admin"])];
 
 // GET /?mes=M&anio=Y[&operario=nombre]
-router.get("/", async (req, res) => {
+router.get("/", soloAdmin, async (req, res) => {
   try {
     const { mes, anio, operario } = req.query;
     let sql = "SELECT * FROM incidencias_protocolo WHERE 1=1";
@@ -24,7 +26,7 @@ router.get("/", async (req, res) => {
 });
 
 // POST / — crear incidencia
-router.post("/", async (req, res) => {
+router.post("/", soloAdmin, async (req, res) => {
   try {
     const { operario_nombre, or_numero, moto_marca_modelo, tipo_incidencia, notas, mes, anio } = req.body;
 
@@ -46,7 +48,7 @@ router.post("/", async (req, res) => {
 });
 
 // DELETE /:id
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", soloAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const [result] = await pool.execute("DELETE FROM incidencias_protocolo WHERE id = ?", [id]);

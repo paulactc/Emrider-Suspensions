@@ -4,9 +4,11 @@ class ApiService {
   // Método genérico para hacer peticiones
   async makeRequest(url, options = {}) {
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}${url}`, {
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
           ...options.headers,
         },
         ...options,

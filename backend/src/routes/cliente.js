@@ -4,6 +4,14 @@ const express = require("express");
 const router = express.Router();
 const { pool } = require("../config/database");
 const gdtallerService = require("../services/gdtallerService");
+const { verifyToken, verifyRole } = require("../middleware/auth");
+const soloAdmin = [verifyToken, verifyRole(["admin"])];
+
+// Devuelve true si el id solicitado corresponde al propio cliente autenticado
+function esClientePropio(id, user) {
+  const norm = (s) => (s || "").replace(/\s+/g, "").toLowerCase();
+  return norm(id) === norm(user.dni) || String(id) === String(user.clienteId);
+}
 
 // Helper: obtener cuestionarios de forma segura (si MySQL falla, devuelve mapa vacio)
 async function getCuestionarioClientesMap() {
@@ -69,8 +77,8 @@ async function getCuestionarioByCif(cif) {
   }
 }
 
-// GET - Obtener todos los clientes (GDTaller + merge cuestionario local)
-router.get("/", async (req, res) => {
+// GET - Obtener todos los clientes (GDTaller + merge cuestionario local) — solo admin
+router.get("/", soloAdmin, async (req, res) => {
   try {
     // Obtener clientes de GDTaller
     const rawClients = await gdtallerService.getClients();
@@ -99,10 +107,13 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET - Obtener un cliente por ID (GDTaller clienteID) o CIF
-router.get("/:id", async (req, res) => {
+// GET - Obtener un cliente por ID (GDTaller clienteID) o CIF — admin o propio cliente
+router.get("/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
+    if (req.user.rol !== "admin" && !esClientePropio(id, req.user)) {
+      return res.status(403).json({ message: "Acceso denegado" });
+    }
 
     const rawClients = await gdtallerService.getClients();
     const clients = rawClients.map(gdtallerService.mapClientFromGDTaller);
@@ -140,10 +151,13 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// PUT - Actualizar SOLO datos del cuestionario (peso y nivel de pilotaje) por CIF
-router.put("/:id/cuestionario", async (req, res) => {
+// PUT - Actualizar SOLO datos del cuestionario (peso y nivel de pilotaje) por CIF — propio cliente o admin
+router.put("/:id/cuestionario", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
+    if (req.user.rol !== "admin" && !esClientePropio(id, req.user)) {
+      return res.status(403).json({ message: "Acceso denegado" });
+    }
     const { peso, nivelPilotaje } = req.body;
 
     if (!peso || !nivelPilotaje) {

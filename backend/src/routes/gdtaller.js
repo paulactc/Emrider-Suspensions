@@ -4,9 +4,17 @@
 const express = require("express");
 const router = express.Router();
 const gdtallerService = require("../services/gdtallerService");
+const { verifyToken, verifyRole } = require("../middleware/auth");
+const soloAdmin = [verifyToken, verifyRole(["admin"])];
 
-// GET - Probar conexión con GDTaller
-router.get("/test-connection", async (req, res) => {
+// Devuelve true si el clientId solicitado corresponde al usuario autenticado
+function esClientePropio(clientId, user) {
+  const norm = (s) => (s || "").replace(/\s+/g, "").toLowerCase();
+  return norm(clientId) === norm(user.dni) || String(clientId) === String(user.clienteId);
+}
+
+// GET - Probar conexión con GDTaller — solo admin
+router.get("/test-connection", soloAdmin, async (req, res) => {
   try {
     const result = await gdtallerService.testConnection();
     res.json({
@@ -24,8 +32,8 @@ router.get("/test-connection", async (req, res) => {
   }
 });
 
-// GET - Debug: ver vehículos RAW de GDTaller para un cliente por CIF
-router.get("/debug-vehicles/:cif", async (req, res) => {
+// GET - Debug: ver vehículos RAW de GDTaller para un cliente por CIF — solo admin
+router.get("/debug-vehicles/:cif", soloAdmin, async (req, res) => {
   try {
     const { cif } = req.params;
     gdtallerService.clearCache();
@@ -64,8 +72,8 @@ router.get("/debug-vehicles/:cif", async (req, res) => {
   }
 });
 
-// GET - Debug: ver datos RAW de GDTaller para un cliente por CIF
-router.get("/debug-client/:cif", async (req, res) => {
+// GET - Debug: ver datos RAW de GDTaller para un cliente por CIF — solo admin
+router.get("/debug-client/:cif", soloAdmin, async (req, res) => {
   try {
     const { cif } = req.params;
     gdtallerService.clearCache();
@@ -86,8 +94,8 @@ router.get("/debug-client/:cif", async (req, res) => {
   }
 });
 
-// GET - Obtener clientes desde GDTaller
-router.get("/clients", async (req, res) => {
+// GET - Obtener clientes desde GDTaller — solo admin
+router.get("/clients", soloAdmin, async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     const clients = await gdtallerService.getClients({ startDate, endDate });
@@ -108,8 +116,8 @@ router.get("/clients", async (req, res) => {
   }
 });
 
-// GET - Obtener vehículos desde GDTaller
-router.get("/vehicles", async (req, res) => {
+// GET - Obtener vehículos desde GDTaller — solo admin
+router.get("/vehicles", soloAdmin, async (req, res) => {
   try {
     const { startDate, endDate, clientId } = req.query;
     const vehicles = await gdtallerService.getVehicles({ startDate, endDate, clientId });
@@ -130,10 +138,13 @@ router.get("/vehicles", async (req, res) => {
   }
 });
 
-// GET - Obtener ordenes de trabajo agrupadas por cliente
-router.get("/order-lines/:clientId", async (req, res) => {
+// GET - Obtener ordenes de trabajo agrupadas por cliente — autenticado, solo datos propios
+router.get("/order-lines/:clientId", verifyToken, async (req, res) => {
   try {
     const { clientId } = req.params;
+    if (req.user.rol !== "admin" && !esClientePropio(clientId, req.user)) {
+      return res.status(403).json({ success: false, message: "Acceso denegado" });
+    }
 
     // Resolver clientId: si no es puramente numérico, puede ser un CIF → buscar clienteID en GDTaller
     let resolvedClientId = clientId;
@@ -179,6 +190,20 @@ router.get("/order-lines/:clientId", async (req, res) => {
       (l) => String(l.clienteID) === String(resolvedClientId)
     );
 
+    // Líneas "incluido en pack": internas, precio 0€, sin palabras clave de servicios legítimos.
+    // Líneas legítimas a 0€: las que contienen "limpieza" o "checkin" en la descripción.
+    // El resto a 0€ se consideran internas y no se envían al cliente.
+    function esLineaPack(line) {
+      if (parseFloat(line.precio) !== 0) return false;
+      const desc = (line.desc || "").toLowerCase();
+      return !desc.includes("limpieza") && !desc.includes("checkin");
+    }
+
+    function esFinalizado(line) {
+      const texto = `${line.desc || ""} ${line.ref || ""} ${line.obs || ""}`.toLowerCase();
+      return texto.includes("trabajo finalizado");
+    }
+
     // Agrupar por numero de orden (solo ordenes OR..., excluir EC... entregas a cuenta y similares)
     const ordersMap = {};
     for (const line of clientLines) {
@@ -196,10 +221,18 @@ router.get("/order-lines/:clientId", async (req, res) => {
           modelo: (vehicle && vehicle.modelo) || null,
           kms: line.orKms,
           lineas: [],
+          finalizado: false,
           totalBase: 0,
           totalImporte: 0,
         };
       }
+
+      // Cualquier línea (incluidas las de pack) puede marcar la OR como finalizada
+      if (esFinalizado(line)) ordersMap[key].finalizado = true;
+
+      // Las líneas de pack no se envían al cliente (son €0 y de uso interno)
+      if (esLineaPack(line)) continue;
+
       ordersMap[key].lineas.push({
         lineaID: line.lineaID,
         desc: line.desc,
@@ -241,8 +274,8 @@ router.get("/order-lines/:clientId", async (req, res) => {
   }
 });
 
-// GET - Probar GetVehicules con startDate=2021-01-01 y endDate=hoy (raw, sin mapear)
-router.get("/test-vehicules", async (_req, res) => {
+// GET - Probar GetVehicules con startDate=2021-01-01 y endDate=hoy (raw, sin mapear) — solo admin
+router.get("/test-vehicules", soloAdmin, async (_req, res) => {
   try {
     const startDate = "2021-01-01";
     const endDate = new Date().toISOString().split("T")[0];
@@ -290,9 +323,12 @@ function textoContieneKeyword(texto, keyword) {
   return false;
 }
 
-// GET - Alertas de mantenimiento de motor por cliente (aceite, frenos, refrigerante)
-router.get("/maintenance-alerts/:clientId", async (req, res) => {
+// GET - Alertas de mantenimiento de motor por cliente — autenticado, solo datos propios
+router.get("/maintenance-alerts/:clientId", verifyToken, async (req, res) => {
   let { clientId } = req.params;
+  if (req.user.rol !== "admin" && !esClientePropio(clientId, req.user)) {
+    return res.status(403).json({ success: false, message: "Acceso denegado" });
+  }
 
   // Resolver CIF → clienteID numérico si es necesario
   if (!/^\d+$/.test(clientId)) {
@@ -441,14 +477,14 @@ router.get("/maintenance-alerts/:clientId", async (req, res) => {
   }
 });
 
-// POST - Limpiar cache de GDTaller
-router.post("/clear-cache", async (req, res) => {
+// POST - Limpiar cache de GDTaller — solo admin
+router.post("/clear-cache", soloAdmin, async (req, res) => {
   gdtallerService.clearCache();
   res.json({ success: true, message: "Cache limpiado" });
 });
 
-// GET - Debug: ver estructura RAW de GetOrderLines (primeras líneas sin mapear)
-router.get("/debug-orderlines-sample", async (_req, res) => {
+// GET - Debug: ver estructura RAW de GetOrderLines (primeras líneas sin mapear) — solo admin
+router.get("/debug-orderlines-sample", soloAdmin, async (_req, res) => {
   try {
     gdtallerService.clearCache();
     const lines = await gdtallerService.getOrderLines();
@@ -517,9 +553,9 @@ function horasImputadas(linea) {
   return parseFloat(linea.cant) || 0;
 }
 
-// GET - Debug: ver todos los campos RAW de las primeras líneas de GDTaller
+// GET - Debug: ver todos los campos RAW de las primeras líneas de GDTaller — solo admin
 // Query params: year, month, limit (default 5), q (filtro texto en desc/ref)
-router.get("/debug-raw-fields", async (req, res) => {
+router.get("/debug-raw-fields", soloAdmin, async (req, res) => {
   try {
     const hoy = new Date();
     const y = parseInt(req.query.year) || hoy.getFullYear();
@@ -548,9 +584,9 @@ router.get("/debug-raw-fields", async (req, res) => {
   }
 });
 
-// GET - Debug: ver descripciones únicas de líneas para verificar patrones de servicios
+// GET - Debug: ver descripciones únicas de líneas para verificar patrones de servicios — solo admin
 // Query params: year, month (opcionales), q (filtro de texto opcional)
-router.get("/debug-desc-servicios", async (req, res) => {
+router.get("/debug-desc-servicios", soloAdmin, async (req, res) => {
   try {
     const hoy = new Date();
     const y = parseInt(req.query.year) || hoy.getFullYear();
@@ -590,8 +626,8 @@ router.get("/debug-desc-servicios", async (req, res) => {
   }
 });
 
-// GET - Debug: ver operarios únicos en GetOrderLines
-router.get("/debug-operarios", async (_req, res) => {
+// GET - Debug: ver operarios únicos en GetOrderLines — solo admin
+router.get("/debug-operarios", soloAdmin, async (_req, res) => {
   try {
     const lines = await gdtallerService.getOrderLines();
     const operariosMap = {};
@@ -609,9 +645,9 @@ router.get("/debug-operarios", async (_req, res) => {
   }
 });
 
-// GET - Líneas de trabajo de un operario por mes/año, con datos del vehículo
+// GET - Líneas de trabajo de un operario por mes/año, con datos del vehículo — solo admin
 // Query params: operarioId, year, month
-router.get("/operario-lineas", async (req, res) => {
+router.get("/operario-lineas", soloAdmin, async (req, res) => {
   try {
     const { operarioId, year, month } = req.query;
     if (!operarioId) return res.status(400).json({ success: false, error: "operarioId requerido" });
@@ -691,9 +727,9 @@ router.get("/operario-lineas", async (req, res) => {
   }
 });
 
-// GET - Horas por operario en un período (resumen, para Ernesto)
+// GET - Horas por operario en un período (resumen, para Ernesto) — solo admin
 // Query params: year, month
-router.get("/horas-operario", async (req, res) => {
+router.get("/horas-operario", soloAdmin, async (req, res) => {
   try {
     const hoy = new Date();
     const y = parseInt(req.query.year) || hoy.getFullYear();

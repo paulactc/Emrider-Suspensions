@@ -4,6 +4,7 @@ const express = require("express");
 const router = express.Router();
 const { pool } = require("../config/database");
 const gdtallerService = require("../services/gdtallerService");
+const { verifyToken } = require("../middleware/auth");
 
 // Helper: resolver un identificador (GDTaller ID o CIF) a un CIF real
 async function resolveClientCif(identifier) {
@@ -38,8 +39,8 @@ async function resolveVehicleMatricula(identifier) {
   return null;
 }
 
-// POST - Guardar respuestas del cuestionario
-router.post("/", async (req, res) => {
+// POST - Guardar respuestas del cuestionario — autenticado
+router.post("/", verifyToken, async (req, res) => {
   const { cliente, motocicletas, skipClientSave } = req.body;
 
   try {
@@ -108,8 +109,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-// GET - Verificar estado del cuestionario
-router.get("/status/:id", async (req, res) => {
+// GET - Verificar estado del cuestionario — autenticado
+router.get("/status/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
 
   try {
