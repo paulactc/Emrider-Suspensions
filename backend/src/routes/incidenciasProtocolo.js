@@ -15,9 +15,9 @@ router.get("/", soloAdmin, async (req, res) => {
     if (mes) { sql += " AND mes = ?"; params.push(Number(mes)); }
     if (anio) { sql += " AND anio = ?"; params.push(Number(anio)); }
 
-    // Operarios solo pueden ver sus propias incidencias
+    // Operarios solo pueden ver sus propias incidencias (operario_id > 0)
     // Se usa LIKE con el primer nombre (trim) para cubrir "Rene" → "Rene Orran Beyer"
-    if (req.user.operario_id != null) {
+    if (req.user.operario_id > 0) {
       const primerNombre = (req.user.nombre || "").trim().split(" ")[0];
       if (primerNombre) { sql += " AND operario_nombre LIKE ?"; params.push(primerNombre + "%"); }
     } else if (operario) {

@@ -652,7 +652,8 @@ router.get("/operario-lineas", soloAdmin, async (req, res) => {
     let { operarioId, year, month } = req.query;
 
     // Si el usuario es un operario (no Ernesto), solo puede consultar sus propias líneas
-    if (req.user.operario_id != null) {
+    // operario_id > 0 = operario real; 0 = Ernesto/responsable (ve todo)
+    if (req.user.operario_id > 0) {
       operarioId = String(req.user.operario_id);
     }
 
@@ -737,7 +738,8 @@ router.get("/operario-lineas", soloAdmin, async (req, res) => {
 // Query params: year, month
 router.get("/horas-operario", soloAdmin, async (req, res) => {
   // Operarios solo pueden ver sus propias horas (via /operario-lineas)
-  if (req.user.operario_id != null) {
+  // operario_id > 0 = operario real; 0 = Ernesto/responsable (acceso total)
+  if (req.user.operario_id > 0) {
     return res.status(403).json({ success: false, message: "Acceso denegado" });
   }
 
