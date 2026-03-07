@@ -397,8 +397,8 @@ router.get("/maintenance-alerts/:clientId", verifyToken, async (req, res) => {
       keywordGroups: [
         ["mantenimiento", "rr"],
         ["mantenimiento", "amortiguador trasero"],
-        ["mantenimiento", "cambio de retenes"],
-        ["mantenimiento", "cambio retenes"],
+        ["mantenimiento", "cambio de retenes", "rr"],
+        ["mantenimiento", "cambio retenes", "rr"],
       ],
       meses: 12,
     },
