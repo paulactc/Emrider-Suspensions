@@ -162,6 +162,12 @@ function ClienteTribu() {
               </div>
             </div>
 
+            {/* === NOTA BANANAPOINTS ANUALES === */}
+            <div className="emrider-banana-info">
+              <span className="emrider-banana-info__emoji">🍌</span>
+              <p>Los <strong>BananaPoints</strong> se calculan con los servicios realizados en <strong>{new Date().getFullYear()}</strong> y se reinician cada 1 de enero.</p>
+            </div>
+
             {!loadingNivel && (
               <>
                 {/* === SIN BANANAPOINTS AÚN === */}
@@ -178,54 +184,59 @@ function ClienteTribu() {
                   </div>
                 ) : (
                   /* === TU NIVEL ACTUAL === */
-                  <div className="emrider-nivel-actual">
-                  <div className="emrider-nivel-actual__top">
-                    <img
-                      src={nivelActual.imagen}
-                      alt={nivelActual.alt}
-                      className="emrider-nivel-actual__img"
-                      onError={(e) => { e.target.style.display = "none"; }}
-                    />
-                    <div className="emrider-nivel-actual__info">
-                      <span className="emrider-nivel-actual__label">Tu nivel actual</span>
-                      <h3 className="emrider-nivel-actual__nombre">{nivelActual.nombre}</h3>
-                      <span className="emrider-nivel-actual__points">
-                        🍌 {Math.round(facturacionAnual).toLocaleString("es-ES")} BananaPoints en {new Date().getFullYear()}
-                      </span>
+                  <div className="emrider-nivel-actual emrider-nivel-actual--animado">
+                    <div className="emrider-nivel-actual__top">
+                      <img
+                        src={nivelActual.imagen}
+                        alt={nivelActual.alt}
+                        className="emrider-nivel-actual__img"
+                        onError={(e) => { e.target.style.display = "none"; }}
+                      />
+                      <div className="emrider-nivel-actual__info">
+                        <span className="emrider-nivel-actual__label">Tu nivel actual</span>
+                        <h3 className="emrider-nivel-actual__nombre">{nivelActual.nombre}</h3>
+                        <span className="emrider-nivel-actual__points">
+                          <span className="emrider-banana-bounce">🍌</span> {Math.round(facturacionAnual).toLocaleString("es-ES")} BananaPoints en {new Date().getFullYear()}
+                        </span>
+                      </div>
                     </div>
+
+                    {siguienteNivel ? (
+                      <div className="emrider-nivel-actual__progreso">
+                        <div className="emrider-nivel-actual__progreso-info">
+                          <span>Hacia {siguienteNivel.nombre}</span>
+                          <span>Faltan 🍌 {Math.round(faltaParaSiguiente).toLocaleString("es-ES")}</span>
+                        </div>
+                        <div className="emrider-niveles__progreso-bar">
+                          <div
+                            className="emrider-niveles__progreso-fill"
+                            style={{ width: porcentajeProgreso + "%" }}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="emrider-nivel-actual__max">¡Nivel máximo alcanzado! Eres parte de la élite EmRider. 🏆</p>
+                    )}
+
+                    <div className="emrider-nivel-actual__beneficios-titulo">Tus beneficios</div>
+                    <ul className="nivel-card__beneficios">
+                      {nivelActual.beneficios.map((b, idx) => {
+                        const IconComp = b.icon;
+                        return (
+                          <li key={idx}>
+                            <IconComp className="nivel-card__beneficio-icon" />
+                            <span>{b.texto}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </div>
-
-                  {siguienteNivel ? (
-                    <div className="emrider-nivel-actual__progreso">
-                      <div className="emrider-nivel-actual__progreso-info">
-                        <span>Hacia {siguienteNivel.nombre}</span>
-                        <span>Faltan 🍌 {Math.round(faltaParaSiguiente).toLocaleString("es-ES")}</span>
-                      </div>
-                      <div className="emrider-niveles__progreso-bar">
-                        <div
-                          className="emrider-niveles__progreso-fill"
-                          style={{ width: porcentajeProgreso + "%" }}
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="emrider-nivel-actual__max">¡Nivel máximo alcanzado! Eres parte de la élite EmRider.</p>
-                  )}
-
-                  <div className="emrider-nivel-actual__beneficios-titulo">Tus beneficios</div>
-                  <ul className="nivel-card__beneficios">
-                    {nivelActual.beneficios.map((b, idx) => {
-                      const IconComp = b.icon;
-                      return (
-                        <li key={idx}>
-                          <IconComp className="nivel-card__beneficio-icon" />
-                          <span>{b.texto}</span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
                 )}
+
+                {/* === SEPARADOR === */}
+                <div className="emrider-niveles__divider">
+                  <span>Todos los niveles de la Tribu</span>
+                </div>
 
                 {/* === TODOS LOS NIVELES === */}
                 <div className="emrider-niveles__seccion">

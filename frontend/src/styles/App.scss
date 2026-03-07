@@ -4388,6 +4388,22 @@ footer {
   50% { background-position: 100% 50%; }
 }
 
+@keyframes fadeSlideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bananaBounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  30%       { transform: translateY(-4px) rotate(-8deg); }
+  60%       { transform: translateY(-2px) rotate(4deg); }
+}
+
+.emrider-banana-bounce {
+  display: inline-block;
+  animation: bananaBounce 2.2s ease-in-out infinite;
+}
+
 // === PROGRAMA DE FIDELIDAD EMRIDER ===
 .emrider-niveles {
   background: $ohlins-gray-900;
@@ -4591,6 +4607,59 @@ footer {
   }
 }
 
+// === NOTA BANANAPOINTS ANUALES ===
+.emrider-banana-info {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: rgba($ohlins-yellow, 0.06);
+  border: 1px solid rgba($ohlins-yellow, 0.18);
+  border-radius: 0.6rem;
+  padding: 0.65rem 1rem;
+  margin-bottom: 1.25rem;
+  animation: fadeSlideDown 0.5s ease both;
+
+  &__emoji {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    animation: bananaBounce 2s ease-in-out infinite;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.78rem;
+    color: $ohlins-gray-300;
+    line-height: 1.45;
+
+    strong { color: $ohlins-yellow; }
+  }
+}
+
+// === SEPARADOR ENTRE NIVEL ACTUAL Y GRID ===
+.emrider-niveles__divider {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 2rem 0 1.5rem;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba($ohlins-yellow, 0.25), transparent);
+  }
+
+  span {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: $ohlins-gray-500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+}
+
 // === SIN BANANAPOINTS AÚN ===
 .emrider-sin-nivel {
   background: $ohlins-gray-800;
@@ -4641,6 +4710,10 @@ footer {
   margin-bottom: 1.5rem;
   position: relative;
   overflow: hidden;
+
+  &--animado {
+    animation: fadeSlideDown 0.45s ease both;
+  }
 
   &::before {
     content: '';
@@ -4735,7 +4808,12 @@ footer {
   padding: 1.25rem;
   position: relative;
   overflow: hidden;
-  transition: all 0.2s ease;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+  animation: fadeSlideDown 0.4s ease both;
+
+  @for $i from 1 through 3 {
+    &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 0.08}s; }
+  }
 
   &::before {
     content: '';
