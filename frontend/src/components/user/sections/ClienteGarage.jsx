@@ -28,8 +28,6 @@ function ClienteGarage() {
     if (!cliente?.cif) return;
     setLoadingMotos(true);
 
-    const clienteId = cliente.gdtaller_id || cliente.id;
-
     api
       .getMotosByCif(cliente.cif)
       .then((motosData) => {
@@ -51,12 +49,10 @@ function ClienteGarage() {
       .finally(() => setLoadingMotos(false));
 
     // Cargar alertas de mantenimiento de motor (aceite, frenos, refrigerante)
-    if (clienteId) {
-      api.getMaintenanceAlerts(clienteId)
-        .then((res) => setAlertasMotor(res.data || {}))
-        .catch(() => {});
-    }
-  }, [cliente?.cif, cliente?.gdtaller_id, cliente?.id]);
+    api.getMaintenanceAlerts(cliente.cif)
+      .then((res) => setAlertasMotor(res.data || {}))
+      .catch(() => {});
+  }, [cliente?.cif]);
 
   const handleConfirmarBorrar = async () => {
     if (!motoABorrar || !cliente?.cif) return;

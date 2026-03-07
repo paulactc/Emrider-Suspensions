@@ -22,17 +22,22 @@ export function useClienteData() {
 
     const load = async () => {
       try {
-        const clientes = await api.getClientes();
-        let found = Array.isArray(clientes)
-          ? clientes.find((c) => c.cif?.toLowerCase() === userCif.toLowerCase())
-          : null;
-
-        if (found?.id) {
-          try {
-            const fresco = await api.getCliente(found.id);
-            if (fresco) found = { ...found, ...fresco };
-          } catch (_) {}
+        // Intentar listar todos los clientes (solo funciona para admin)
+        let found = null;
+        try {
+          const clientes = await api.getClientes();
+          found = Array.isArray(clientes)
+            ? clientes.find((c) => c.cif?.toLowerCase() === userCif.toLowerCase())
+            : null;
+        } catch (_) {
+          // Esperado para clientes sin rol admin
         }
+
+        // Siempre obtener datos frescos por CIF (incluye cuestionario de BD)
+        try {
+          const fresco = await api.getCliente(found?.id || userCif);
+          if (fresco) found = { ...found, ...fresco };
+        } catch (_) {}
 
         if (!found) {
           found = {

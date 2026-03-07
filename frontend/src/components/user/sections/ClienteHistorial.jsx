@@ -42,7 +42,7 @@ function ClienteHistorial() {
       </div>
 
       <div className="cliente-section-page__content">
-        <HistorialOrdenes clientId={cliente?.gdtaller_id || cliente?.id} />
+        <HistorialOrdenes clientId={cliente?.cif || cliente?.id} />
       </div>
     </div>
   );

@@ -69,19 +69,6 @@ function Cliente({ listCustom, listBikes }) {
           }
         }
 
-        // Siempre obtener datos frescos del cliente individual (incluye cuestionario actualizado de BD)
-        if (cliente && cliente.id) {
-          try {
-            const clienteFresco = await api.getCliente(cliente.id);
-            if (clienteFresco) {
-              cliente = { ...cliente, ...clienteFresco };
-              console.log("Cliente actualizado con datos frescos:", cliente);
-            }
-          } catch (apiError) {
-            console.log("No se pudieron obtener datos frescos, usando datos de listCustom");
-          }
-        }
-
         // Si no se encontró cliente en GDTaller, crear uno básico desde los datos del usuario registrado
         if (!cliente && userCif) {
           console.log("⚠️ Cliente no encontrado en GDTaller, usando datos locales del usuario");
@@ -93,6 +80,19 @@ function Cliente({ listCustom, listBikes }) {
             email: user.email || "",
             telefono: user.telefono || "",
           };
+        }
+
+        // Siempre obtener datos frescos del cliente individual (incluye cuestionario actualizado de BD)
+        if (cliente && (cliente.id || cliente.cif)) {
+          try {
+            const clienteFresco = await api.getCliente(cliente.id || cliente.cif);
+            if (clienteFresco) {
+              cliente = { ...cliente, ...clienteFresco };
+              console.log("Cliente actualizado con datos frescos:", cliente);
+            }
+          } catch (apiError) {
+            console.log("No se pudieron obtener datos frescos, usando datos disponibles");
+          }
         }
 
         // Si GDTaller no tiene nombre, usar el nombre del usuario local (si no es el DNI)

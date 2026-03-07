@@ -7,13 +7,22 @@ const soloAdmin = [verifyToken, verifyRole(["admin"])];
 // GET /?mes=M&anio=Y[&operario=nombre]
 router.get("/", soloAdmin, async (req, res) => {
   try {
-    const { mes, anio, operario } = req.query;
+    let { mes, anio, operario } = req.query;
+
     let sql = "SELECT * FROM incidencias_protocolo WHERE 1=1";
     const params = [];
 
     if (mes) { sql += " AND mes = ?"; params.push(Number(mes)); }
     if (anio) { sql += " AND anio = ?"; params.push(Number(anio)); }
-    if (operario) { sql += " AND operario_nombre = ?"; params.push(operario); }
+
+    // Operarios solo pueden ver sus propias incidencias
+    // Se usa LIKE con el primer nombre (trim) para cubrir "Rene" → "Rene Orran Beyer"
+    if (req.user.operario_id != null) {
+      const primerNombre = (req.user.nombre || "").trim().split(" ")[0];
+      if (primerNombre) { sql += " AND operario_nombre LIKE ?"; params.push(primerNombre + "%"); }
+    } else if (operario) {
+      sql += " AND operario_nombre = ?"; params.push(operario);
+    }
 
     sql += " ORDER BY created_at DESC";
 

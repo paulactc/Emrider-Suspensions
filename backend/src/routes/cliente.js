@@ -118,9 +118,10 @@ router.get("/:id", verifyToken, async (req, res) => {
     const rawClients = await gdtallerService.getClients();
     const clients = rawClients.map(gdtallerService.mapClientFromGDTaller);
 
+    const normCif = (s) => (s || "").replace(/\s+/g, "").toLowerCase();
     let client = clients.find((c) => String(c.id) === String(id));
     if (!client) {
-      client = clients.find((c) => c.cif === id);
+      client = clients.find((c) => normCif(c.cif) === normCif(id));
     }
 
     if (!client) {
@@ -171,9 +172,10 @@ router.put("/:id/cuestionario", verifyToken, async (req, res) => {
     const rawClients = await gdtallerService.getClients();
     const clients = rawClients.map(gdtallerService.mapClientFromGDTaller);
 
+    const normCif = (s) => (s || "").replace(/\s+/g, "").toLowerCase();
     let client = clients.find((c) => String(c.id) === String(id));
     if (!client) {
-      client = clients.find((c) => c.cif === id);
+      client = clients.find((c) => normCif(c.cif) === normCif(id));
     }
 
     if (client && client.cif) {

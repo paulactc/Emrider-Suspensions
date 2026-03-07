@@ -649,7 +649,13 @@ router.get("/debug-operarios", soloAdmin, async (_req, res) => {
 // Query params: operarioId, year, month
 router.get("/operario-lineas", soloAdmin, async (req, res) => {
   try {
-    const { operarioId, year, month } = req.query;
+    let { operarioId, year, month } = req.query;
+
+    // Si el usuario es un operario (no Ernesto), solo puede consultar sus propias líneas
+    if (req.user.operario_id != null) {
+      operarioId = String(req.user.operario_id);
+    }
+
     if (!operarioId) return res.status(400).json({ success: false, error: "operarioId requerido" });
 
     const y = parseInt(year) || new Date().getFullYear();
@@ -727,9 +733,14 @@ router.get("/operario-lineas", soloAdmin, async (req, res) => {
   }
 });
 
-// GET - Horas por operario en un período (resumen, para Ernesto) — solo admin
+// GET - Horas por operario en un período (resumen, para Ernesto) — solo admin sin operario_id
 // Query params: year, month
 router.get("/horas-operario", soloAdmin, async (req, res) => {
+  // Operarios solo pueden ver sus propias horas (via /operario-lineas)
+  if (req.user.operario_id != null) {
+    return res.status(403).json({ success: false, message: "Acceso denegado" });
+  }
+
   try {
     const hoy = new Date();
     const y = parseInt(req.query.year) || hoy.getFullYear();

@@ -29,7 +29,7 @@ const verifyToken = async (req, res, next) => {
 
     // Verificar que el usuario existe y está activo
     const userResult = await executeQuery(
-      "SELECT id, nombre, email, dni, rol, activo FROM usuarios WHERE id = ?",
+      "SELECT id, nombre, email, dni, rol, activo, operario_id FROM usuarios WHERE id = ?",
       [decoded.id]
     );
 
@@ -56,6 +56,7 @@ const verifyToken = async (req, res, next) => {
       email: user.email,
       dni: user.dni,
       rol: user.rol,
+      operario_id: user.operario_id ?? null,
       clienteId: decoded.clienteId,
     };
 

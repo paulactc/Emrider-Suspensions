@@ -70,7 +70,7 @@ function ClienteTribu() {
 
   useEffect(() => {
     if (!cliente) return;
-    const clientId = cliente.gdtaller_id || cliente.id;
+    const clientId = cliente.cif || cliente.id;
     if (!clientId) { setLoadingNivel(false); return; }
 
     api
@@ -87,7 +87,7 @@ function ClienteTribu() {
       })
       .catch(() => setFacturacionAnual(0))
       .finally(() => setLoadingNivel(false));
-  }, [cliente?.gdtaller_id, cliente?.id]);
+  }, [cliente?.cif, cliente?.id]);
 
   const nivelActual = useMemo(() => calcularNivel(facturacionAnual), [facturacionAnual]);
   const siguienteNivel = NIVELES_EMRIDER.find((n) => n.id === nivelActual.id + 1);

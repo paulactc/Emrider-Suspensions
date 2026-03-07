@@ -45,10 +45,18 @@ function ScrollToTop() {
   return null;
 }
 
-// Redirige a operarios fuera de su área
+// Redirige a operarios fuera de su área; bloquea acceso a no-admin
 function SoloAdmin({ children }) {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
+  if (!user.rol || user.rol !== "admin") return <Navigate to="/" replace />;
   if (user.operario_id != null) return <Navigate to="/admin/horas-operario" replace />;
+  return children;
+}
+
+// Solo para admin sin operario_id (Ernesto) o para el propio operario
+function SoloAdminOOperario({ children }) {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  if (!user.rol || user.rol !== "admin") return <Navigate to="/" replace />;
   return children;
 }
 
@@ -289,7 +297,7 @@ function App() {
         <Route path="/admin/trabajos-finalizados" element={<SoloAdmin><TrabajosAdmin modo="finalizados" /></SoloAdmin>} />
         <Route path="/admin/servicio/:id" element={<SoloAdmin><ServicioDetalleAdmin /></SoloAdmin>} />
         <Route path="/admin/avisos" element={<SoloAdmin><AvisosAdmin /></SoloAdmin>} />
-        <Route path="/admin/horas-operario" element={<HorasOperarioAdmin />} />
+        <Route path="/admin/horas-operario" element={<SoloAdminOOperario><HorasOperarioAdmin /></SoloAdminOOperario>} />
         <Route path="/admin/incidencias-protocolo" element={<SoloAdmin><IncidenciasProtocoloAdmin /></SoloAdmin>} />
 
         {/* 📝 FORMULARIOS */}
